@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.food.AddFoodActions
 import com.clement.nutrimo.ui.food.AddFoodScreen
 import com.clement.nutrimo.ui.food.CustomFoodScreen
@@ -20,7 +21,12 @@ import com.clement.nutrimo.ui.journal.JournalActions
 import com.clement.nutrimo.ui.journal.JournalScreen
 import com.clement.nutrimo.ui.more.MoreScreen
 import com.clement.nutrimo.ui.profile.ProfileScreen
+import com.clement.nutrimo.ui.recipe.RecipeEditScreen
+import com.clement.nutrimo.ui.recipe.RecipeViewScreen
+import com.clement.nutrimo.ui.recipe.RecipesScreen
 import com.clement.nutrimo.ui.weight.WeightScreen
+import java.time.LocalDate
+import java.time.LocalTime
 
 fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     val back: () -> Unit = { nav.popBackStack() }
@@ -34,7 +40,8 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
         )
     }
     composable<WeightRoute> { WeightScreen(onNewGoal = { nav.navigate(GoalEditRoute) }, onGoals = { nav.navigate(GoalsRoute) }) }
-    composable<RecipesRoute> { PlaceholderScreen("Recettes") }
+    composable<RecipesRoute> { RecipesScreen(onOpen = { nav.navigate(RecipeViewRoute(it)) }, onCreate = { nav.navigate(RecipeEditRoute()) }) }
+    recipeDestinations(nav, back)
     composable<MoreRoute> { MoreScreen(onOpen = { nav.navigate(it) }) }
     foodDestinations(nav, back)
     composable<DayNutrientsRoute> { DayNutrientsScreen(it.toRoute<DayNutrientsRoute>().epochDay, back) }
@@ -83,4 +90,27 @@ private fun NavGraphBuilder.foodDestinations(nav: NavHostController, back: () ->
         })
     }
     composable<CustomFoodRoute> { CustomFoodScreen(onBack = back) }
+}
+
+/** Recipe detail and editor; the editor receives picked ingredients through NavResults.INGREDIENT. */
+private fun NavGraphBuilder.recipeDestinations(nav: NavHostController, back: () -> Unit) {
+    composable<RecipeViewRoute> {
+        RecipeViewScreen(
+            onBack = back,
+            onEdit = { nav.navigate(RecipeEditRoute(it)) },
+            onLog = { id ->
+                val meal = Meal.atHour(LocalTime.now().hour).name
+                nav.navigate(ItemDetailRoute(recipeId = id, epochDay = LocalDate.now().toEpochDay(), meal = meal))
+            },
+        )
+    }
+    composable<RecipeEditRoute> { entry ->
+        val picked by entry.savedStateHandle.getStateFlow<String?>(NavResults.INGREDIENT, null).collectAsStateWithLifecycle()
+        RecipeEditScreen(
+            onBack = back,
+            onAddIngredient = { nav.navigate(AddFoodRoute(epochDay = 0, meal = Meal.LUNCH.name, forRecipe = true)) },
+            picked = picked,
+            onPickedConsumed = { entry.savedStateHandle[NavResults.INGREDIENT] = null },
+        )
+    }
 }

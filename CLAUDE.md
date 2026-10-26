@@ -64,6 +64,9 @@ ui/
                                   ItemDetailScreen/ViewModel (diary add/edit, or recipe-ingredient pick),
                                   CustomFoodScreen/ViewModel (MACRO_FIELDS, micros, portions), ScannerScreen
                                   (CameraX + ML Kit)
+  recipe/                         RecipesScreen (list + kcal/part), RecipeViewScreen (per part / 100 g, delete warns
+                                  about parent recipes), RecipeEditScreen/ViewModel (ingredients picked through
+                                  AddFood(forRecipe) → ItemDetail → NavResults.INGREDIENT; cycle check)
   weight/                         WeightScreen (3 sub-tabs + FAB), WeightViewModel (progressOf), WeightDashboard,
                                   WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
                                   (series + window) on LineChart (generic Canvas date/value chart)
@@ -97,4 +100,5 @@ ui/
 - ✅ Navigation shell, onboarding, profile, new goal, goals list.
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
-- ⏳ Recipes, settings screens (server, reminders, backup, measurements, about), reminders.
+- ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ⏳ Settings screens (server, reminders, backup, measurements, about), reminders.

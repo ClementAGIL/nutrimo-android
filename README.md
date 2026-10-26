@@ -23,7 +23,9 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Quantity in grams, product portions ("1 pot (125 g)") or your own portions; live nutrient preview.
 - Custom foods: name + label values per 100 g mandatory (kcal, fat, saturated fat, carbs, sugars, protein, salt);
   fiber, brand, barcode, vitamins and minerals optional.
-- 🚧 Recipes, settings, reminders, backup — see `docs/PLAN.md` for the full scope.
+- Recipes: ingredients picked from the same search (foods in grams, other recipes in parts), number of parts,
+  optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal.
+- 🚧 Settings, reminders, backup — see `docs/PLAN.md` for the full scope.
 
 ## Build and install
 

@@ -17,6 +17,17 @@ enum class Meal(val label: String) {
     LUNCH("Déjeuner"),
     DINNER("Dîner"),
     SNACK("Collations"),
+    ;
+
+    companion object {
+        /** Meal most likely being eaten at [hour] (0-23), to preselect it. */
+        fun atHour(hour: Int): Meal = when (hour) {
+            in 4..10 -> BREAKFAST
+            in 11..14 -> LUNCH
+            in 15..17 -> SNACK
+            else -> DINNER
+        }
+    }
 }
 
 enum class FoodSource(val label: String) { CIQUAL("CIQUAL"), OFF("OFF"), CUSTOM("Perso") }
