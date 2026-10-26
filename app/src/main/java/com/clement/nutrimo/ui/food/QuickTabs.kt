@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -41,7 +42,7 @@ fun QuickTabs(vm: AddFoodViewModel, actions: AddFoodActions) {
     // A whole saved meal makes no sense as one recipe ingredient.
     val tabs = QuickTab.entries.filter { !(vm.route.forRecipe && it == QuickTab.MEALS) }
     Column {
-        ScrollableTabRow(selectedTabIndex = tab, edgePadding = 8.dp) {
+        ScrollableTabRow(selectedTabIndex = tab, edgePadding = 8.dp, containerColor = MaterialTheme.colorScheme.background) {
             tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t.label) }) }
         }
         when (tabs[tab.coerceIn(tabs.indices)]) {

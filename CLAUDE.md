@@ -13,7 +13,7 @@ The full product plan is in `docs/PLAN.md`. UI text is **French only**.
 ## Stack
 
 Kotlin 2.1, AGP 8.12, Gradle 8.14 (JDK 17), compileSdk/targetSdk 36, **minSdk 31**.
-Jetpack Compose + Material 3 (dynamic colors, light/dark), Navigation Compose with type-safe routes,
+Jetpack Compose + Material 3 (fixed green brand palette, light/dark), Navigation Compose with type-safe routes,
 Room (KSP), DataStore Preferences, OkHttp + kotlinx.serialization, CameraX + ML Kit barcode, WorkManager, Health Connect client.
 Material 3 experimental APIs are opted in globally (app/build.gradle.kts).
 Deliberate choices: **manual DI** (`data/AppContainer.kt`, no Hilt), **no Retrofit** (the server URL is set at
@@ -84,7 +84,7 @@ ui/
                                   ItemDetailScreen/ViewModel (diary add/edit, or recipe-ingredient pick),
                                   CustomFoodScreen/ViewModel (MACRO_FIELDS, micros, portions), ScannerScreen
                                   (CameraX + ML Kit)
-  recipe/                         RecipesScreen (list + kcal/part), RecipeViewScreen (per part / 100 g, delete warns
+  recipe/                         RecipesScreen (favorites first, then by use count = diary entries, counted live in SQL; kcal/part), RecipeViewScreen (per part / 100 g, delete warns
                                   about parent recipes), RecipeEditScreen/ViewModel (ingredients picked through
                                   AddFood(forRecipe) → ItemDetail → NavResults.INGREDIENT; cycle check)
   weight/                         WeightScreen (Poids / Mensurations switch, each with sub-tabs; FAB adds to the shown one),
@@ -95,7 +95,8 @@ ui/
   common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components (ScreenScaffold,
                                   ScrollColumn = standard scrollable screen body, SectionCard(onClick), CardHeader, GoalSettingsButton, …), Pickers,
                                   NutrientViews (MacroBars with reference targets, NutrientTable with micros)
-  theme/Theme.kt                  Material 3 theme + fixed chart/macro colors
+  theme/Theme.kt                  brand color schemes (cards = surface, page = background), shapes, bold titles + fixed chart colors
+                                  (SectionCard: white, 20 dp corners, 1 dp elevation; AppTabs / top bar use the page color)
 ```
 
 ## Key conventions

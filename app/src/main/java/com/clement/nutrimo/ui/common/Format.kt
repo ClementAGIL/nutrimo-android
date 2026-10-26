@@ -20,7 +20,7 @@ fun kg(value: Double) = "${fmt(value, 1)} kg"
 fun signed(delta: Double, unit: String) = "${if (delta > 0) "+" else ""}${fmt(delta)} $unit"
 fun signedKg(delta: Double) = signed(delta, "kg")
 fun grams(value: Double?) = value?.let { "${fmt(it, 1)} g" } ?: "–"
-fun percent(ratio: Double) = "${fmt(ratio * 100, 0)} %"
+fun percent(ratio: Double, decimals: Int = 0) = "${fmt(ratio * 100, decimals)} %"
 
 fun LocalDate.day(): String = format(DAY).replaceFirstChar { it.uppercase() }
 fun LocalDate.full(): String = format(FULL)

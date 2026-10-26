@@ -1,4 +1,4 @@
-// Recipes tab: saved recipes with kcal per part; "+" creates one.
+// Recipes tab: saved recipes (favorites first, then the most logged) with kcal per part and use count; "+" creates one.
 package com.clement.nutrimo.ui.recipe
 
 import androidx.compose.foundation.clickable
@@ -31,11 +31,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-data class RecipeSummary(val recipe: RecipeEntity, val kcalPerPart: Double?)
+data class RecipeSummary(val recipe: RecipeEntity, val kcalPerPart: Double?, val useCount: Int)
 
 class RecipesViewModel(c: AppContainer) : ViewModel() {
-    val recipes = c.recipes.recipes
-        .map { list -> list.map { RecipeSummary(it, c.recipes.totals(it.id)?.perPart?.kcal) } }
+    val recipes = c.recipes.recipesWithUses
+        .map { list -> list.map { RecipeSummary(it.recipe, c.recipes.totals(it.recipe.id)?.perPart?.kcal, it.useCount) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 }
 
@@ -51,10 +51,12 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
             Modifier.padding(padding),
         )
         LazyColumn(Modifier.padding(padding)) {
-            items(recipes, key = { it.recipe.id }) { (recipe, perPart) ->
+            items(recipes, key = { it.recipe.id }) { (recipe, perPart, uses) ->
                 ListItem(
                     headlineContent = { Text(recipe.name) },
-                    supportingContent = { Text("${formatParts(recipe.parts)} parts · ${perPart?.let { kcal(it) } ?: "–"} / part") },
+                    supportingContent = {
+                        Text("${formatParts(recipe.parts)} parts · ${perPart?.let { kcal(it) } ?: "–"} / part · ${usesText(uses)}")
+                    },
                     trailingContent = if (recipe.isFavorite) ({ Icon(Icons.Default.Star, "Favori", tint = MaterialTheme.colorScheme.primary) }) else null,
                     modifier = Modifier.clickable { onOpen(recipe.id) },
                 )
@@ -62,4 +64,10 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
             }
         }
     }
+}
+
+private fun usesText(n: Int) = when (n) {
+    0 -> "jamais utilisée"
+    1 -> "utilisée 1 fois"
+    else -> "utilisée $n fois"
 }

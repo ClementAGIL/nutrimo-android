@@ -9,7 +9,7 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - First launch: profile (sex, birth date, height, activity) and first goal.
 - Goal by pace (0.5 / 1 / 2 kg per week or custom) or by end date, with the daily calorie target
   (Mifflin-St Jeor maintenance − deficit, never below 1200 kcal women / 1500 kcal men) and safety warnings.
-- Weight tab: dashboard (weight and time progress bars, start / current / target, lost, remaining, BMI,
+- Weight tab: dashboard (weight and time progress bars with their % on the bar line, start / current / target, lost, remaining, BMI,
   average loss per week, required pace, calorie target, planned and estimated end dates), weigh-in history
   (one per day, edit / delete, change since the previous one) and graph (weight, objective line, trend line
   projected to the estimated end date; 1 / 3 / 6 months or everything). Goal history in "Mes objectifs".
@@ -41,7 +41,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Custom foods: name + label values per 100 g mandatory (kcal, fat, saturated fat, carbs, sugars, protein, salt);
   fiber, brand, barcode, vitamins and minerals optional.
 - Recipes: ingredients picked from the same search (foods in grams, other recipes in parts), number of parts,
-  optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal.
+  optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal. The list shows
+  how many times each recipe was logged: favorites first, then the most used.
 - Body measurements (waist, hips, chest, arm, thigh) in the Poids tab (Poids / Mensurations switch): history and
   one evolution chart per measurement (1 / 3 / 6 months or everything).
 - Each journal card with a goal (calories, steps, sport, water) has a settings button opening the screen where

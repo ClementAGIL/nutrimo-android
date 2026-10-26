@@ -8,11 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.data.db.MeasurementEntity
+import com.clement.nutrimo.ui.common.AppTabs
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 import java.time.LocalDate
@@ -54,9 +53,7 @@ fun WeightScreen(onNewGoal: () -> Unit, onGoals: () -> Unit) {
                 view = it
                 tab = 0
             }
-            PrimaryTabRow(selectedTabIndex = tab) {
-                view.tabs.forEachIndexed { i, title -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(title) }) }
-            }
+            AppTabs(view.tabs, tab) { tab = it }
             if (view == BodyView.WEIGHT) WeightTabs(vm, tab, onNewGoal, onGoals) else MeasurementTabs(vm, tab) { measurement = it }
         }
     }

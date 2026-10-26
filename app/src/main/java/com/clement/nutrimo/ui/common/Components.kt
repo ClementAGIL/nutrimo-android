@@ -21,17 +21,21 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,6 +52,8 @@ import androidx.compose.ui.unit.dp
 /** Bottom space to keep the last items of a list reachable above a floating action button. */
 val FAB_CLEARANCE = 88.dp
 private val STAT_VALUE_MAX_WIDTH = 220.dp
+/** Just enough shadow to lift white cards off the tinted page. */
+private val CARD_ELEVATION = 1.dp
 
 /** Scaffold with a top bar; [onBack] adds a back arrow. */
 @Composable
@@ -69,6 +75,8 @@ fun ScreenScaffold(
                     }
                 },
                 actions = { actions() },
+                // Same color as the page so the cards stand out, not the bar.
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
             )
         },
         floatingActionButton = floatingActionButton,
@@ -86,8 +94,19 @@ fun SectionCard(title: String? = null, onClick: (() -> Unit)? = null, content: @
             content()
         }
     }
-    if (onClick != null) Card(onClick = onClick, modifier = Modifier.fillMaxWidth(), content = inner)
-    else Card(Modifier.fillMaxWidth(), content = inner)
+    val shape = MaterialTheme.shapes.large
+    val colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    val elevation = CardDefaults.cardElevation(defaultElevation = CARD_ELEVATION)
+    if (onClick != null) Card(onClick, Modifier.fillMaxWidth(), shape = shape, colors = colors, elevation = elevation, content = inner)
+    else Card(Modifier.fillMaxWidth(), shape = shape, colors = colors, elevation = elevation, content = inner)
+}
+
+/** Sub-tabs on the page color (a white strip would look like a card). */
+@Composable
+fun AppTabs(titles: List<String>, selected: Int, onSelect: (Int) -> Unit) {
+    PrimaryTabRow(selectedTabIndex = selected, containerColor = MaterialTheme.colorScheme.background) {
+        titles.forEachIndexed { i, title -> Tab(selected = selected == i, onClick = { onSelect(i) }, text = { Text(title) }) }
+    }
 }
 
 /** Card title row: [title] and optional [subtitle] on the left, icon buttons ([actions]) on the right. */
@@ -139,14 +158,20 @@ fun StatRow(label: String, value: String, valueColor: Color = Color.Unspecified)
 fun ProgressRow(label: String, value: String, progress: Double, color: Color = MaterialTheme.colorScheme.primary) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         StatRow(label, value)
-        LinearProgressIndicator(
-            progress = { progress.toFloat().coerceIn(0f, 1f) },
-            modifier = Modifier.fillMaxWidth().height(10.dp),
-            color = color,
-            strokeCap = StrokeCap.Round,
-            drawStopIndicator = {},
-        )
+        ProgressBar(progress, color, Modifier.fillMaxWidth())
     }
+}
+
+/** Rounded bar; [progress] is clamped to 0..1. */
+@Composable
+fun ProgressBar(progress: Double, color: Color, modifier: Modifier = Modifier) {
+    LinearProgressIndicator(
+        progress = { progress.toFloat().coerceIn(0f, 1f) },
+        modifier = modifier.height(10.dp),
+        color = color,
+        strokeCap = StrokeCap.Round,
+        drawStopIndicator = {},
+    )
 }
 
 /** Text field for decimal numbers; accepts both "," and ".". */

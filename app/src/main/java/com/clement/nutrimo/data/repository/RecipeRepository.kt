@@ -5,6 +5,7 @@ import androidx.room.withTransaction
 import com.clement.nutrimo.data.db.IngredientEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.db.RecipeEntity
+import com.clement.nutrimo.data.db.RecipeWithUses
 import com.clement.nutrimo.data.db.now
 import com.clement.nutrimo.domain.calc.IngredientContribution
 import com.clement.nutrimo.domain.calc.RecipeMath
@@ -12,6 +13,7 @@ import com.clement.nutrimo.domain.calc.RecipeTotals
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.normalized
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 data class IngredientLine(
     val ingredient: IngredientEntity,
@@ -26,7 +28,8 @@ class RecipeRepository(private val db: NutrimoDatabase) {
     private val dao = db.recipeDao()
     private val foods = db.foodDao()
 
-    val recipes: Flow<List<RecipeEntity>> = dao.observeAll()
+    val recipesWithUses: Flow<List<RecipeWithUses>> = dao.observeWithUses()
+    val recipes: Flow<List<RecipeEntity>> = recipesWithUses.map { list -> list.map { it.recipe } }
 
     suspend fun recipe(id: String): RecipeEntity? = dao.byId(id)
 

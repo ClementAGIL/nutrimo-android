@@ -15,13 +15,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.domain.calc.Bmi
 import com.clement.nutrimo.domain.calc.GoalProgress
 import com.clement.nutrimo.domain.calc.MIN_TREND_POINTS
 import com.clement.nutrimo.ui.common.FAB_CLEARANCE
-import com.clement.nutrimo.ui.common.ProgressRow
+import com.clement.nutrimo.ui.common.ProgressBar
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
@@ -67,9 +70,22 @@ private fun GoalReachedCard(onAchieved: () -> Unit) {
 @Composable
 private fun ProgressCard(p: GoalProgress) {
     SectionCard("Progression") {
-        ProgressRow("Poids", "${kg(p.lostKg.coerceAtLeast(0.0))} / ${kg(p.startKg - p.targetKg)} (${percent(p.weightProgress)})", p.weightProgress, NutrimoColors.weight)
-        ProgressRow("Temps", "${p.daysElapsed} j écoulés · ${p.daysRemaining} j restants", p.timeProgress, NutrimoColors.objective)
+        PercentProgress("Poids", p.weightProgress, "${kg(p.lostKg.coerceAtLeast(0.0))} perdus sur ${kg(p.startKg - p.targetKg)}", NutrimoColors.weight)
+        PercentProgress("Temps", p.timeProgress, "${p.daysElapsed} j écoulés · ${p.daysRemaining} j restants", NutrimoColors.objective)
         if (p.weightProgress + 0.05 < p.timeProgress) WarningText("Un peu en retard sur le plan : courage !")
+    }
+}
+
+/** Title, then the bar with its percentage on the same line, then the detail. */
+@Composable
+private fun PercentProgress(title: String, progress: Double, detail: String, color: Color) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(title, style = MaterialTheme.typography.titleSmall)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            ProgressBar(progress, color, Modifier.weight(1f))
+            Text(percent(progress, 1), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        }
+        Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

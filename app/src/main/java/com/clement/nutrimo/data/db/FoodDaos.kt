@@ -72,8 +72,12 @@ interface FoodDao {
 
 @Dao
 interface RecipeDao {
-    @Query("SELECT * FROM recipes ORDER BY isFavorite DESC, name")
-    fun observeAll(): Flow<List<RecipeEntity>>
+    /** Favorites first, then the most logged. */
+    @Query(
+        "SELECT r.*, (SELECT COUNT(*) FROM diary d WHERE d.recipeId = r.id) AS useCount FROM recipes r " +
+            "ORDER BY r.isFavorite DESC, useCount DESC, r.name",
+    )
+    fun observeWithUses(): Flow<List<RecipeWithUses>>
 
     @Query("SELECT * FROM recipes")
     suspend fun all(): List<RecipeEntity>

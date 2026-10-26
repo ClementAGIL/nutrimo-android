@@ -77,6 +77,9 @@ data class IngredientEntity(
 )
 
 /** One day of the diary summed up (calorie history). */
+/** A recipe with the number of diary entries that logged it (counted live, so deleting an entry lowers it). */
+data class RecipeWithUses(@Embedded val recipe: RecipeEntity, val useCount: Int)
+
 data class DayTotal(val date: LocalDate, val kcal: Double, val protein: Double?, val carbs: Double?, val fat: Double?)
 
 /** [nutrients] is a snapshot of what was eaten, so editing a food or recipe later keeps past days unchanged. */
