@@ -6,8 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Flag
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -16,8 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.navigation.AboutRoute
+import com.clement.nutrimo.ui.navigation.BackupRoute
 import com.clement.nutrimo.ui.navigation.GoalEditRoute
+import com.clement.nutrimo.ui.navigation.GoalsRoute
+import com.clement.nutrimo.ui.navigation.MeasurementsRoute
 import com.clement.nutrimo.ui.navigation.ProfileRoute
+import com.clement.nutrimo.ui.navigation.RemindersRoute
+import com.clement.nutrimo.ui.navigation.ServerRoute
 
 data class MoreEntry(val title: String, val subtitle: String, val icon: ImageVector, val route: Any)
 
@@ -25,6 +37,12 @@ data class MoreEntry(val title: String, val subtitle: String, val icon: ImageVec
 val MORE_ENTRIES = listOf(
     MoreEntry("Profil", "Sexe, âge, taille, activité", Icons.Default.Person, ProfileRoute),
     MoreEntry("Nouvel objectif", "Poids cible et rythme", Icons.Default.Flag, GoalEditRoute),
+    MoreEntry("Mes objectifs", "Objectif en cours et archivés", Icons.Default.History, GoalsRoute),
+    MoreEntry("Mensurations", "Taille, hanches, poitrine…", Icons.Default.Straighten, MeasurementsRoute),
+    MoreEntry("Rappels", "Pesée et saisie des repas", Icons.Default.Notifications, RemindersRoute),
+    MoreEntry("Serveur", "Adresse de nutrimo-api sur le Wi-Fi", Icons.Default.Dns, ServerRoute),
+    MoreEntry("Sauvegarde", "Exporter / importer vos données", Icons.Default.Backup, BackupRoute),
+    MoreEntry("À propos", "Sources des données et licences", Icons.Default.Info, AboutRoute),
 )
 
 @Composable

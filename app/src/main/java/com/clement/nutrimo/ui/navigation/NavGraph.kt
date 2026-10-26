@@ -19,7 +19,12 @@ import com.clement.nutrimo.ui.goal.GoalsScreen
 import com.clement.nutrimo.ui.journal.DayNutrientsScreen
 import com.clement.nutrimo.ui.journal.JournalActions
 import com.clement.nutrimo.ui.journal.JournalScreen
+import com.clement.nutrimo.ui.more.AboutScreen
+import com.clement.nutrimo.ui.more.BackupScreen
+import com.clement.nutrimo.ui.more.MeasurementsScreen
 import com.clement.nutrimo.ui.more.MoreScreen
+import com.clement.nutrimo.ui.more.RemindersScreen
+import com.clement.nutrimo.ui.more.ServerScreen
 import com.clement.nutrimo.ui.profile.ProfileScreen
 import com.clement.nutrimo.ui.recipe.RecipeEditScreen
 import com.clement.nutrimo.ui.recipe.RecipeViewScreen
@@ -48,6 +53,11 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     composable<ProfileRoute> { ProfileScreen(onBack = back) }
     composable<GoalEditRoute> { GoalEditScreen(onBack = back) }
     composable<GoalsRoute> { GoalsScreen(onBack = back) }
+    composable<MeasurementsRoute> { MeasurementsScreen(onBack = back) }
+    composable<RemindersRoute> { RemindersScreen(onBack = back) }
+    composable<ServerRoute> { ServerScreen(onBack = back) }
+    composable<BackupRoute> { BackupScreen(onBack = back) }
+    composable<AboutRoute> { AboutScreen(onBack = back) }
 }
 
 /** Search → (scanner) → quantity screen, and custom foods. */

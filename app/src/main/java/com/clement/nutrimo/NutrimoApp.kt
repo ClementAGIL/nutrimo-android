@@ -3,6 +3,7 @@ package com.clement.nutrimo
 
 import android.app.Application
 import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.reminders.Reminders
 
 class NutrimoApp : Application() {
     lateinit var container: AppContainer
@@ -11,5 +12,6 @@ class NutrimoApp : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
+        Reminders.createChannel(this)
     }
 }

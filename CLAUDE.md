@@ -40,6 +40,8 @@ data/
                                   FoodEntities (foods, portions, recipes, ingredients, diary), DAOs, Converters
   network/                        Http (OkHttp wrapper), FoodDto (+ mapping to entities), FoodApis
                                   (NutrimoApi = PC backend, OffApi = Open Food Facts + mapOffProduct)
+  reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
+                                  only when nothing was logged today)
   repository/                     Settings (DataStore), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
                                   nutrition, cycle check), Diary (entries + water), Backup (JSON export/import)
@@ -55,7 +57,8 @@ ui/
   profile/                        ProfileForm (shared) + ProfileScreen
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
-  more/                           "Plus" tab menu (MORE_ENTRIES)
+  more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
+                                  (SAF export/import), MeasurementsScreen, RemindersScreen, AboutScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water),
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
                                   (quantityText, SwipeToDelete), DayNutrientsScreen
@@ -101,4 +104,5 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
-- ⏳ Settings screens (server, reminders, backup, measurements, about), reminders.
+- ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
+- ⏳ Polish: device testing, empty states, small UX fixes.
