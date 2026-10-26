@@ -33,6 +33,11 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   on Wi-Fi) and restore the latest server backup; or export / import a JSON file.
 - Server: set the Nutrimo API address (e.g. `http://192.168.1.20:3000`) and test the connection (Plus → Serveur).
 
+## Demo data
+
+Plus → Développeur → "Charger les données de démo" replaces all data with a realistic history (5 months of
+weigh-ins, 30 days of meals, recipes…) so every screen can be tried; "Tout effacer" goes back to onboarding.
+
 ## Testing against the PC server over USB
 
 `adb reverse tcp:3000 tcp:3000` lets the phone reach the PC's API as `http://localhost:3000` (no firewall rule needed).

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.navigation.AboutRoute
 import com.clement.nutrimo.ui.navigation.BackupRoute
+import com.clement.nutrimo.ui.navigation.DevRoute
 import com.clement.nutrimo.ui.navigation.GoalEditRoute
 import com.clement.nutrimo.ui.navigation.GoalsRoute
 import com.clement.nutrimo.ui.navigation.MeasurementsRoute
@@ -43,6 +45,7 @@ val MORE_ENTRIES = listOf(
     MoreEntry("Serveur", "Adresse de nutrimo-api sur le Wi-Fi", Icons.Default.Dns, ServerRoute),
     MoreEntry("Sauvegarde", "Exporter / importer vos données", Icons.Default.Backup, BackupRoute),
     MoreEntry("À propos", "Sources des données et licences", Icons.Default.Info, AboutRoute),
+    MoreEntry("Développeur", "Données de démo, tout effacer", Icons.Default.Science, DevRoute),
 )
 
 @Composable

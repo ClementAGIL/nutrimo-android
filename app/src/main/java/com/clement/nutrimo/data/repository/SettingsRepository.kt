@@ -60,7 +60,7 @@ class SettingsRepository(private val context: Context) {
         it[Keys.apiKey] = apiKey.trim()
     }
 
-    suspend fun setOnboardingDone() = edit { it[Keys.onboardingDone] = true }
+    suspend fun setOnboardingDone(done: Boolean = true) = edit { it[Keys.onboardingDone] = done }
 
     suspend fun setAutoBackup(enabled: Boolean) = edit { it[Keys.autoBackup] = enabled }
 
