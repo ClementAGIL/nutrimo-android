@@ -37,7 +37,8 @@ NutrimoApp.kt / MainActivity.kt   Application (holds AppContainer) / single acti
 data/
   AppContainer.kt                 creates db, Http, repositories; seeds CIQUAL on first launch
   db/                             Room: BodyEntities (profile, weights, measurements, goals, water),
-                                  FoodEntities (foods, portions, recipes, ingredients, diary), DAOs, Converters
+                                  FoodEntities (foods, portions, recipes, ingredients, diary, saved meals + items), DAOs, Converters.
+                                  Schema changes: bump the version and add an AutoMigration (schemas in app/schemas)
   network/                        Http (OkHttp wrapper), FoodDto (+ mapping to entities), FoodApis
                                   (NutrimoApi = PC backend, OffApi = Open Food Facts + mapOffProduct)
   sync/ServerBackup.kt            push / restore the JSON backup on nutrimo-api (/backups), AutoBackupWorker (daily,
@@ -46,7 +47,7 @@ data/
                                   water, custom food, recipes incl. a sub-recipe), DemoDiary (30 days of meals, fixed CIQUAL ids)
   reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
                                   only when nothing was logged today)
-  repository/                     Settings (DataStore), Body (profile/weights/goals/calorie target), Food
+  repository/                     Settings (DataStore), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
                                   nutrition, cycle check), Diary (entries + water), Backup (JSON export/import)
 domain/
@@ -110,6 +111,7 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ✅ Saved meals (journal bookmark icon → "Repas" tab of the search). DB v2 via AutoMigration(1 → 2).
 - ✅ Developer section (Plus → Développeur): demo data / erase everything. Use it to test every screen.
 - ✅ Calorie history (journal top bar).
 - ✅ Server backup (manual + daily automatic) and restore.

@@ -58,13 +58,17 @@ fun JournalScreen(actions: JournalActions) {
             item { DayBar(state.date, vm::shiftDay) { vm.setDate(LocalDate.now()) } }
             item { SummaryCard(state) { actions.onDetails(state.date) } }
             items(Meal.entries) { meal ->
+                val entries = state.meals[meal].orEmpty()
                 MealCard(
-                    meal = meal,
-                    entries = state.meals[meal].orEmpty(),
-                    onAdd = { actions.onAdd(state.date, meal) },
-                    onEdit = actions.onEdit,
-                    onDelete = vm::delete,
-                    onCopy = { vm.copyFromPreviousDay(meal) },
+                    meal,
+                    entries,
+                    MealCardActions(
+                        onAdd = { actions.onAdd(state.date, meal) },
+                        onEdit = actions.onEdit,
+                        onDelete = vm::delete,
+                        onCopy = { vm.copyFromPreviousDay(meal) },
+                        onSave = { name -> vm.saveMeal(name, entries) },
+                    ),
                 )
             }
             item { WaterCard(state.waterMl, state.waterGoalMl, vm::addWater) }

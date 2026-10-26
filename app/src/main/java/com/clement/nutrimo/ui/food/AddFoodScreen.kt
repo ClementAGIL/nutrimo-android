@@ -37,6 +37,8 @@ data class AddFoodActions(
     val onRecipe: (String) -> Unit,
     val onScan: () -> Unit,
     val onCreate: (barcode: String?) -> Unit,
+    /** After a saved meal was added to the journal. */
+    val onLogged: () -> Unit,
 )
 
 @Composable

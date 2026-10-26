@@ -10,6 +10,7 @@ import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.RecipeEntity
 import com.clement.nutrimo.data.network.FoodDto
 import com.clement.nutrimo.data.repository.RemoteSource
+import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.navigation.AddFoodRoute
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private const val LOCAL_DEBOUNCE_MS = 200L
 private const val REMOTE_DEBOUNCE_MS = 600L
@@ -40,6 +42,7 @@ class AddFoodViewModel(private val c: AppContainer, handle: SavedStateHandle) : 
     val recent = c.foods.recent.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val favorites = c.foods.favorites.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val custom = c.foods.custom.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val savedMeals = c.savedMeals.meals.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     val allRecipes = c.recipes.recipes.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     private var searchJob: Job? = null
 
@@ -83,6 +86,16 @@ class AddFoodViewModel(private val c: AppContainer, handle: SavedStateHandle) : 
             )
         }
     }
+
+    /** Adds every item of a saved meal to the day / meal this search was opened for. */
+    fun logSavedMeal(id: String, onDone: () -> Unit) = viewModelScope.launch {
+        c.savedMeals.logInto(id, LocalDate.ofEpochDay(route.epochDay), Meal.valueOf(route.meal))
+        onDone()
+    }
+
+    suspend fun savedMealKcal(id: String): Double = c.savedMeals.kcalOf(id)
+
+    fun deleteSavedMeal(id: String) = viewModelScope.launch { c.savedMeals.delete(id) }
 
     /** Saves the remote food in the local cache, then opens it. */
     fun pickRemote(dto: FoodDto, open: (String) -> Unit) = viewModelScope.launch { open(c.foods.cache(dto).id) }

@@ -98,3 +98,33 @@ data class DiaryEntity(
     val createdAt: Long = now(),
     val updatedAt: Long = now(),
 )
+
+/** A named meal saved from the journal ("Mon petit-déj"), re-added in one tap. */
+@Serializable
+@Entity(tableName = "saved_meals")
+data class SavedMealEntity(
+    @PrimaryKey val id: String = newId(),
+    val name: String,
+    val updatedAt: Long = now(),
+)
+
+/** Copy of a diary entry inside a saved meal, with its nutrient snapshot. */
+@Serializable
+@Entity(
+    tableName = "saved_meal_items",
+    indices = [Index("mealId")],
+    foreignKeys = [ForeignKey(SavedMealEntity::class, ["id"], ["mealId"], onDelete = ForeignKey.CASCADE)],
+)
+data class SavedMealItemEntity(
+    @PrimaryKey val id: String = newId(),
+    val mealId: String,
+    val position: Int,
+    val foodId: String? = null,
+    val recipeId: String? = null,
+    val label: String,
+    val quantity: Double,
+    val unit: QuantityUnit,
+    val portionLabel: String? = null,
+    val portionGrams: Double? = null,
+    @Embedded val nutrients: Nutrients,
+)

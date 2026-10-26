@@ -11,6 +11,8 @@ import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.db.PortionEntity
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.data.db.RecipeEntity
+import com.clement.nutrimo.data.db.SavedMealEntity
+import com.clement.nutrimo.data.db.SavedMealItemEntity
 import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.data.db.WeightEntity
 import kotlinx.serialization.Serializable
@@ -33,6 +35,8 @@ data class Backup(
     val recipes: List<RecipeEntity> = emptyList(),
     val ingredients: List<IngredientEntity> = emptyList(),
     val diary: List<DiaryEntity> = emptyList(),
+    val savedMeals: List<SavedMealEntity> = emptyList(),
+    val savedMealItems: List<SavedMealItemEntity> = emptyList(),
 )
 
 data class BackupSummary(val weights: Int, val diary: Int, val recipes: Int, val foods: Int)
@@ -55,6 +59,8 @@ class BackupRepository(private val db: NutrimoDatabase, json: Json) {
             recipes = db.recipeDao().all(),
             ingredients = db.recipeDao().allIngredients(),
             diary = db.diaryDao().all(),
+            savedMeals = db.savedMealDao().all(),
+            savedMealItems = db.savedMealDao().allItems(),
         )
         return json.encodeToString(backup)
     }
@@ -74,6 +80,8 @@ class BackupRepository(private val db: NutrimoDatabase, json: Json) {
             db.recipeDao().upsertAll(b.recipes)
             db.recipeDao().upsertIngredients(b.ingredients)
             db.diaryDao().upsertAll(b.diary)
+            db.savedMealDao().upsertAll(b.savedMeals)
+            db.savedMealDao().upsertItems(b.savedMealItems)
         }
         return BackupSummary(b.weights.size, b.diary.size, b.recipes.size, b.foods.size)
     }

@@ -2,6 +2,7 @@
 package com.clement.nutrimo.data.db
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,8 +12,11 @@ import androidx.room.TypeConverters
     entities = [
         ProfileEntity::class, WeightEntity::class, MeasurementEntity::class, GoalEntity::class, WaterEntity::class,
         FoodEntity::class, PortionEntity::class, RecipeEntity::class, IngredientEntity::class, DiaryEntity::class,
+        SavedMealEntity::class, SavedMealItemEntity::class,
     ],
-    version = 1,
+    version = 2,
+    // New tables only: Room generates the migration from the exported schemas (app/schemas). Never drop user data.
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
 )
 @TypeConverters(Converters::class)
 abstract class NutrimoDatabase : RoomDatabase() {
@@ -24,6 +28,7 @@ abstract class NutrimoDatabase : RoomDatabase() {
     abstract fun foodDao(): FoodDao
     abstract fun recipeDao(): RecipeDao
     abstract fun diaryDao(): DiaryDao
+    abstract fun savedMealDao(): SavedMealDao
 
     companion object {
         fun create(context: Context): NutrimoDatabase =

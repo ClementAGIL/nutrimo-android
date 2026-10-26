@@ -113,6 +113,33 @@ interface RecipeDao {
 }
 
 @Dao
+interface SavedMealDao {
+    @Query("SELECT * FROM saved_meals ORDER BY name")
+    fun observeAll(): Flow<List<SavedMealEntity>>
+
+    @Query("SELECT * FROM saved_meals")
+    suspend fun all(): List<SavedMealEntity>
+
+    @Query("SELECT * FROM saved_meal_items WHERE mealId = :mealId ORDER BY position")
+    suspend fun items(mealId: String): List<SavedMealItemEntity>
+
+    @Query("SELECT * FROM saved_meal_items")
+    suspend fun allItems(): List<SavedMealItemEntity>
+
+    @Upsert
+    suspend fun upsert(meal: SavedMealEntity)
+
+    @Upsert
+    suspend fun upsertAll(meals: List<SavedMealEntity>)
+
+    @Upsert
+    suspend fun upsertItems(items: List<SavedMealItemEntity>)
+
+    @Query("DELETE FROM saved_meals WHERE id = :id")
+    suspend fun delete(id: String)
+}
+
+@Dao
 interface DiaryDao {
     @Query("SELECT * FROM diary WHERE date = :date ORDER BY createdAt")
     fun observeDay(date: LocalDate): Flow<List<DiaryEntity>>

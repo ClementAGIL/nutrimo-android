@@ -10,6 +10,7 @@ import com.clement.nutrimo.data.repository.BodyRepository
 import com.clement.nutrimo.data.repository.DiaryRepository
 import com.clement.nutrimo.data.repository.FoodRepository
 import com.clement.nutrimo.data.repository.RecipeRepository
+import com.clement.nutrimo.data.repository.SavedMealRepository
 import com.clement.nutrimo.data.repository.SettingsRepository
 import com.clement.nutrimo.data.sync.ServerBackup
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +28,7 @@ class AppContainer(context: Context) {
     val foods = FoodRepository(context, db, http, settings)
     val recipes = RecipeRepository(db)
     val diary = DiaryRepository(db, foods, recipes)
+    val savedMeals = SavedMealRepository(db)
     val backup = BackupRepository(db, http.json)
     val serverBackup = ServerBackup(backup, NutrimoApi(http), settings)
 

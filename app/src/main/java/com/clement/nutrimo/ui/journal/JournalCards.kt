@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.CircularProgressIndicator
@@ -18,7 +19,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +34,7 @@ import com.clement.nutrimo.ui.common.MacroBars
 import com.clement.nutrimo.ui.common.MacroTargets
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
+import com.clement.nutrimo.ui.common.TextDialog
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.theme.NutrimoColors
@@ -72,27 +78,33 @@ private fun KcalRing(eaten: Double, target: Double?) {
     }
 }
 
+/** What a meal card can do. */
+class MealCardActions(
+    val onAdd: () -> Unit,
+    val onEdit: (DiaryEntity) -> Unit,
+    val onDelete: (DiaryEntity) -> Unit,
+    val onCopy: () -> Unit,
+    /** Saves the meal's entries as a reusable meal named by the user. */
+    val onSave: (String) -> Unit,
+)
+
 @Composable
-fun MealCard(
-    meal: Meal,
-    entries: List<DiaryEntity>,
-    onAdd: () -> Unit,
-    onEdit: (DiaryEntity) -> Unit,
-    onDelete: (DiaryEntity) -> Unit,
-    onCopy: () -> Unit,
-) {
+fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
+    var naming by remember { mutableStateOf(false) }
     SectionCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(meal.label, style = MaterialTheme.typography.titleMedium)
                 Text(kcal(entries.sumOf { it.nutrients.kcal }), style = MaterialTheme.typography.bodySmall)
             }
-            if (entries.isEmpty()) IconButton(onClick = onCopy) { Icon(Icons.Default.ContentCopy, "Copier depuis la veille") }
-            IconButton(onClick = onAdd) { Icon(Icons.Default.Add, "Ajouter") }
+            if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, "Copier depuis la veille") }
+            else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, "Enregistrer ce repas") }
+            IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, "Ajouter") }
         }
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
-        entries.forEach { entry -> key(entry.id) { EntryRow(entry, onEdit, onDelete) } }
+        entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
     }
+    if (naming) TextDialog("Enregistrer ce repas", "Nom (ex : Petit-déj habituel)", meal.label, actions.onSave) { naming = false }
 }
 
 @Composable

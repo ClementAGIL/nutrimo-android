@@ -63,5 +63,10 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         messages.tryEmit(if (count == 0) "Rien à copier pour ce repas la veille" else "$count aliment(s) copié(s)")
     }
 
+    fun saveMeal(name: String, entries: List<DiaryEntity>) = viewModelScope.launch {
+        c.savedMeals.saveFrom(name, entries)
+        messages.tryEmit("Repas « $name » enregistré : retrouvez-le dans l'onglet Repas de la recherche")
+    }
+
     fun addWater(deltaMl: Int) = viewModelScope.launch { c.diary.addWater(date.value, state.value.waterMl, deltaMl) }
 }

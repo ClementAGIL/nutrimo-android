@@ -21,6 +21,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Food search: instant results on the phone (CIQUAL + foods already used + custom foods + recipes), then the
   Nutrimo server on the home Wi-Fi; away from home, press search on the keyboard to query Open Food Facts.
   Foods you pick are cached on the phone. Recents, favorites (star) and "Mes aliments" tabs.
+- Saved meals: the bookmark icon of a journal meal saves it (e.g. "Petit-déj habituel"); add it again in one tap
+  from the "Repas" tab of the search.
 - Barcode scan (camera, on-device ML Kit): phone cache → server → Open Food Facts → create the food.
 - Quantity in grams, product portions ("1 pot (125 g)") or your own portions; live nutrient preview.
 - Custom foods: name + label values per 100 g mandatory (kcal, fat, saturated fat, carbs, sugars, protein, salt);

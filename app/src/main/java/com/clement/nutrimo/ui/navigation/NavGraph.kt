@@ -80,6 +80,7 @@ private fun NavGraphBuilder.foodDestinations(nav: NavHostController, back: () ->
                 onRecipe = { detail(null, it) },
                 onScan = { nav.navigate(ScannerRoute) },
                 onCreate = { nav.navigate(CustomFoodRoute(barcode = it)) },
+                onLogged = { nav.popBackStack<JournalRoute>(inclusive = false) },
             ),
             scannedBarcode = scanned,
             onBarcodeConsumed = { entry.savedStateHandle[NavResults.BARCODE] = null },
