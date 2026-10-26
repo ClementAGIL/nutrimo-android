@@ -41,6 +41,7 @@ data class JournalUiState(
     val activities: List<ActivityEntity> = emptyList(),
     val macroSplit: MacroSplit = MacroSplit.BALANCED,
     val health: HealthInfo? = null,
+    val sportGoalKcal: Int = 300,
     val stepGoal: Int = 10_000,
     val healthInBudget: Boolean = false,
 ) {
@@ -90,6 +91,7 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
             macroSplit = settings.macroSplit,
             health = healthInfo,
             stepGoal = settings.stepGoal,
+            sportGoalKcal = settings.sportGoalKcal,
             healthInBudget = settings.healthInBudget,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), JournalUiState())

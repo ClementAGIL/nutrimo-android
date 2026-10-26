@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -86,6 +88,24 @@ fun SectionCard(title: String? = null, onClick: (() -> Unit)? = null, content: @
     }
     if (onClick != null) Card(onClick = onClick, modifier = Modifier.fillMaxWidth(), content = inner)
     else Card(Modifier.fillMaxWidth(), content = inner)
+}
+
+/** Card title row: [title] and optional [subtitle] on the left, icon buttons ([actions]) on the right. */
+@Composable
+fun CardHeader(title: String, subtitle: String? = null, actions: @Composable RowScope.() -> Unit = {}) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+        }
+        actions()
+    }
+}
+
+/** Opens the settings screen where the card's goal is set. */
+@Composable
+fun GoalSettingsButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) { Icon(Icons.Default.Tune, "Modifier l'objectif") }
 }
 
 /** Scrollable screen body: scaffold [padding] + 16 dp margins, children spaced by [spacing]. */

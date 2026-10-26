@@ -1,4 +1,4 @@
-// Journal card listing the day's physical activities, with a dialog to add one.
+// Journal card: progress to the daily sport goal, the day's activities (manual + Health Connect) and an add dialog.
 package com.clement.nutrimo.ui.journal
 
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +25,16 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.domain.calc.Activities
+import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.Dropdown
+import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.NumberField
+import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
+import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.common.toDecimal
+import com.clement.nutrimo.ui.theme.NutrimoColors
 
 @Composable
 fun ActivityCard(
@@ -37,16 +42,17 @@ fun ActivityCard(
     imported: List<ImportedActivity>,
     onAdd: (type: String, minutes: Int?, kcal: Double?) -> Unit,
     onDelete: (ActivityEntity) -> Unit,
+    goalKcal: Int,
+    onGoalSettings: () -> Unit,
 ) {
     var adding by remember { mutableStateOf(false) }
+    val total = activities.sumOf { it.kcal } + imported.sumOf { it.kcal }
     SectionCard {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text("Activité physique", style = MaterialTheme.typography.titleMedium)
-                Text("${kcal(activities.sumOf { it.kcal })} notées · ajoutées au budget", style = MaterialTheme.typography.bodySmall)
-            }
+        CardHeader("Activité physique", "Activités notées : ajoutées au budget") {
+            GoalSettingsButton(onGoalSettings)
             IconButton(onClick = { adding = true }) { Icon(Icons.Default.Add, "Ajouter une activité") }
         }
+        ProgressRow("${fmt(total, 0)} / ${kcal(goalKcal.toDouble())}", "", total / goalKcal, NutrimoColors.sport)
         activities.forEach { a ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val minutes = a.minutes?.let { " · $it min" }.orEmpty()

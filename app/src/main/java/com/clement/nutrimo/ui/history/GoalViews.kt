@@ -24,8 +24,8 @@ val DailyGoal.color: Color
     get() = when (this) {
         DailyGoal.CALORIES -> NutrimoColors.carbs
         DailyGoal.WEIGHT -> NutrimoColors.weight
-        DailyGoal.SPORT -> NutrimoColors.trend
-        DailyGoal.STEPS -> NutrimoColors.fat
+        DailyGoal.SPORT -> NutrimoColors.sport
+        DailyGoal.STEPS -> NutrimoColors.steps
         DailyGoal.WATER -> NutrimoColors.water
     }
 

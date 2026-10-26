@@ -30,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
+import com.clement.nutrimo.ui.common.CardHeader
+import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.MacroBars
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
@@ -41,7 +43,7 @@ import com.clement.nutrimo.ui.theme.NutrimoColors
 private const val WATER_STEP_ML = 250
 
 @Composable
-fun SummaryCard(state: JournalUiState, onClick: () -> Unit) {
+fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -> Unit) {
     val target = state.budget
     SectionCard(onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -59,6 +61,7 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit) {
                     )
                 }
             }
+            GoalSettingsButton(onGoalSettings)
         }
         MacroBars(state.total, target?.let { state.macroSplit.grams(it) })
         Text("Toucher pour le détail des nutriments", style = MaterialTheme.typography.bodySmall)
@@ -92,11 +95,7 @@ class MealCardActions(
 fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
     var naming by remember { mutableStateOf(false) }
     SectionCard {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text(meal.label, style = MaterialTheme.typography.titleMedium)
-                Text(kcal(entries.sumOf { it.nutrients.kcal }), style = MaterialTheme.typography.bodySmall)
-            }
+        CardHeader(meal.label, kcal(entries.sumOf { it.nutrients.kcal })) {
             if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, "Copier depuis la veille") }
             else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, "Enregistrer ce repas") }
             IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, "Ajouter") }
@@ -108,11 +107,12 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
 }
 
 @Composable
-fun WaterCard(ml: Int, goalMl: Int, onAdd: (Int) -> Unit) {
-    SectionCard("Eau") {
+fun WaterCard(ml: Int, goalMl: Int, onAdd: (Int) -> Unit, onGoalSettings: () -> Unit) {
+    SectionCard {
+        CardHeader("Eau") { GoalSettingsButton(onGoalSettings) }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                ProgressRow("$ml / $goalMl ml", "${ml / WATER_STEP_ML} verre(s)", ml.toDouble() / goalMl, NutrimoColors.protein)
+                ProgressRow("$ml / $goalMl ml", "${ml / WATER_STEP_ML} verre(s)", ml.toDouble() / goalMl, NutrimoColors.water)
             }
             IconButton(onClick = { onAdd(-WATER_STEP_ML) }, enabled = ml > 0) { Icon(Icons.Default.Remove, "Retirer un verre") }
             IconButton(onClick = { onAdd(WATER_STEP_ML) }) { Icon(Icons.Default.Add, "Ajouter un verre") }

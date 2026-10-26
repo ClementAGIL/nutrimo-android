@@ -32,6 +32,9 @@ import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.day
+import com.clement.nutrimo.ui.navigation.GoalEditRoute
+import com.clement.nutrimo.ui.navigation.ProfileRoute
+import com.clement.nutrimo.ui.navigation.StepsRoute
 import java.time.LocalDate
 
 /** Navigation callbacks of the journal. */
@@ -40,6 +43,8 @@ data class JournalActions(
     val onEdit: (DiaryEntity) -> Unit,
     val onDetails: (LocalDate) -> Unit,
     val onHistory: () -> Unit,
+    /** Opens the settings screen of a goal (one of the navigation routes). */
+    val onGoalSettings: (route: Any) -> Unit,
 )
 
 @Composable
@@ -61,7 +66,7 @@ fun JournalScreen(actions: JournalActions) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item { DayBar(state.date, vm::shiftDay) { vm.setDate(LocalDate.now()) } }
-            item { SummaryCard(state) { actions.onDetails(state.date) } }
+            item { SummaryCard(state, { actions.onDetails(state.date) }) { actions.onGoalSettings(GoalEditRoute) } }
             items(Meal.entries) { meal ->
                 val entries = state.meals[meal].orEmpty()
                 MealCard(
@@ -76,9 +81,13 @@ fun JournalScreen(actions: JournalActions) {
                     ),
                 )
             }
-            item { StepsCard(state.health, state.stepGoal, state.healthInBudget, vm::refreshHealth) }
-            item { ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity) }
-            item { WaterCard(state.waterMl, state.waterGoalMl, vm::addWater) }
+            item { StepsCard(state.health, state.stepGoal, state.healthInBudget, vm::refreshHealth) { actions.onGoalSettings(StepsRoute) } }
+            item {
+                ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.sportGoalKcal) {
+                    actions.onGoalSettings(StepsRoute)
+                }
+            }
+            item { WaterCard(state.waterMl, state.waterGoalMl, vm::addWater) { actions.onGoalSettings(ProfileRoute) } }
         }
     }
 }

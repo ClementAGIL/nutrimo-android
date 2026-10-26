@@ -30,7 +30,6 @@ import kotlinx.serialization.Serializable
 @Serializable data class RecipeEditRoute(val recipeId: String? = null)
 @Serializable data class RecipeViewRoute(val recipeId: String)
 @Serializable object ProfileRoute
-@Serializable object MeasurementsRoute
 @Serializable object RemindersRoute
 @Serializable object ServerRoute
 @Serializable object BackupRoute

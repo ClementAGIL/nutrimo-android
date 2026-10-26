@@ -33,7 +33,7 @@ import java.time.LocalDate
 import kotlin.math.ceil
 import kotlin.math.floor
 
-/** Extra kg above and below the data so lines don't touch the edges. */
+/** Extra units (kg or cm) above and below the data so lines don't touch the edges. */
 private const val Y_MARGIN_KG = 1.0
 
 enum class ChartPeriod(val label: String, val months: Long?) {
@@ -74,7 +74,8 @@ private fun buildSeries(state: WeightUiState): List<ChartSeries> = buildList {
     add(ChartSeries(state.weights.map { ChartPoint(it.date, it.kg) }, NutrimoColors.weight, dots = true))
 }
 
-private fun windowOf(series: List<ChartSeries>, period: ChartPeriod): ChartWindow {
+/** Window over [period] with a 1-unit margin rounded to whole units (kg here, cm for measurements). */
+internal fun windowOf(series: List<ChartSeries>, period: ChartPeriod): ChartWindow {
     val points = series.flatMap { it.points }
     val last = maxOf(points.maxOf { it.date }, LocalDate.now())
     val first = period.months?.let { LocalDate.now().minusMonths(it) } ?: points.minOf { it.date }

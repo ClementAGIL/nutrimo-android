@@ -67,11 +67,13 @@ ui/
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
-                                  (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen, StepsScreen
+                                  (server backup/restore + auto toggle, SAF file export/import), RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen, StepsScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
                                   activities; budget = target + burned), ActivityCard (manual + imported sessions), StepsCard (install / connect / progress),
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
-                                  (quantityText, SwipeToDelete), DayNutrientsScreen
+                                  (quantityText, SwipeToDelete), DayNutrientsScreen. Every card with a goal has a
+                                  GoalSettingsButton → JournalActions.onGoalSettings(route): calories → GoalEdit,
+                                  steps and sport → Steps ("Pas et sport"), water → Profile
   history/                        HistoryScreen (journal chart icon): CalendarTab (month grid, one dot per goal: filled =
                                   achieved, ring = missed, none = no data; day detail; streaks) and ChartsTab (7/30-day bars
                                   vs goal for calories, sport, steps, water; averages; estimated loss = Σ(TDEE + sport −
@@ -85,11 +87,13 @@ ui/
   recipe/                         RecipesScreen (list + kcal/part), RecipeViewScreen (per part / 100 g, delete warns
                                   about parent recipes), RecipeEditScreen/ViewModel (ingredients picked through
                                   AddFood(forRecipe) → ItemDetail → NavResults.INGREDIENT; cycle check)
-  weight/                         WeightScreen (3 sub-tabs + FAB), WeightViewModel (progressOf), WeightDashboard,
+  weight/                         WeightScreen (Poids / Mensurations switch, each with sub-tabs; FAB adds to the shown one),
+                                  Measurements (MEASUREMENT_FIELDS shared by list, dialog and charts), MeasurementCharts
+                                  (one line chart per measurement, reuses windowOf), WeightViewModel (progressOf), WeightDashboard,
                                   WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
                                   (series + window) on LineChart (generic Canvas date/value chart: lines, dots, daily bars)
   common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components (ScreenScaffold,
-                                  ScrollColumn = standard scrollable screen body, SectionCard(onClick), …), Pickers,
+                                  ScrollColumn = standard scrollable screen body, SectionCard(onClick), CardHeader, GoalSettingsButton, …), Pickers,
                                   NutrientViews (MacroBars with reference targets, NutrientTable with micros)
   theme/Theme.kt                  Material 3 theme + fixed chart/macro colors
 ```
@@ -130,6 +134,6 @@ ui/
 - ✅ Developer section (Plus → Développeur): demo data / erase everything. Use it to test every screen.
 - ✅ History (journal top bar): goal calendar with streaks (default tab) + charts for calories, sport, steps, water.
 - ✅ Server backup (manual + daily automatic) and restore.
-- ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
+- ✅ Plus tab: server, reminders, JSON backup, goals, about. Measurements live in the Poids tab (list + charts).
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

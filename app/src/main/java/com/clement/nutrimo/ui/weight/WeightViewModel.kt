@@ -1,10 +1,11 @@
-// State of the weight tab: goal progress, BMI, calorie target and the weigh-in list.
+// State of the weight tab: goal progress, BMI, calorie target, the weigh-in list and the body measurements.
 package com.clement.nutrimo.ui.weight
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.GoalEntity
+import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.data.db.WeightEntity
 import com.clement.nutrimo.domain.calc.Bmi
@@ -47,11 +48,19 @@ class WeightViewModel(private val c: AppContainer) : ViewModel() {
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WeightUiState())
 
+    /** Newest first. */
+    val measurements: StateFlow<List<MeasurementEntity>> =
+        c.body.measurementHistory.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
     suspend fun existingOn(date: LocalDate): WeightEntity? = c.body.weightOn(date)
 
     fun save(date: LocalDate, kg: Double) = viewModelScope.launch { c.body.saveWeight(date, kg) }
 
     fun delete(id: String) = viewModelScope.launch { c.body.deleteWeight(id) }
+
+    fun saveMeasurement(m: MeasurementEntity) = viewModelScope.launch { c.body.saveMeasurement(m) }
+
+    fun deleteMeasurement(id: String) = viewModelScope.launch { c.body.deleteMeasurement(id) }
 
     fun markGoalAchieved() = viewModelScope.launch { c.body.closeActiveGoal(GoalStatus.ACHIEVED) }
 }

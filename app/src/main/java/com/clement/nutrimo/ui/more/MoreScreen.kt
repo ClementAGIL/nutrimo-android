@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Science
-import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -31,7 +30,6 @@ import com.clement.nutrimo.ui.navigation.DevRoute
 import com.clement.nutrimo.ui.navigation.GoalEditRoute
 import com.clement.nutrimo.ui.navigation.GoalsRoute
 import com.clement.nutrimo.ui.navigation.MacrosRoute
-import com.clement.nutrimo.ui.navigation.MeasurementsRoute
 import com.clement.nutrimo.ui.navigation.ProfileRoute
 import com.clement.nutrimo.ui.navigation.RemindersRoute
 import com.clement.nutrimo.ui.navigation.ServerRoute
@@ -46,7 +44,6 @@ val MORE_ENTRIES = listOf(
     MoreEntry("Objectifs de macros", "Protéines, glucides, lipides", Icons.Default.PieChart, MacrosRoute),
     MoreEntry("Pas et sport", "Objectifs de pas et de sport, Health Connect", Icons.Default.DirectionsWalk, StepsRoute),
     MoreEntry("Mes objectifs", "Objectif en cours et archivés", Icons.Default.History, GoalsRoute),
-    MoreEntry("Mensurations", "Taille, hanches, poitrine…", Icons.Default.Straighten, MeasurementsRoute),
     MoreEntry("Rappels", "Pesée et saisie des repas", Icons.Default.Notifications, RemindersRoute),
     MoreEntry("Serveur", "Adresse de nutrimo-api sur le Wi-Fi", Icons.Default.Dns, ServerRoute),
     MoreEntry("Sauvegarde", "Exporter / importer vos données", Icons.Default.Backup, BackupRoute),

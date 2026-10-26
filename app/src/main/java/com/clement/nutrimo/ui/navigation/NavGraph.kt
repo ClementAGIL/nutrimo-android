@@ -24,7 +24,6 @@ import com.clement.nutrimo.ui.more.AboutScreen
 import com.clement.nutrimo.ui.more.BackupScreen
 import com.clement.nutrimo.ui.more.DevScreen
 import com.clement.nutrimo.ui.more.MacrosScreen
-import com.clement.nutrimo.ui.more.MeasurementsScreen
 import com.clement.nutrimo.ui.more.MoreScreen
 import com.clement.nutrimo.ui.more.RemindersScreen
 import com.clement.nutrimo.ui.more.ServerScreen
@@ -46,6 +45,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
                 onEdit = { nav.navigate(ItemDetailRoute(entryId = it.id)) },
                 onDetails = { nav.navigate(DayNutrientsRoute(it.toEpochDay())) },
                 onHistory = { nav.navigate(HistoryRoute) },
+                onGoalSettings = { nav.navigate(it) },
             ),
         )
     }
@@ -59,7 +59,6 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     composable<ProfileRoute> { ProfileScreen(onBack = back) }
     composable<GoalEditRoute> { GoalEditScreen(onBack = back) }
     composable<GoalsRoute> { GoalsScreen(onBack = back) }
-    composable<MeasurementsRoute> { MeasurementsScreen(onBack = back) }
     composable<RemindersRoute> { RemindersScreen(onBack = back) }
     composable<ServerRoute> { ServerScreen(onBack = back) }
     composable<BackupRoute> { BackupScreen(onBack = back) }

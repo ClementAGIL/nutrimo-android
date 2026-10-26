@@ -42,7 +42,10 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   fiber, brand, barcode, vitamins and minerals optional.
 - Recipes: ingredients picked from the same search (foods in grams, other recipes in parts), number of parts,
   optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal.
-- Body measurements (waist, hips, chest, arm, thigh).
+- Body measurements (waist, hips, chest, arm, thigh) in the Poids tab (Poids / Mensurations switch): history and
+  one evolution chart per measurement (1 / 3 / 6 months or everything).
+- Each journal card with a goal (calories, steps, sport, water) has a settings button opening the screen where
+  that goal is set.
 - Reminders: weekly weigh-in and daily meal logging (only when nothing was logged that day).
 - Backup (Plus → Sauvegarde): send everything to the Nutrimo server on your PC (now, or automatically every day
   on Wi-Fi) and restore the latest server backup; or export / import a JSON file.

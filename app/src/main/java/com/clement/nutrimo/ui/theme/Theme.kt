@@ -19,6 +19,10 @@ object NutrimoColors {
     val trend = Color(0xFFB36AE2)
     val warning = Color(0xFFE08A00)
     val water = Color(0xFF29A8E0)
+
+    // Daily goals keep the same color in the journal and the history calendar.
+    val steps = fat
+    val sport = trend
 }
 
 @Composable
