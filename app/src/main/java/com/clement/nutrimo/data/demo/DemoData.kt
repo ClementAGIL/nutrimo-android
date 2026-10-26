@@ -1,5 +1,5 @@
 // Developer tool: replaces all personal data with a realistic demo history (profile, 2 goals, weigh-ins,
-// measurements, water, custom food, recipes with a sub-recipe, 30 days of meals) so every screen has content.
+// measurements, water, activities, custom food, recipes with a sub-recipe, 30 days of meals) so every screen has content.
 package com.clement.nutrimo.data.demo
 
 import com.clement.nutrimo.data.AppContainer
@@ -55,6 +55,7 @@ class DemoData(private val c: AppContainer) {
         customFood()
         recipes()
         DemoDiary(c, random, today).fill()
+        activities()
         listOf(DemoFoods.BANANA, DemoFoods.YOGURT).forEach { c.foods.setFavorite(it, true) }
         c.recipes.setFavorite(DEMO_CAKE_ID, true)
         c.settings.setOnboardingDone()
@@ -108,6 +109,16 @@ class DemoData(private val c: AppContainer) {
 
     private suspend fun water() {
         for (daysAgo in 0 until WATER_DAYS) c.diary.addWater(today.minusDays(daysAgo), 0, 250 * random.nextInt(5, 11))
+    }
+
+    /** A walk, run or bike ride about every third day. */
+    private suspend fun activities() {
+        val options = listOf("brisk_walk" to 45, "run" to 30, "bike" to 60)
+        for (daysAgo in 0 until WATER_DAYS) {
+            if (random.nextInt(3) != 0) continue
+            val (type, minutes) = options.random(random)
+            c.activities.add(today.minusDays(daysAgo), type, minutes, null)
+        }
     }
 
     private suspend fun customFood() {

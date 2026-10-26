@@ -103,3 +103,24 @@ interface WaterDao {
     @Upsert
     suspend fun upsertAll(water: List<WaterEntity>)
 }
+
+@Dao
+interface ActivityDao {
+    @Query("SELECT * FROM activities WHERE date = :date ORDER BY updatedAt")
+    fun observeDay(date: LocalDate): Flow<List<ActivityEntity>>
+
+    @Query("SELECT date, SUM(kcal) AS kcal FROM activities WHERE date BETWEEN :from AND :to GROUP BY date")
+    fun observeBurned(from: LocalDate, to: LocalDate): Flow<List<DayBurn>>
+
+    @Query("SELECT * FROM activities")
+    suspend fun all(): List<ActivityEntity>
+
+    @Upsert
+    suspend fun upsert(activity: ActivityEntity)
+
+    @Upsert
+    suspend fun upsertAll(activities: List<ActivityEntity>)
+
+    @Query("DELETE FROM activities WHERE id = :id")
+    suspend fun delete(id: String)
+}

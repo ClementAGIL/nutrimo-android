@@ -78,3 +78,19 @@ data class WaterEntity(
     val ml: Int,
     val updatedAt: Long = now(),
 )
+
+/** A physical activity of a day; [kcal] is computed when added (MET × weight × time) or typed by the user. */
+@Serializable
+@Entity(tableName = "activities", indices = [Index("date")])
+data class ActivityEntity(
+    @PrimaryKey val id: String = newId(),
+    val date: LocalDate,
+    /** Key of Activities.TYPES. */
+    val type: String,
+    val minutes: Int? = null,
+    val kcal: Double,
+    val updatedAt: Long = now(),
+)
+
+/** kcal burned on one day (calorie history). */
+data class DayBurn(val date: LocalDate, val kcal: Double)

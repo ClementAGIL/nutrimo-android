@@ -71,6 +71,7 @@ fun JournalScreen(actions: JournalActions) {
                     ),
                 )
             }
+            item { ActivityCard(state.activities, vm::addActivity, vm::deleteActivity) }
             item { WaterCard(state.waterMl, state.waterGoalMl, vm::addWater) }
         }
     }

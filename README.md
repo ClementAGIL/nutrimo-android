@@ -16,6 +16,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Journal: day by day, calories eaten / target / remaining, protein-carbs-fat bars, 4 meals (breakfast, lunch,
   dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
   Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
+- Physical activity: walking, running, cycling, swimming, strength training… with the duration (calories estimated
+  from MET values and your weight) or any activity with its kcal; burned calories are added to the day's budget.
 - Calorie history (chart icon in the journal): daily calories vs target over 7 or 30 days, average, days on
   target, average macros, and the weight loss your logged calories should produce.
 - Food search: instant results on the phone (CIQUAL + foods already used + custom foods + recipes), then the

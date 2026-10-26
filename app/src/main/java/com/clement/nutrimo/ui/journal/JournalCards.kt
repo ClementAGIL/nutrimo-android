@@ -43,14 +43,15 @@ private const val WATER_STEP_ML = 250
 
 @Composable
 fun SummaryCard(state: JournalUiState, onClick: () -> Unit) {
-    val target = state.target?.target
+    val target = state.budget
     SectionCard(onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             KcalRing(state.total.kcal, target)
             Column(Modifier.weight(1f)) {
                 Text("Mangé : ${kcal(state.total.kcal)}")
                 target?.let {
-                    Text("Objectif : ${kcal(it)}")
+                    Text("${if (state.burned > 0) "Budget" else "Objectif"} : ${kcal(it)}")
+                    if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité", style = MaterialTheme.typography.bodySmall)
                     val left = it - state.total.kcal
                     Text(
                         if (left >= 0) "Reste : ${kcal(left)}" else "Dépassement : ${kcal(-left)}",

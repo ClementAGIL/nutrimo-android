@@ -4,7 +4,9 @@ package com.clement.nutrimo.ui.journal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DiaryEntity
+import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
@@ -28,27 +30,35 @@ data class JournalUiState(
     val target: CalorieTarget? = null,
     val waterMl: Int = 0,
     val waterGoalMl: Int = DEFAULT_WATER_GOAL_ML,
-)
+    val activities: List<ActivityEntity> = emptyList(),
+) {
+    val burned: Double get() = activities.sumOf { it.kcal }
+
+    /** What can be eaten today: the calorie target plus what activities burned. */
+    val budget: Double? get() = target?.let { it.target + burned }
+}
+
+/** Everything stored for one day. */
+private data class DayData(val date: LocalDate, val entries: List<DiaryEntity>, val water: WaterEntity?, val activities: List<ActivityEntity>)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class JournalViewModel(private val c: AppContainer) : ViewModel() {
     private val date = MutableStateFlow(LocalDate.now())
     val messages = MutableSharedFlow<String>(extraBufferCapacity = 1)
 
-    val state: StateFlow<JournalUiState> = combine(
-        date,
-        date.flatMapLatest { c.diary.day(it) },
-        date.flatMapLatest { c.diary.water(it) },
-        c.body.calorieTarget,
-        c.body.profile,
-    ) { day, entries, water, target, profile ->
+    private val day = date.flatMapLatest { d ->
+        combine(c.diary.day(d), c.diary.water(d), c.activities.day(d)) { entries, water, activities -> DayData(d, entries, water, activities) }
+    }
+
+    val state: StateFlow<JournalUiState> = combine(day, c.body.calorieTarget, c.body.profile) { d, target, profile ->
         JournalUiState(
-            date = day,
-            meals = Meal.entries.associateWith { meal -> entries.filter { it.meal == meal } },
-            total = Nutrients.sum(entries.map { it.nutrients }),
+            date = d.date,
+            meals = Meal.entries.associateWith { meal -> d.entries.filter { it.meal == meal } },
+            total = Nutrients.sum(d.entries.map { it.nutrients }),
             target = target,
-            waterMl = water?.ml ?: 0,
+            waterMl = d.water?.ml ?: 0,
             waterGoalMl = profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML,
+            activities = d.activities,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), JournalUiState())
 
@@ -67,6 +77,12 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         c.savedMeals.saveFrom(name, entries)
         messages.tryEmit("Repas « $name » enregistré : retrouvez-le dans l'onglet Repas de la recherche")
     }
+
+    fun addActivity(type: String, minutes: Int?, kcal: Double?) = viewModelScope.launch {
+        c.activities.add(date.value, type, minutes, kcal)
+    }
+
+    fun deleteActivity(activity: ActivityEntity) = viewModelScope.launch { c.activities.delete(activity.id) }
 
     fun addWater(deltaMl: Int) = viewModelScope.launch { c.diary.addWater(date.value, state.value.waterMl, deltaMl) }
 }

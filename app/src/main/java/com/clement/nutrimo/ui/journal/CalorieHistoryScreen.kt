@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.db.DayBurn
 import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.KCAL_PER_KG
@@ -46,13 +47,22 @@ private val PERIODS = listOf(7, 30)
 /** Y axis rounded up to this step, with room above the highest bar. */
 private const val Y_STEP_KCAL = 250.0
 
-data class HistoryState(val days: Int = 7, val totals: List<DayTotal> = emptyList(), val target: CalorieTarget? = null) {
+data class HistoryState(
+    val days: Int = 7,
+    val totals: List<DayTotal> = emptyList(),
+    val target: CalorieTarget? = null,
+    val burned: List<DayBurn> = emptyList(),
+) {
     val from: LocalDate get() = LocalDate.now().minusDays(days - 1L)
     val average: Double? get() = totals.takeIf { it.isNotEmpty() }?.map { it.kcal }?.average()
     val onTarget: Int get() = target?.let { t -> totals.count { it.kcal <= t.target } } ?: 0
 
     /** Energy not eaten compared with maintenance, converted to fat mass. */
-    val estimatedLossKg: Double? get() = target?.let { t -> totals.sumOf { t.tdee - it.kcal } / KCAL_PER_KG }
+    val estimatedLossKg: Double? get() = target?.let { t -> totals.sumOf { t.tdee + burnedOn(it.date) - it.kcal } / KCAL_PER_KG }
+
+    val totalBurned: Double get() = burned.sumOf { it.kcal }
+
+    private fun burnedOn(date: LocalDate): Double = burned.firstOrNull { it.date == date }?.kcal ?: 0.0
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -62,7 +72,8 @@ class CalorieHistoryViewModel(c: AppContainer) : ViewModel() {
         days,
         days.flatMapLatest { d -> c.diary.dailyTotals(LocalDate.now().minusDays(d - 1L), LocalDate.now()) },
         c.body.calorieTarget,
-    ) { d, totals, target -> HistoryState(d, totals, target) }
+        days.flatMapLatest { d -> c.activities.burned(LocalDate.now().minusDays(d - 1L), LocalDate.now()) },
+    ) { d, totals, target, burned -> HistoryState(d, totals, target, burned) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryState())
 }
 
@@ -106,12 +117,13 @@ private fun HistoryStats(state: HistoryState) {
         state.average?.let { StatRow("Moyenne", "${kcal(it)} / jour") }
         state.target?.let { StatRow("Objectif", "${kcal(it.target)} / jour") }
         if (state.target != null) StatRow("Jours dans l'objectif", "${state.onTarget} / ${state.totals.size}")
+        if (state.totalBurned > 0) StatRow("Activité physique", kcal(state.totalBurned))
         state.estimatedLossKg?.let { StatRow("Perte estimée (calories)", "${fmt(it, 2)} kg") }
         StatRow("Protéines moyennes", grams(state.totals.mapNotNull { it.protein }.takeIf { it.isNotEmpty() }?.average()))
         StatRow("Glucides moyens", grams(state.totals.mapNotNull { it.carbs }.takeIf { it.isNotEmpty() }?.average()))
         StatRow("Lipides moyens", grams(state.totals.mapNotNull { it.fat }.takeIf { it.isNotEmpty() }?.average()))
         Text(
-            "La perte estimée compare vos calories notées à votre maintenance (jours notés uniquement).",
+            "La perte estimée compare vos calories notées à votre maintenance + activité (jours notés uniquement).",
             style = MaterialTheme.typography.bodySmall,
         )
     }

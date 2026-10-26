@@ -47,14 +47,14 @@ data/
                                   water, custom food, recipes incl. a sub-recipe), DemoDiary (30 days of meals, fixed CIQUAL ids)
   reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
                                   only when nothing was logged today)
-  repository/                     Settings (DataStore), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
+  repository/                     Settings (DataStore), Activity (MET × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
                                   nutrition, cycle check), Diary (entries + water), Backup (JSON export/import)
 domain/
   model/                          Nutrients (scale/plus), enums with French labels, NutrientCatalog (micros),
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
-                                  Trend (linear regression, estimated end), Bmi, RecipeMath
+                                  Trend (linear regression, estimated end), Bmi, RecipeMath, Activities (MET table)
 ui/
   NutrimoRoot.kt                  root: onboarding (outside the graph) or NavHost + bottom bar (4 tabs)
   navigation/                     Routes (@Serializable routes + NavResults keys), NavGraph (all destinations)
@@ -64,7 +64,8 @@ ui/
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
                                   (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen, DevScreen (load demo / erase all)
-  journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water),
+  journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
+                                  activities; budget = target + burned), ActivityCard,
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
                                   (quantityText, SwipeToDelete), DayNutrientsScreen, CalorieHistoryScreen (7/30-day
                                   bars vs target, averages, estimated loss = Σ(TDEE − eaten)/7700)
@@ -111,6 +112,7 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ✅ Physical activity (journal card; burned kcal raise the day's budget). DB v3 via AutoMigration(2 → 3).
 - ✅ Saved meals (journal bookmark icon → "Repas" tab of the search). DB v2 via AutoMigration(1 → 2).
 - ✅ Developer section (Plus → Développeur): demo data / erase everything. Use it to test every screen.
 - ✅ Calorie history (journal top bar).
