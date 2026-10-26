@@ -13,7 +13,17 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   average loss per week, required pace, calorie target, planned and estimated end dates), weigh-in history
   (one per day, edit / delete, change since the previous one) and graph (weight, objective line, trend line
   projected to the estimated end date; 1 / 3 / 6 months or everything). Goal history in "Mes objectifs".
-- 🚧 Journal, food search, recipes, settings — see `docs/PLAN.md` for the full scope.
+- Journal: day by day, calories eaten / target / remaining, protein-carbs-fat bars, 4 meals (breakfast, lunch,
+  dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
+  Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
+- Food search: instant results on the phone (CIQUAL + foods already used + custom foods + recipes), then the
+  Nutrimo server on the home Wi-Fi; away from home, press search on the keyboard to query Open Food Facts.
+  Foods you pick are cached on the phone. Recents, favorites (star) and "Mes aliments" tabs.
+- Barcode scan (camera, on-device ML Kit): phone cache → server → Open Food Facts → create the food.
+- Quantity in grams, product portions ("1 pot (125 g)") or your own portions; live nutrient preview.
+- Custom foods: name + label values per 100 g mandatory (kcal, fat, saturated fat, carbs, sugars, protein, salt);
+  fiber, brand, barcode, vitamins and minerals optional.
+- 🚧 Recipes, settings, reminders, backup — see `docs/PLAN.md` for the full scope.
 
 ## Build and install
 

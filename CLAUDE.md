@@ -56,10 +56,19 @@ ui/
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES)
+  journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water),
+                                  JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
+                                  (quantityText, SwipeToDelete), DayNutrientsScreen
+  food/                           AddFoodScreen/ViewModel (local instant, backend after 600 ms, OFF only on submit;
+                                  barcode lookup), QuickTabs (recents/favorites/custom/recipes), FoodRows,
+                                  ItemDetailScreen/ViewModel (diary add/edit, or recipe-ingredient pick),
+                                  CustomFoodScreen/ViewModel (MACRO_FIELDS, micros, portions), ScannerScreen
+                                  (CameraX + ML Kit)
   weight/                         WeightScreen (3 sub-tabs + FAB), WeightViewModel (progressOf), WeightDashboard,
                                   WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
                                   (series + window) on LineChart (generic Canvas date/value chart)
-  common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components, Pickers
+  common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components, Pickers,
+                                  NutrientViews (MacroBars with reference targets, NutrientTable with micros)
   theme/Theme.kt                  Material 3 theme + fixed chart/macro colors
 ```
 
@@ -87,4 +96,5 @@ ui/
 - ✅ Gradle setup, theme, domain calculations, Room schema, network, repositories, backup format.
 - ✅ Navigation shell, onboarding, profile, new goal, goals list.
 - ✅ Weight tab: dashboard, history, graph.
-- ⏳ Journal + food search, recipes, settings screens, reminders.
+- ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
+- ⏳ Recipes, settings screens (server, reminders, backup, measurements, about), reminders.
