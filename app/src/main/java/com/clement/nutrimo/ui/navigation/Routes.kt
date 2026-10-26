@@ -3,7 +3,6 @@ package com.clement.nutrimo.ui.navigation
 
 import kotlinx.serialization.Serializable
 
-@Serializable object OnboardingRoute
 @Serializable object JournalRoute
 @Serializable object WeightRoute
 @Serializable object RecipesRoute

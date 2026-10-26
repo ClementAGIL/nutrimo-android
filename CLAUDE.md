@@ -48,8 +48,13 @@ domain/
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
                                   Trend (linear regression, estimated end), Bmi, RecipeMath
 ui/
-  NutrimoRoot.kt                  root composable
-  navigation/Routes.kt            @Serializable routes + NavResults keys
+  NutrimoRoot.kt                  root: onboarding (outside the graph) or NavHost + bottom bar (4 tabs)
+  navigation/                     Routes (@Serializable routes + NavResults keys), NavGraph (all destinations)
+  onboarding/                     first launch: profile then first goal (also saves the first weigh-in)
+  profile/                        ProfileForm (shared) + ProfileScreen
+  goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
+                                  preview and safety warnings, shared), GoalEditScreen
+  more/                           "Plus" tab menu (MORE_ENTRIES)
   common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components, Pickers
   theme/Theme.kt                  Material 3 theme + fixed chart/macro colors
 ```
@@ -76,4 +81,5 @@ ui/
 ## Status
 
 - ✅ Gradle setup, theme, domain calculations, Room schema, network, repositories, backup format.
-- ⏳ Screens (onboarding, journal, food search, weight, recipes, settings), reminders.
+- ✅ Navigation shell, onboarding, profile, new goal.
+- ⏳ Weight tab, journal + food search, recipes, settings screens, reminders.
