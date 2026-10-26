@@ -7,6 +7,10 @@ import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.WaterEntity
+import com.clement.nutrimo.data.health.HealthStatus
+import com.clement.nutrimo.data.health.ImportedActivity
+import com.clement.nutrimo.data.health.toImported
+import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.MacroSplit
 import com.clement.nutrimo.domain.model.Meal
@@ -23,6 +27,8 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private const val DEFAULT_WATER_GOAL_ML = 2000
+/** Only for estimates before the first weigh-in. */
+private const val DEFAULT_WEIGHT_KG = 70.0
 
 data class JournalUiState(
     val date: LocalDate = LocalDate.now(),
@@ -33,11 +39,27 @@ data class JournalUiState(
     val waterGoalMl: Int = DEFAULT_WATER_GOAL_ML,
     val activities: List<ActivityEntity> = emptyList(),
     val macroSplit: MacroSplit = MacroSplit.BALANCED,
+    val health: HealthInfo? = null,
+    val stepGoal: Int = 10_000,
+    val healthInBudget: Boolean = false,
 ) {
-    val burned: Double get() = activities.sumOf { it.kcal }
+    /** kcal added to the target: logged activities, plus Health Connect data when the user opted in. */
+    val burned: Double get() = activities.sumOf { it.kcal } + (if (healthInBudget) health?.budgetKcal ?: 0.0 else 0.0)
 
-    /** What can be eaten today: the calorie target plus what activities burned. */
+    /** What can be eaten today: the calorie target plus what was burned. */
     val budget: Double? get() = target?.let { it.target + burned }
+}
+
+/** Health Connect state and data of the selected day; [stepsKcal] counts only steps beyond the baseline. */
+data class HealthInfo(
+    val status: HealthStatus,
+    val canReadSteps: Boolean,
+    val steps: Long?,
+    val stepsKcal: Double,
+    val sessions: List<ImportedActivity>,
+) {
+    /** Walks and runs are left out: their steps already count. */
+    val budgetKcal: Double get() = stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal }
 }
 
 /** Everything stored for one day. */
@@ -52,7 +74,9 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         combine(c.diary.day(d), c.diary.water(d), c.activities.day(d)) { entries, water, activities -> DayData(d, entries, water, activities) }
     }
 
-    val state: StateFlow<JournalUiState> = combine(day, c.body.calorieTarget, c.body.profile, c.settings.settings) { d, target, profile, settings ->
+    private val health = MutableStateFlow<HealthInfo?>(null)
+
+    val state: StateFlow<JournalUiState> = combine(day, c.body.calorieTarget, c.body.profile, c.settings.settings, health) { d, target, profile, settings, healthInfo ->
         JournalUiState(
             date = d.date,
             meals = Meal.entries.associateWith { meal -> d.entries.filter { it.meal == meal } },
@@ -62,11 +86,28 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
             waterGoalMl = profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML,
             activities = d.activities,
             macroSplit = settings.macroSplit,
+            health = healthInfo,
+            stepGoal = settings.stepGoal,
+            healthInBudget = settings.healthInBudget,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), JournalUiState())
 
-    fun shiftDay(days: Long) { date.value = date.value.plusDays(days) }
-    fun setDate(d: LocalDate) { date.value = d }
+    fun shiftDay(days: Long) = setDate(date.value.plusDays(days))
+
+    fun setDate(d: LocalDate) {
+        date.value = d
+        refreshHealth()
+    }
+
+    /** Health Connect is not observable: re-read on resume, on day change and after granting the permission. */
+    fun refreshHealth() = viewModelScope.launch {
+        val day = date.value
+        val canReadSteps = c.health.canReadSteps()
+        val count = if (canReadSteps) c.health.stepsOn(day) else null
+        val kg = c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG
+        val sessions = if (canReadSteps) c.health.sessionsOn(day).map { it.toImported(kg) } else emptyList()
+        health.value = HealthInfo(c.health.status(), canReadSteps, count, count?.let { Activities.stepsKcal(it, kg) } ?: 0.0, sessions)
+    }
 
     fun delete(entry: DiaryEntity) = viewModelScope.launch { c.diary.delete(entry.id) }
 

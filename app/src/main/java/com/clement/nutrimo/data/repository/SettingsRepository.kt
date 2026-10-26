@@ -35,6 +35,9 @@ data class AppSettings(
     /** Epoch millis of the last successful server backup, 0 if none. */
     val lastServerBackup: Long = 0,
     val macroSplit: MacroSplit = MacroSplit.BALANCED,
+    val stepGoal: Int = 10_000,
+    /** Off by default: adds Health Connect steps (beyond the baseline) and non-walking workouts to the budget. */
+    val healthInBudget: Boolean = false,
 )
 
 class SettingsRepository(private val context: Context) {
@@ -54,6 +57,8 @@ class SettingsRepository(private val context: Context) {
         val proteinPct = intPreferencesKey("protein_pct")
         val carbsPct = intPreferencesKey("carbs_pct")
         val fatPct = intPreferencesKey("fat_pct")
+        val stepGoal = intPreferencesKey("step_goal")
+        val healthInBudget = booleanPreferencesKey("steps_in_budget")
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { it.toSettings() }
@@ -71,6 +76,11 @@ class SettingsRepository(private val context: Context) {
         it[Keys.proteinPct] = split.proteinPct
         it[Keys.carbsPct] = split.carbsPct
         it[Keys.fatPct] = split.fatPct
+    }
+
+    suspend fun setSteps(goal: Int, inBudget: Boolean) = edit {
+        it[Keys.stepGoal] = goal
+        it[Keys.healthInBudget] = inBudget
     }
 
     suspend fun setAutoBackup(enabled: Boolean) = edit { it[Keys.autoBackup] = enabled }
@@ -113,6 +123,8 @@ class SettingsRepository(private val context: Context) {
             ),
             autoBackup = this[Keys.autoBackup] ?: false,
             lastServerBackup = this[Keys.lastServerBackup] ?: 0,
+            stepGoal = this[Keys.stepGoal] ?: d.stepGoal,
+            healthInBudget = this[Keys.healthInBudget] ?: false,
             macroSplit = MacroSplit(
                 this[Keys.proteinPct] ?: d.macroSplit.proteinPct,
                 this[Keys.carbsPct] ?: d.macroSplit.carbsPct,

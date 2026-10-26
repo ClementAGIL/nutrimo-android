@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
 import kotlin.math.ceil
@@ -52,7 +53,10 @@ data class HistoryState(
     val totals: List<DayTotal> = emptyList(),
     val target: CalorieTarget? = null,
     val burned: List<DayBurn> = emptyList(),
+    val steps: Map<LocalDate, Long> = emptyMap(),
 ) {
+    val averageSteps: Double? get() = steps.values.filter { it > 0 }.takeIf { it.isNotEmpty() }?.average()
+
     val from: LocalDate get() = LocalDate.now().minusDays(days - 1L)
     val average: Double? get() = totals.takeIf { it.isNotEmpty() }?.map { it.kcal }?.average()
     val onTarget: Int get() = target?.let { t -> totals.count { it.kcal <= t.target } } ?: 0
@@ -73,7 +77,8 @@ class CalorieHistoryViewModel(c: AppContainer) : ViewModel() {
         days.flatMapLatest { d -> c.diary.dailyTotals(LocalDate.now().minusDays(d - 1L), LocalDate.now()) },
         c.body.calorieTarget,
         days.flatMapLatest { d -> c.activities.burned(LocalDate.now().minusDays(d - 1L), LocalDate.now()) },
-    ) { d, totals, target, burned -> HistoryState(d, totals, target, burned) }
+        days.flatMapLatest { d -> flow { emit(c.health.dailySteps(LocalDate.now().minusDays(d - 1L), LocalDate.now())) } },
+    ) { d, totals, target, burned, steps -> HistoryState(d, totals, target, burned, steps) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryState())
 }
 
@@ -118,6 +123,7 @@ private fun HistoryStats(state: HistoryState) {
         state.target?.let { StatRow("Objectif", "${kcal(it.target)} / jour") }
         if (state.target != null) StatRow("Jours dans l'objectif", "${state.onTarget} / ${state.totals.size}")
         if (state.totalBurned > 0) StatRow("Activité physique", kcal(state.totalBurned))
+        state.averageSteps?.let { StatRow("Pas moyens", "${fmt(it, 0)} / jour") }
         state.estimatedLossKg?.let { StatRow("Perte estimée (calories)", "${fmt(it, 2)} kg") }
         StatRow("Protéines moyennes", grams(state.totals.mapNotNull { it.protein }.takeIf { it.isNotEmpty() }?.average()))
         StatRow("Glucides moyens", grams(state.totals.mapNotNull { it.carbs }.takeIf { it.isNotEmpty() }?.average()))

@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.ActivityEntity
+import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.NumberField
@@ -33,6 +34,7 @@ import com.clement.nutrimo.ui.common.toDecimal
 @Composable
 fun ActivityCard(
     activities: List<ActivityEntity>,
+    imported: List<ImportedActivity>,
     onAdd: (type: String, minutes: Int?, kcal: Double?) -> Unit,
     onDelete: (ActivityEntity) -> Unit,
 ) {
@@ -41,7 +43,7 @@ fun ActivityCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text("Activité physique", style = MaterialTheme.typography.titleMedium)
-                Text("${kcal(activities.sumOf { it.kcal })} dépensées · ajoutées au budget", style = MaterialTheme.typography.bodySmall)
+                Text("${kcal(activities.sumOf { it.kcal })} notées · ajoutées au budget", style = MaterialTheme.typography.bodySmall)
             }
             IconButton(onClick = { adding = true }) { Icon(Icons.Default.Add, "Ajouter une activité") }
         }
@@ -53,8 +55,21 @@ fun ActivityCard(
                 IconButton(onClick = { onDelete(a) }) { Icon(Icons.Default.Close, "Supprimer") }
             }
         }
+        if (imported.isNotEmpty()) ImportedSessions(imported)
     }
     if (adding) ActivityDialog(onAdd) { adding = false }
+}
+
+/** Read-only workouts from Health Connect (they count in the budget only if enabled in Plus → Pas). */
+@Composable
+private fun ImportedSessions(sessions: List<ImportedActivity>) {
+    Text("Depuis Health Connect", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+    sessions.forEach { s ->
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("${s.label} · ${s.minutes} min", Modifier.weight(1f))
+            Text("${kcal(s.kcal)}${if (s.measured) "" else " (est.)"}")
+        }
+    }
 }
 
 @Composable

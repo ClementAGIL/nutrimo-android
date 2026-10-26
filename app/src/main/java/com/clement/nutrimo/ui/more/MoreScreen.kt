@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.History
@@ -34,6 +35,7 @@ import com.clement.nutrimo.ui.navigation.MeasurementsRoute
 import com.clement.nutrimo.ui.navigation.ProfileRoute
 import com.clement.nutrimo.ui.navigation.RemindersRoute
 import com.clement.nutrimo.ui.navigation.ServerRoute
+import com.clement.nutrimo.ui.navigation.StepsRoute
 
 data class MoreEntry(val title: String, val subtitle: String, val icon: ImageVector, val route: Any)
 
@@ -42,6 +44,7 @@ val MORE_ENTRIES = listOf(
     MoreEntry("Profil", "Sexe, âge, taille, activité", Icons.Default.Person, ProfileRoute),
     MoreEntry("Nouvel objectif", "Poids cible et rythme", Icons.Default.Flag, GoalEditRoute),
     MoreEntry("Objectifs de macros", "Protéines, glucides, lipides", Icons.Default.PieChart, MacrosRoute),
+    MoreEntry("Pas et séances", "Health Connect : objectif de pas, budget", Icons.Default.DirectionsWalk, StepsRoute),
     MoreEntry("Mes objectifs", "Objectif en cours et archivés", Icons.Default.History, GoalsRoute),
     MoreEntry("Mensurations", "Taille, hanches, poitrine…", Icons.Default.Straighten, MeasurementsRoute),
     MoreEntry("Rappels", "Pesée et saisie des repas", Icons.Default.Notifications, RemindersRoute),

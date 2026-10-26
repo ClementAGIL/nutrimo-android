@@ -50,7 +50,7 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit) {
                 Text("Mangé : ${kcal(state.total.kcal)}")
                 target?.let {
                     Text("${if (state.burned > 0) "Budget" else "Objectif"} : ${kcal(it)}")
-                    if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité", style = MaterialTheme.typography.bodySmall)
+                    if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité et de pas", style = MaterialTheme.typography.bodySmall)
                     val left = it - state.total.kcal
                     Text(
                         if (left >= 0) "Reste : ${kcal(left)}" else "Dépassement : ${kcal(-left)}",

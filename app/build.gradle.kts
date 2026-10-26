@@ -63,5 +63,7 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.mlkit.barcode)
     implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.health.connect)
+    implementation(libs.guava)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
@@ -47,6 +48,10 @@ fun JournalScreen(actions: JournalActions) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
+    LifecycleResumeEffect(Unit) {
+        vm.refreshHealth()
+        onPauseOrDispose {}
+    }
     ScreenScaffold("Journal", snackbar = snackbar, actions = {
         IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, "Historique des calories") }
     }) { padding ->
@@ -71,7 +76,8 @@ fun JournalScreen(actions: JournalActions) {
                     ),
                 )
             }
-            item { ActivityCard(state.activities, vm::addActivity, vm::deleteActivity) }
+            item { StepsCard(state.health, state.stepGoal, state.healthInBudget, vm::refreshHealth) }
+            item { ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity) }
             item { WaterCard(state.waterMl, state.waterGoalMl, vm::addWater) }
         }
     }

@@ -18,6 +18,9 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
 - Macro targets (Plus → Objectifs de macros): balanced, high-protein or low-carb presets, or your own percentages;
   shows the grams and protein per kg; the journal bars use them.
+- Steps and workouts from Health Connect (read only): today's steps vs your goal, workouts recorded by Mi Fitness,
+  Google Fit, Samsung Health, Strava… with their measured calories. Optionally added to the calorie budget
+  (Plus → Pas et séances): steps beyond 5,000 + workouts other than walking/running (their steps already count).
 - Physical activity: walking, running, cycling, swimming, strength training… with the duration (calories estimated
   from MET values and your weight) or any activity with its kcal; burned calories are added to the day's budget.
 - Calorie history (chart icon in the journal): daily calories vs target over 7 or 30 days, average, days on

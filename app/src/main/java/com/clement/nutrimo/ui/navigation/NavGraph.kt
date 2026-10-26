@@ -28,6 +28,7 @@ import com.clement.nutrimo.ui.more.MeasurementsScreen
 import com.clement.nutrimo.ui.more.MoreScreen
 import com.clement.nutrimo.ui.more.RemindersScreen
 import com.clement.nutrimo.ui.more.ServerScreen
+import com.clement.nutrimo.ui.more.StepsScreen
 import com.clement.nutrimo.ui.profile.ProfileScreen
 import com.clement.nutrimo.ui.recipe.RecipeEditScreen
 import com.clement.nutrimo.ui.recipe.RecipeViewScreen
@@ -65,6 +66,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     composable<AboutRoute> { AboutScreen(onBack = back) }
     composable<DevRoute> { DevScreen(onBack = back) }
     composable<MacrosRoute> { MacrosScreen(onBack = back) }
+    composable<StepsRoute> { StepsScreen(onBack = back) }
 }
 
 /** Search → (scanner) → quantity screen, and custom foods. */

@@ -14,7 +14,7 @@ The full product plan is in `docs/PLAN.md`. UI text is **French only**.
 
 Kotlin 2.1, AGP 8.12, Gradle 8.14 (JDK 17), compileSdk/targetSdk 36, **minSdk 31**.
 Jetpack Compose + Material 3 (dynamic colors, light/dark), Navigation Compose with type-safe routes,
-Room (KSP), DataStore Preferences, OkHttp + kotlinx.serialization, CameraX + ML Kit barcode, WorkManager.
+Room (KSP), DataStore Preferences, OkHttp + kotlinx.serialization, CameraX + ML Kit barcode, WorkManager, Health Connect client.
 Material 3 experimental APIs are opted in globally (app/build.gradle.kts).
 Deliberate choices: **manual DI** (`data/AppContainer.kt`, no Hilt), **no Retrofit** (the server URL is set at
 runtime; `data/network/Http.kt` is enough), **no chart library** (the weight graph is drawn on a Compose Canvas).
@@ -41,6 +41,9 @@ data/
                                   Schema changes: bump the version and add an AutoMigration (schemas in app/schemas)
   network/                        Http (OkHttp wrapper), FoodDto (+ mapping to entities), FoodApis
                                   (NutrimoApi = PC backend, OffApi = Open Food Facts + mapOffProduct)
+  health/                         HealthRepository (read-only Health Connect: status, permissions, steps per day,
+                                  exercise sessions + active kcal), ImportedActivity (HC exercise type → label, MET
+                                  estimate, walks/runs excluded from the budget since their steps count)
   sync/ServerBackup.kt            push / restore the JSON backup on nutrimo-api (/backups), AutoBackupWorker (daily,
                                   Wi-Fi only, retries when away from home)
   demo/                           DemoData (wipe + realistic history: profile, 2 goals, 5 months of weigh-ins, measurements,
@@ -63,9 +66,9 @@ ui/
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
-                                  (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen
+                                  (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen, StepsScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
-                                  activities; budget = target + burned), ActivityCard,
+                                  activities; budget = target + burned), ActivityCard (manual + imported sessions), StepsCard (install / connect / progress),
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
                                   (quantityText, SwipeToDelete), DayNutrientsScreen, CalorieHistoryScreen (7/30-day
                                   bars vs target, averages, estimated loss = Σ(TDEE − eaten)/7700)
@@ -112,6 +115,8 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ✅ Steps and workouts from Health Connect (read-only; opt-in budget: steps beyond 5,000 + non-walking sessions).
+  Guava is an explicit dependency: Health Connect otherwise hides CameraX's ListenableFuture.
 - ✅ Custom macro targets (Plus → Objectifs de macros), used by the journal bars.
 - ✅ Physical activity (journal card; burned kcal raise the day's budget). DB v3 via AutoMigration(2 → 3).
 - ✅ Saved meals (journal bookmark icon → "Repas" tab of the search). DB v2 via AutoMigration(1 → 2).

@@ -4,6 +4,9 @@ package com.clement.nutrimo.domain.calc
 /** [met] = energy cost relative to rest; null means the user types the kcal ("Autre"). */
 data class ActivityType(val key: String, val label: String, val met: Double?)
 
+const val STEPS_BASELINE = 5000L
+private const val KCAL_PER_STEP_PER_KG = 0.0004
+
 object Activities {
     val TYPES: List<ActivityType> = listOf(
         ActivityType("walk", "Marche", 3.5),
@@ -21,6 +24,12 @@ object Activities {
     )
 
     fun byKey(key: String): ActivityType = TYPES.firstOrNull { it.key == key } ?: TYPES.last()
+
+    /**
+     * Calories of the steps beyond [STEPS_BASELINE]: everyday walking is already in the activity level of the
+     * profile, so only the extra steps raise the budget. Walking costs ~0.5 kcal per kg per km, ~1,300 steps/km.
+     */
+    fun stepsKcal(steps: Long, weightKg: Double): Double = (steps - STEPS_BASELINE).coerceAtLeast(0) * KCAL_PER_STEP_PER_KG * weightKg
 
     /** kcal = MET × body weight (kg) × duration (h). */
     fun burned(met: Double, weightKg: Double, minutes: Int): Double = met * weightKg * minutes / 60.0

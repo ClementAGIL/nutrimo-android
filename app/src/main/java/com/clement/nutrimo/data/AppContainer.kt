@@ -3,6 +3,7 @@ package com.clement.nutrimo.data
 
 import android.content.Context
 import com.clement.nutrimo.data.db.NutrimoDatabase
+import com.clement.nutrimo.data.health.HealthRepository
 import com.clement.nutrimo.data.network.Http
 import com.clement.nutrimo.data.network.NutrimoApi
 import com.clement.nutrimo.data.repository.ActivityRepository
@@ -31,6 +32,7 @@ class AppContainer(context: Context) {
     val diary = DiaryRepository(db, foods, recipes)
     val savedMeals = SavedMealRepository(db)
     val activities = ActivityRepository(db)
+    val health = HealthRepository(context)
     val backup = BackupRepository(db, http.json)
     val serverBackup = ServerBackup(backup, NutrimoApi(http), settings)
 
