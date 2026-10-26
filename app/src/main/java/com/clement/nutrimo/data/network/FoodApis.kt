@@ -12,6 +12,7 @@ import java.net.URLEncoder
 
 /** Backend calls fail fast so the search falls back to OFF quickly when away from home. */
 private const val BACKEND_TIMEOUT_MS = 2500L
+private const val BACKUP_TIMEOUT_MS = 30_000L
 private const val OFF_BASE = "https://world.openfoodfacts.org"
 private const val OFF_USER_AGENT = "Nutrimo/0.1 (Android; personal project)"
 private const val OFF_FIELDS = "code,product_name,product_name_fr,brands,serving_size,serving_quantity,nutriments"
@@ -29,6 +30,17 @@ class NutrimoApi(private val http: Http) {
         http.json.decodeFromString<FoodDto>(
             http.get("${baseUrl.trimEnd('/')}/foods/barcode/$code", headers(apiKey), BACKEND_TIMEOUT_MS * 3),
         )
+    } catch (e: HttpException) {
+        if (e.code == 404) null else throw e
+    }
+
+    /** Backups can be several MB: allow more time than a search. */
+    suspend fun uploadBackup(baseUrl: String, apiKey: String, device: String, json: String): String =
+        http.postJson("${baseUrl.trimEnd('/')}/backups", json, headers(apiKey) + ("X-Device" to device), BACKUP_TIMEOUT_MS)
+
+    /** The latest backup JSON, or null when the server has none. */
+    suspend fun latestBackup(baseUrl: String, apiKey: String): String? = try {
+        http.get("${baseUrl.trimEnd('/')}/backups/latest", headers(apiKey), BACKUP_TIMEOUT_MS)
     } catch (e: HttpException) {
         if (e.code == 404) null else throw e
     }

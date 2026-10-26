@@ -4,12 +4,14 @@ package com.clement.nutrimo.data
 import android.content.Context
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.network.Http
+import com.clement.nutrimo.data.network.NutrimoApi
 import com.clement.nutrimo.data.repository.BackupRepository
 import com.clement.nutrimo.data.repository.BodyRepository
 import com.clement.nutrimo.data.repository.DiaryRepository
 import com.clement.nutrimo.data.repository.FoodRepository
 import com.clement.nutrimo.data.repository.RecipeRepository
 import com.clement.nutrimo.data.repository.SettingsRepository
+import com.clement.nutrimo.data.sync.ServerBackup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -26,6 +28,7 @@ class AppContainer(context: Context) {
     val recipes = RecipeRepository(db)
     val diary = DiaryRepository(db, foods, recipes)
     val backup = BackupRepository(db, http.json)
+    val serverBackup = ServerBackup(backup, NutrimoApi(http), settings)
 
     init {
         appScope.launch { foods.seedCiqualIfNeeded() }

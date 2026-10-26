@@ -27,8 +27,13 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal.
 - Body measurements (waist, hips, chest, arm, thigh).
 - Reminders: weekly weigh-in and daily meal logging (only when nothing was logged that day).
-- Backup: export / import every personal data as a JSON file (Plus → Sauvegarde).
+- Backup (Plus → Sauvegarde): send everything to the Nutrimo server on your PC (now, or automatically every day
+  on Wi-Fi) and restore the latest server backup; or export / import a JSON file.
 - Server: set the Nutrimo API address (e.g. `http://192.168.1.20:3000`) and test the connection (Plus → Serveur).
+
+## Testing against the PC server over USB
+
+`adb reverse tcp:3000 tcp:3000` lets the phone reach the PC's API as `http://localhost:3000` (no firewall rule needed).
 
 ## Build and install
 

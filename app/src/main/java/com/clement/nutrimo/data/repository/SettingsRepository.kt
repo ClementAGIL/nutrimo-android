@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +30,9 @@ data class AppSettings(
     val onboardingDone: Boolean = false,
     val weighReminder: ReminderSettings = ReminderSettings(false, 8, 0, DayOfWeek.MONDAY),
     val mealReminder: ReminderSettings = ReminderSettings(false, 20, 0),
+    val autoBackup: Boolean = false,
+    /** Epoch millis of the last successful server backup, 0 if none. */
+    val lastServerBackup: Long = 0,
 )
 
 class SettingsRepository(private val context: Context) {
@@ -43,6 +47,8 @@ class SettingsRepository(private val context: Context) {
         val mealEnabled = booleanPreferencesKey("meal_enabled")
         val mealHour = intPreferencesKey("meal_hour")
         val mealMinute = intPreferencesKey("meal_minute")
+        val autoBackup = booleanPreferencesKey("auto_backup")
+        val lastServerBackup = longPreferencesKey("last_server_backup")
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { it.toSettings() }
@@ -55,6 +61,10 @@ class SettingsRepository(private val context: Context) {
     }
 
     suspend fun setOnboardingDone() = edit { it[Keys.onboardingDone] = true }
+
+    suspend fun setAutoBackup(enabled: Boolean) = edit { it[Keys.autoBackup] = enabled }
+
+    suspend fun setLastServerBackup(at: Long) = edit { it[Keys.lastServerBackup] = at }
 
     suspend fun setWeighReminder(r: ReminderSettings) = edit {
         it[Keys.weighEnabled] = r.enabled
@@ -90,6 +100,8 @@ class SettingsRepository(private val context: Context) {
                 hour = this[Keys.mealHour] ?: d.mealReminder.hour,
                 minute = this[Keys.mealMinute] ?: d.mealReminder.minute,
             ),
+            autoBackup = this[Keys.autoBackup] ?: false,
+            lastServerBackup = this[Keys.lastServerBackup] ?: 0,
         )
     }
 }

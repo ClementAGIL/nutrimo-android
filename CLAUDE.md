@@ -40,6 +40,8 @@ data/
                                   FoodEntities (foods, portions, recipes, ingredients, diary), DAOs, Converters
   network/                        Http (OkHttp wrapper), FoodDto (+ mapping to entities), FoodApis
                                   (NutrimoApi = PC backend, OffApi = Open Food Facts + mapOffProduct)
+  sync/ServerBackup.kt            push / restore the JSON backup on nutrimo-api (/backups), AutoBackupWorker (daily,
+                                  Wi-Fi only, retries when away from home)
   reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
                                   only when nothing was logged today)
   repository/                     Settings (DataStore), Body (profile/weights/goals/calorie target), Food
@@ -58,7 +60,7 @@ ui/
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
-                                  (SAF export/import), MeasurementsScreen, RemindersScreen, AboutScreen
+                                  (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water),
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
                                   (quantityText, SwipeToDelete), DayNutrientsScreen
@@ -105,6 +107,7 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ✅ Server backup (manual + daily automatic) and restore.
 - ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
 - ✅ Installs and launches on the user's phone (Xiaomi, Android 15+); lint clean (only dependency-update notices).
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.
