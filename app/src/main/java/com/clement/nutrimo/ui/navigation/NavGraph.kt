@@ -16,6 +16,7 @@ import com.clement.nutrimo.ui.food.ItemDetailScreen
 import com.clement.nutrimo.ui.food.ScannerScreen
 import com.clement.nutrimo.ui.goal.GoalEditScreen
 import com.clement.nutrimo.ui.goal.GoalsScreen
+import com.clement.nutrimo.ui.journal.CalorieHistoryScreen
 import com.clement.nutrimo.ui.journal.DayNutrientsScreen
 import com.clement.nutrimo.ui.journal.JournalActions
 import com.clement.nutrimo.ui.journal.JournalScreen
@@ -41,6 +42,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
                 onAdd = { date, meal -> nav.navigate(AddFoodRoute(date.toEpochDay(), meal.name)) },
                 onEdit = { nav.navigate(ItemDetailRoute(entryId = it.id)) },
                 onDetails = { nav.navigate(DayNutrientsRoute(it.toEpochDay())) },
+                onHistory = { nav.navigate(CalorieHistoryRoute) },
             ),
         )
     }
@@ -49,6 +51,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     recipeDestinations(nav, back)
     composable<MoreRoute> { MoreScreen(onOpen = { nav.navigate(it) }) }
     foodDestinations(nav, back)
+    composable<CalorieHistoryRoute> { CalorieHistoryScreen(onBack = back) }
     composable<DayNutrientsRoute> { DayNutrientsScreen(it.toRoute<DayNutrientsRoute>().epochDay, back) }
     composable<ProfileRoute> { ProfileScreen(onBack = back) }
     composable<GoalEditRoute> { GoalEditScreen(onBack = back) }

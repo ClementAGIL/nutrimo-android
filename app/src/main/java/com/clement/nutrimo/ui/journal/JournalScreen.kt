@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ data class JournalActions(
     val onAdd: (LocalDate, Meal) -> Unit,
     val onEdit: (DiaryEntity) -> Unit,
     val onDetails: (LocalDate) -> Unit,
+    val onHistory: () -> Unit,
 )
 
 @Composable
@@ -45,7 +47,9 @@ fun JournalScreen(actions: JournalActions) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
-    ScreenScaffold("Journal", snackbar = snackbar) { padding ->
+    ScreenScaffold("Journal", snackbar = snackbar, actions = {
+        IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, "Historique des calories") }
+    }) { padding ->
         LazyColumn(
             Modifier.padding(padding),
             contentPadding = PaddingValues(16.dp),

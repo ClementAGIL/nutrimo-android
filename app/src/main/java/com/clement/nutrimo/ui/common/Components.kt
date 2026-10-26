@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 
 /** Bottom space to keep the last items of a list reachable above a floating action button. */
 val FAB_CLEARANCE = 88.dp
+private val STAT_VALUE_MAX_WIDTH = 220.dp
 
 /** Scaffold with a top bar; [onBack] adds a back arrow. */
 @Composable
@@ -106,7 +108,8 @@ fun StatRow(label: String, value: String, valueColor: Color = Color.Unspecified)
             fontWeight = FontWeight.SemiBold,
             color = valueColor,
             textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f, fill = false),
+            // Bounded so a long value wraps instead of squeezing its label to nothing.
+            modifier = Modifier.widthIn(max = STAT_VALUE_MAX_WIDTH),
         )
     }
 }

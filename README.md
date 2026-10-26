@@ -16,6 +16,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Journal: day by day, calories eaten / target / remaining, protein-carbs-fat bars, 4 meals (breakfast, lunch,
   dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
   Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
+- Calorie history (chart icon in the journal): daily calories vs target over 7 or 30 days, average, days on
+  target, average macros, and the weight loss your logged calories should produce.
 - Food search: instant results on the phone (CIQUAL + foods already used + custom foods + recipes), then the
   Nutrimo server on the home Wi-Fi; away from home, press search on the keyboard to query Open Food Facts.
   Foods you pick are cached on the phone. Recents, favorites (star) and "Mes aliments" tabs.

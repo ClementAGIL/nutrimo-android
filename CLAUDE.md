@@ -63,7 +63,8 @@ ui/
                                   (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water),
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
-                                  (quantityText, SwipeToDelete), DayNutrientsScreen
+                                  (quantityText, SwipeToDelete), DayNutrientsScreen, CalorieHistoryScreen (7/30-day
+                                  bars vs target, averages, estimated loss = Σ(TDEE − eaten)/7700)
   food/                           AddFoodScreen/ViewModel (local instant, backend after 600 ms, OFF only on submit;
                                   barcode lookup), QuickTabs (recents/favorites/custom/recipes), FoodRows,
                                   ItemDetailScreen/ViewModel (diary add/edit, or recipe-ingredient pick),
@@ -74,7 +75,7 @@ ui/
                                   AddFood(forRecipe) → ItemDetail → NavResults.INGREDIENT; cycle check)
   weight/                         WeightScreen (3 sub-tabs + FAB), WeightViewModel (progressOf), WeightDashboard,
                                   WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
-                                  (series + window) on LineChart (generic Canvas date/value chart)
+                                  (series + window) on LineChart (generic Canvas date/value chart: lines, dots, daily bars)
   common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components (ScreenScaffold,
                                   ScrollColumn = standard scrollable screen body, SectionCard(onClick), …), Pickers,
                                   NutrientViews (MacroBars with reference targets, NutrientTable with micros)
@@ -107,6 +108,7 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ✅ Calorie history (journal top bar).
 - ✅ Server backup (manual + daily automatic) and restore.
 - ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
