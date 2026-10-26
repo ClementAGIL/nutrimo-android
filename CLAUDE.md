@@ -15,6 +15,7 @@ The full product plan is in `docs/PLAN.md`. UI text is **French only**.
 Kotlin 2.1, AGP 8.12, Gradle 8.14 (JDK 17), compileSdk/targetSdk 36, **minSdk 31**.
 Jetpack Compose + Material 3 (dynamic colors, light/dark), Navigation Compose with type-safe routes,
 Room (KSP), DataStore Preferences, OkHttp + kotlinx.serialization, CameraX + ML Kit barcode, WorkManager.
+Material 3 experimental APIs are opted in globally (app/build.gradle.kts).
 Deliberate choices: **manual DI** (`data/AppContainer.kt`, no Hilt), **no Retrofit** (the server URL is set at
 runtime; `data/network/Http.kt` is enough), **no chart library** (the weight graph is drawn on a Compose Canvas).
 No unit tests for now (decided with the user).
@@ -55,6 +56,9 @@ ui/
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES)
+  weight/                         WeightScreen (3 sub-tabs + FAB), WeightViewModel (progressOf), WeightDashboard,
+                                  WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
+                                  (series + window) on LineChart (generic Canvas date/value chart)
   common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components, Pickers
   theme/Theme.kt                  Material 3 theme + fixed chart/macro colors
 ```
@@ -81,5 +85,6 @@ ui/
 ## Status
 
 - ✅ Gradle setup, theme, domain calculations, Room schema, network, repositories, backup format.
-- ✅ Navigation shell, onboarding, profile, new goal.
-- ⏳ Weight tab, journal + food search, recipes, settings screens, reminders.
+- ✅ Navigation shell, onboarding, profile, new goal, goals list.
+- ✅ Weight tab: dashboard, history, graph.
+- ⏳ Journal + food search, recipes, settings screens, reminders.

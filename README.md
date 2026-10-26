@@ -9,7 +9,11 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - First launch: profile (sex, birth date, height, activity) and first goal.
 - Goal by pace (0.5 / 1 / 2 kg per week or custom) or by end date, with the daily calorie target
   (Mifflin-St Jeor maintenance − deficit, never below 1200 kcal women / 1500 kcal men) and safety warnings.
-- 🚧 Weight tab, journal, food search, recipes, settings — see `docs/PLAN.md` for the full scope.
+- Weight tab: dashboard (weight and time progress bars, start / current / target, lost, remaining, BMI,
+  average loss per week, required pace, calorie target, planned and estimated end dates), weigh-in history
+  (one per day, edit / delete, change since the previous one) and graph (weight, objective line, trend line
+  projected to the estimated end date; 1 / 3 / 6 months or everything). Goal history in "Mes objectifs".
+- 🚧 Journal, food search, recipes, settings — see `docs/PLAN.md` for the full scope.
 
 ## Build and install
 

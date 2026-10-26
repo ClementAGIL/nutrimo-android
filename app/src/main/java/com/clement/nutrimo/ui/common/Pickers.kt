@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -29,7 +28,6 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 
 /** Read-only field showing [date]; the calendar button opens a picker limited by [min] / [max]. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateField(
     label: String,
@@ -73,7 +71,6 @@ fun DateField(
 private fun LocalDate.toMillis() = atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
 
 /** Dropdown to pick one of [options], shown with [label]. */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> Dropdown(
     title: String,
