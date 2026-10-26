@@ -7,8 +7,10 @@ import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.WaterEntity
+import com.clement.nutrimo.data.health.HEALTH_PERMISSIONS
 import com.clement.nutrimo.data.health.HealthStatus
 import com.clement.nutrimo.data.health.ImportedActivity
+import com.clement.nutrimo.data.health.STEPS_PERMISSION
 import com.clement.nutrimo.data.health.toImported
 import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.domain.calc.CalorieTarget
@@ -54,6 +56,8 @@ data class JournalUiState(
 data class HealthInfo(
     val status: HealthStatus,
     val canReadSteps: Boolean,
+    /** False when only some permissions were granted (e.g. steps but not workouts). */
+    val allGranted: Boolean,
     val steps: Long?,
     val stepsKcal: Double,
     val sessions: List<ImportedActivity>,
@@ -102,11 +106,19 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
     /** Health Connect is not observable: re-read on resume, on day change and after granting the permission. */
     fun refreshHealth() = viewModelScope.launch {
         val day = date.value
-        val canReadSteps = c.health.canReadSteps()
+        val granted = c.health.granted()
+        val canReadSteps = STEPS_PERMISSION in granted
         val count = if (canReadSteps) c.health.stepsOn(day) else null
         val kg = c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG
         val sessions = if (canReadSteps) c.health.sessionsOn(day).map { it.toImported(kg) } else emptyList()
-        health.value = HealthInfo(c.health.status(), canReadSteps, count, count?.let { Activities.stepsKcal(it, kg) } ?: 0.0, sessions)
+        health.value = HealthInfo(
+            status = c.health.status(),
+            canReadSteps = canReadSteps,
+            allGranted = granted.containsAll(HEALTH_PERMISSIONS),
+            steps = count,
+            stepsKcal = count?.let { Activities.stepsKcal(it, kg) } ?: 0.0,
+            sessions = sessions,
+        )
     }
 
     fun delete(entry: DiaryEntity) = viewModelScope.launch { c.diary.delete(entry.id) }

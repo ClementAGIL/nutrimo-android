@@ -4,11 +4,18 @@ package com.clement.nutrimo.ui.journal
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.health.connect.client.PermissionController
@@ -28,7 +35,12 @@ private const val PLAY_STORE = "market://details?id=$HEALTH_CONNECT_PACKAGE&url=
 fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> Unit) {
     val context = LocalContext.current
     val permission = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) { onRefresh() }
-    SectionCard("Pas") {
+    SectionCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Pas", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            // Other apps sync to Health Connect in the background, so the data can change while the journal is open.
+            if (info?.canReadSteps == true) IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, "Actualiser") }
+        }
         when {
             info == null -> Unit
             info.status == HealthStatus.UNAVAILABLE -> Hint("Health Connect n'est pas disponible sur ce téléphone.")
@@ -45,7 +57,12 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
                     Text("Connecter Health Connect")
                 }
             }
-            else -> StepsProgress(info, goal, inBudget)
+            else -> {
+                StepsProgress(info, goal, inBudget)
+                if (!info.allGranted) TextButton(onClick = { permission.launch(HEALTH_PERMISSIONS) }) {
+                    Text("Autoriser aussi les séances de sport")
+                }
+            }
         }
     }
 }

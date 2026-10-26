@@ -19,11 +19,11 @@ import java.time.Period
 
 enum class HealthStatus { AVAILABLE, NEEDS_UPDATE, UNAVAILABLE }
 
-private val STEPS = HealthPermission.getReadPermission(StepsRecord::class)
+val STEPS_PERMISSION: String = HealthPermission.getReadPermission(StepsRecord::class)
 
 /** Asked together in one Health Connect screen; steps are the minimum, the rest is optional. */
 val HEALTH_PERMISSIONS: Set<String> = setOf(
-    STEPS,
+    STEPS_PERMISSION,
     HealthPermission.getReadPermission(ExerciseSessionRecord::class),
     HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
 )
@@ -45,7 +45,7 @@ class HealthRepository(private val context: Context) {
     suspend fun granted(): Set<String> =
         if (status() != HealthStatus.AVAILABLE) emptySet() else safely { client.permissionController.getGrantedPermissions() }.orEmpty()
 
-    suspend fun canReadSteps(): Boolean = STEPS in granted()
+    suspend fun canReadSteps(): Boolean = STEPS_PERMISSION in granted()
 
     /** Steps of one day (deduplicated across sources by Health Connect), or null when unavailable. */
     suspend fun stepsOn(date: LocalDate): Long? = safely {

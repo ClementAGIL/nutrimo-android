@@ -117,6 +117,8 @@ ui/
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
 - ✅ Steps and workouts from Health Connect (read-only; opt-in budget: steps beyond 5,000 + non-walking sessions).
   Guava is an explicit dependency: Health Connect otherwise hides CameraX's ListenableFuture.
+  Every Health Connect read permission must also be declared in the manifest, or the request silently skips it.
+  The Pas card has a refresh button (data synced by other apps can arrive while the journal is open).
 - ✅ Custom macro targets (Plus → Objectifs de macros), used by the journal bars.
 - ✅ Physical activity (journal card; burned kcal raise the day's budget). DB v3 via AutoMigration(2 → 3).
 - ✅ Saved meals (journal bookmark icon → "Repas" tab of the search). DB v2 via AutoMigration(1 → 2).
