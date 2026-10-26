@@ -24,7 +24,7 @@ data class Loggable(
             if (perPart != null) add(UnitChoice(QuantityUnit.PART, "part(s)"))
             if (per100 != null) {
                 add(UnitChoice(QuantityUnit.GRAM, "g"))
-                portions.forEach { add(UnitChoice(QuantityUnit.PORTION, "${it.label} (${fmt(it.grams)} g)", it)) }
+                portions.forEach { add(UnitChoice(QuantityUnit.PORTION, portionLabel(it), it)) }
             }
         }
 
@@ -33,6 +33,12 @@ data class Loggable(
         QuantityUnit.GRAM -> (per100 ?: Nutrients.ZERO).scaled(quantity / 100)
         QuantityUnit.PORTION -> (per100 ?: Nutrients.ZERO).scaled(quantity * (choice.portion?.grams ?: 0.0) / 100)
     }
+}
+
+/** "1 pot (125 g)", but just "125 g" when the label already says the weight. */
+private fun portionLabel(p: Portion): String {
+    val grams = fmt(p.grams)
+    return if (p.label.replace(" ", "").contains("${grams}g")) p.label else "${p.label} ($grams g)"
 }
 
 private fun fmt(v: Double) = if (v % 1.0 == 0.0) v.toInt().toString() else "%.1f".format(v)

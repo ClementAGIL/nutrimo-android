@@ -1,6 +1,7 @@
 // First launch: profile, then current weight + first goal. Saves everything and opens the journal.
 package com.clement.nutrimo.ui.onboarding
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,6 +55,8 @@ class OnboardingViewModel(private val c: AppContainer) : ViewModel() {
 fun OnboardingScreen(onDone: () -> Unit) {
     val vm = appViewModel { c, _ -> OnboardingViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
+    // Back on the goal step returns to the profile instead of closing the app and losing the input.
+    BackHandler(enabled = state.step == 1) { vm.setStep(0) }
     ScreenScaffold(title = if (state.step == 0) "Bienvenue sur Nutrimo" else "Votre objectif") { padding ->
         ScrollColumn(padding, spacing = 16.dp) {
             if (state.step == 0) {

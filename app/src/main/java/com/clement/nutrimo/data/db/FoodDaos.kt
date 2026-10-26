@@ -123,6 +123,12 @@ interface DiaryDao {
     @Query("SELECT * FROM diary WHERE id = :id")
     suspend fun byId(id: String): DiaryEntity?
 
+    @Query(
+        "SELECT date, SUM(kcal) AS kcal, SUM(protein) AS protein, SUM(carbs) AS carbs, SUM(fat) AS fat " +
+            "FROM diary WHERE date BETWEEN :from AND :to GROUP BY date ORDER BY date",
+    )
+    fun observeDailyTotals(from: LocalDate, to: LocalDate): Flow<List<DayTotal>>
+
     @Query("SELECT COUNT(*) FROM diary WHERE date = :date")
     suspend fun countOn(date: LocalDate): Int
 

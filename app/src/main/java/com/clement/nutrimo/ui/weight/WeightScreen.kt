@@ -22,7 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 
-private val TABS = listOf("Tableau de bord", "Historique", "Graphique")
+private val TABS = listOf("Bilan", "Historique", "Graphique")
 
 @Composable
 fun WeightScreen(onNewGoal: () -> Unit, onGoals: () -> Unit) {

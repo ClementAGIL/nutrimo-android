@@ -76,6 +76,9 @@ data class IngredientEntity(
     val quantity: Double,
 )
 
+/** One day of the diary summed up (calorie history). */
+data class DayTotal(val date: LocalDate, val kcal: Double, val protein: Double?, val carbs: Double?, val fat: Double?)
+
 /** [nutrients] is a snapshot of what was eaten, so editing a food or recipe later keeps past days unchanged. */
 @Serializable
 @Entity(tableName = "diary", indices = [Index("date")])

@@ -1,4 +1,4 @@
-// Generic date/value line chart drawn on a Canvas (no chart library): grid, axis labels, lines and dots.
+// Generic date/value chart drawn on a Canvas (no chart library): grid, axis labels, daily bars, lines and dots.
 package com.clement.nutrimo.ui.weight
 
 import androidx.compose.foundation.Canvas
@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -26,6 +27,8 @@ import java.time.temporal.ChronoUnit
 private const val Y_TICKS = 5
 private const val X_TICKS = 4
 private const val MAX_DOTS = 60
+/** Share of a day's width left empty on each side of a bar. */
+private const val BAR_GAP = 0.15f
 
 data class ChartPoint(val date: LocalDate, val value: Double)
 
@@ -36,8 +39,15 @@ data class ChartWindow(val start: LocalDate, val end: LocalDate, val min: Double
     val days: Float get() = ChronoUnit.DAYS.between(start, end).coerceAtLeast(1).toFloat()
 }
 
+/** [bars] are drawn as one column per day, spanning [date, date + 1) — give the window one extra day. */
 @Composable
-fun LineChart(series: List<ChartSeries>, window: ChartWindow, modifier: Modifier = Modifier) {
+fun LineChart(
+    series: List<ChartSeries>,
+    window: ChartWindow,
+    modifier: Modifier = Modifier,
+    bars: List<ChartPoint> = emptyList(),
+    barColor: Color = Color.Gray,
+) {
     val measurer = rememberTextMeasurer()
     val labelStyle = TextStyle(fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     val gridColor = MaterialTheme.colorScheme.outlineVariant
@@ -45,6 +55,7 @@ fun LineChart(series: List<ChartSeries>, window: ChartWindow, modifier: Modifier
         val area = PlotArea(left = 36.dp.toPx(), top = 8.dp.toPx(), right = size.width - 8.dp.toPx(), bottom = size.height - 20.dp.toPx(), window)
         drawGrid(area, measurer, labelStyle, gridColor)
         clipRect(area.left, area.top, area.right, area.bottom) {
+            bars.forEach { drawBar(area, it, barColor) }
             series.forEach { drawSeries(area, it) }
         }
     }
@@ -74,6 +85,13 @@ private fun DrawScope.drawGrid(area: PlotArea, measurer: TextMeasurer, style: Te
     if (!today.isBefore(area.w.start) && !today.isAfter(area.w.end)) {
         drawLine(color, Offset(area.x(today), area.top), Offset(area.x(today), area.bottom), strokeWidth = 2f)
     }
+}
+
+private fun DrawScope.drawBar(area: PlotArea, p: ChartPoint, color: Color) {
+    val left = area.x(p.date)
+    val width = area.x(p.date.plusDays(1)) - left
+    val top = area.y(p.value)
+    drawRect(color, Offset(left + width * BAR_GAP, top), Size(width * (1 - 2 * BAR_GAP), area.bottom - top))
 }
 
 private fun DrawScope.drawSeries(area: PlotArea, s: ChartSeries) {

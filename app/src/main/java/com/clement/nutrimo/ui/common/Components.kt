@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.Dp
 import com.clement.nutrimo.ui.theme.NutrimoColors
 import androidx.compose.ui.unit.dp
 
+/** Bottom space to keep the last items of a list reachable above a floating action button. */
+val FAB_CLEARANCE = 88.dp
+
 /** Scaffold with a top bar; [onBack] adds a back arrow. */
 @Composable
 fun ScreenScaffold(
@@ -95,9 +98,16 @@ fun ScrollColumn(padding: PaddingValues, spacing: Dp = 12.dp, content: @Composab
 
 @Composable
 fun StatRow(label: String, value: String, valueColor: Color = Color.Unspecified) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label, style = MaterialTheme.typography.bodyMedium)
-        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = valueColor)
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+        Text(
+            value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = valueColor,
+            textAlign = TextAlign.End,
+            modifier = Modifier.weight(1f, fill = false),
+        )
     }
 }
 

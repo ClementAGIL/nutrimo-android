@@ -2,6 +2,7 @@
 package com.clement.nutrimo.ui.weight
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.clement.nutrimo.data.db.WeightEntity
 import com.clement.nutrimo.ui.common.ConfirmDialog
+import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.day
 import com.clement.nutrimo.ui.common.fmt
@@ -34,7 +36,7 @@ fun WeightHistory(weights: List<WeightEntity>, vm: WeightViewModel) {
     var deleting by remember { mutableStateOf<WeightEntity?>(null) }
     if (weights.isEmpty()) return EmptyState("Aucune pesée pour l'instant.\nAppuyez sur + pour en ajouter une.")
     val newestFirst = weights.reversed()
-    LazyColumn {
+    LazyColumn(contentPadding = PaddingValues(bottom = FAB_CLEARANCE)) {
         items(newestFirst.size, key = { newestFirst[it].id }) { i ->
             val entry = newestFirst[i]
             WeightRow(entry, newestFirst.getOrNull(i + 1), onEdit = { editing = entry }, onDelete = { deleting = entry })

@@ -109,5 +109,5 @@ ui/
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
 - ✅ Server backup (manual + daily automatic) and restore.
 - ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
-- ✅ Installs and launches on the user's phone (Xiaomi, Android 15+); lint clean (only dependency-update notices).
+- ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

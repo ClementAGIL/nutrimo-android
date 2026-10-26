@@ -1,6 +1,7 @@
 // Food diary (entries with a nutrient snapshot) and daily water.
 package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.db.WaterEntity
@@ -21,6 +22,8 @@ class DiaryRepository(
     private val waterDao = db.waterDao()
 
     fun day(date: LocalDate): Flow<List<DiaryEntity>> = dao.observeDay(date)
+
+    fun dailyTotals(from: LocalDate, to: LocalDate): Flow<List<DayTotal>> = dao.observeDailyTotals(from, to)
 
     fun water(date: LocalDate): Flow<WaterEntity?> = waterDao.observe(date)
 

@@ -30,6 +30,8 @@ import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.full
 import com.clement.nutrimo.ui.theme.NutrimoColors
 import java.time.LocalDate
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /** Extra kg above and below the data so lines don't touch the edges. */
 private const val Y_MARGIN_KG = 1.0
@@ -80,8 +82,9 @@ private fun windowOf(series: List<ChartSeries>, period: ChartPeriod): ChartWindo
     return ChartWindow(
         start = first,
         end = if (last.isAfter(first)) last else first.plusDays(1),
-        min = visible.minOf { it.value } - Y_MARGIN_KG,
-        max = visible.maxOf { it.value } + Y_MARGIN_KG,
+        // Whole kilograms keep the axis labels readable.
+        min = floor(visible.minOf { it.value } - Y_MARGIN_KG),
+        max = ceil(visible.maxOf { it.value } + Y_MARGIN_KG),
     )
 }
 

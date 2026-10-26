@@ -4,6 +4,8 @@ package com.clement.nutrimo.ui.weight
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.domain.calc.Bmi
 import com.clement.nutrimo.domain.calc.GoalProgress
 import com.clement.nutrimo.domain.calc.MIN_TREND_POINTS
+import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
@@ -49,6 +52,7 @@ fun WeightDashboard(state: WeightUiState, onNewGoal: () -> Unit, onGoals: () -> 
             OutlinedButton(onClick = onNewGoal, modifier = Modifier.weight(1f)) { Text("Nouvel objectif") }
             OutlinedButton(onClick = onGoals, modifier = Modifier.weight(1f)) { Text("Mes objectifs") }
         }
+        Spacer(Modifier.height(FAB_CLEARANCE))
     }
 }
 
@@ -93,7 +97,7 @@ private fun FiguresCard(state: WeightUiState, p: GoalProgress) {
 }
 
 private fun estimate(p: GoalProgress): String = when {
-    p.trend == null -> "au moins $MIN_TREND_POINTS pesées nécessaires"
+    p.trend == null -> "$MIN_TREND_POINTS pesées minimum"
     p.estimatedEnd == null -> "pas de tendance à la baisse"
     else -> p.estimatedEnd.full()
 }
