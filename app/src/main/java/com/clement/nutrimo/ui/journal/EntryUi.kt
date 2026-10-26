@@ -37,12 +37,14 @@ fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit) {
         state = state,
         enableDismissFromStartToEnd = false,
         backgroundContent = {
-            Box(
+            // Only while swiping, so no red shows around a row at rest.
+            if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) Box(
                 Modifier.fillMaxSize().background(MaterialTheme.colorScheme.errorContainer).padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) { Icon(Icons.Default.Delete, "Supprimer", tint = MaterialTheme.colorScheme.onErrorContainer) }
         },
     ) {
-        Box(Modifier.background(MaterialTheme.colorScheme.surfaceContainerHighest).padding(vertical = 6.dp)) { content() }
+        // Same color as the card the row sits in.
+        Box(Modifier.background(MaterialTheme.colorScheme.surface).padding(vertical = 6.dp)) { content() }
     }
 }
