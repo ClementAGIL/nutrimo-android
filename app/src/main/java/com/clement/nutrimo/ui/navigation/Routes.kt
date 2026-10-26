@@ -36,6 +36,7 @@ import kotlinx.serialization.Serializable
 @Serializable object BackupRoute
 @Serializable object AboutRoute
 @Serializable object DevRoute
+@Serializable object MacrosRoute
 
 /** savedStateHandle keys used to return results to a previous screen. */
 object NavResults {

@@ -8,6 +8,7 @@ import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.domain.calc.CalorieTarget
+import com.clement.nutrimo.domain.calc.MacroSplit
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,6 +32,7 @@ data class JournalUiState(
     val waterMl: Int = 0,
     val waterGoalMl: Int = DEFAULT_WATER_GOAL_ML,
     val activities: List<ActivityEntity> = emptyList(),
+    val macroSplit: MacroSplit = MacroSplit.BALANCED,
 ) {
     val burned: Double get() = activities.sumOf { it.kcal }
 
@@ -50,7 +52,7 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         combine(c.diary.day(d), c.diary.water(d), c.activities.day(d)) { entries, water, activities -> DayData(d, entries, water, activities) }
     }
 
-    val state: StateFlow<JournalUiState> = combine(day, c.body.calorieTarget, c.body.profile) { d, target, profile ->
+    val state: StateFlow<JournalUiState> = combine(day, c.body.calorieTarget, c.body.profile, c.settings.settings) { d, target, profile, settings ->
         JournalUiState(
             date = d.date,
             meals = Meal.entries.associateWith { meal -> d.entries.filter { it.meal == meal } },
@@ -59,6 +61,7 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
             waterMl = d.water?.ml ?: 0,
             waterGoalMl = profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML,
             activities = d.activities,
+            macroSplit = settings.macroSplit,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), JournalUiState())
 

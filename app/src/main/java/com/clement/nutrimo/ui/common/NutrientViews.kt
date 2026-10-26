@@ -12,25 +12,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.domain.calc.MacroGrams
 import com.clement.nutrimo.domain.model.MicroGroup
 import com.clement.nutrimo.domain.model.NutrientCatalog
 import com.clement.nutrimo.domain.model.Nutrients
 import com.clement.nutrimo.ui.theme.NutrimoColors
 
-/** Share of the calorie target usually given to each macro, used for the reference bars (g = kcal × share / kcal per g). */
-private const val PROTEIN_SHARE = 0.25
-private const val CARBS_SHARE = 0.45
-private const val FAT_SHARE = 0.30
-
-data class MacroTargets(val protein: Double, val carbs: Double, val fat: Double) {
-    companion object {
-        fun forKcal(kcal: Double) = MacroTargets(kcal * PROTEIN_SHARE / 4, kcal * CARBS_SHARE / 4, kcal * FAT_SHARE / 9)
-    }
-}
-
 /** Protein / carbs / fat bars against the reference grams of [targets]. */
 @Composable
-fun MacroBars(n: Nutrients, targets: MacroTargets?) {
+fun MacroBars(n: Nutrients, targets: MacroGrams?) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         MacroBar("Protéines", n.protein, targets?.protein, NutrimoColors.protein)
         MacroBar("Glucides", n.carbs, targets?.carbs, NutrimoColors.carbs)

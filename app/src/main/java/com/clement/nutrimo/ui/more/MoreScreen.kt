@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.HorizontalDivider
@@ -28,6 +29,7 @@ import com.clement.nutrimo.ui.navigation.BackupRoute
 import com.clement.nutrimo.ui.navigation.DevRoute
 import com.clement.nutrimo.ui.navigation.GoalEditRoute
 import com.clement.nutrimo.ui.navigation.GoalsRoute
+import com.clement.nutrimo.ui.navigation.MacrosRoute
 import com.clement.nutrimo.ui.navigation.MeasurementsRoute
 import com.clement.nutrimo.ui.navigation.ProfileRoute
 import com.clement.nutrimo.ui.navigation.RemindersRoute
@@ -39,6 +41,7 @@ data class MoreEntry(val title: String, val subtitle: String, val icon: ImageVec
 val MORE_ENTRIES = listOf(
     MoreEntry("Profil", "Sexe, âge, taille, activité", Icons.Default.Person, ProfileRoute),
     MoreEntry("Nouvel objectif", "Poids cible et rythme", Icons.Default.Flag, GoalEditRoute),
+    MoreEntry("Objectifs de macros", "Protéines, glucides, lipides", Icons.Default.PieChart, MacrosRoute),
     MoreEntry("Mes objectifs", "Objectif en cours et archivés", Icons.Default.History, GoalsRoute),
     MoreEntry("Mensurations", "Taille, hanches, poitrine…", Icons.Default.Straighten, MeasurementsRoute),
     MoreEntry("Rappels", "Pesée et saisie des repas", Icons.Default.Notifications, RemindersRoute),

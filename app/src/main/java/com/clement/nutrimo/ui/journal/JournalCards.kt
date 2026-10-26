@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.MacroBars
-import com.clement.nutrimo.ui.common.MacroTargets
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.TextDialog
@@ -61,7 +60,7 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit) {
                 }
             }
         }
-        MacroBars(state.total, target?.let { MacroTargets.forKcal(it) })
+        MacroBars(state.total, target?.let { state.macroSplit.grams(it) })
         Text("Toucher pour le détail des nutriments", style = MaterialTheme.typography.bodySmall)
     }
 }

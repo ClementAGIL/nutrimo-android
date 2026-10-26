@@ -54,7 +54,7 @@ domain/
   model/                          Nutrients (scale/plus), enums with French labels, NutrientCatalog (micros),
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
-                                  Trend (linear regression, estimated end), Bmi, RecipeMath, Activities (MET table)
+                                  Trend (linear regression, estimated end), Bmi, RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets)
 ui/
   NutrimoRoot.kt                  root: onboarding (outside the graph) or NavHost + bottom bar (4 tabs)
   navigation/                     Routes (@Serializable routes + NavResults keys), NavGraph (all destinations)
@@ -63,7 +63,7 @@ ui/
   goal/                           GoalDraft (pace preset / end date → pace + end date), GoalForm (with calorie
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
-                                  (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen, DevScreen (load demo / erase all)
+                                  (server backup/restore + auto toggle, SAF file export/import), MeasurementsScreen, RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
                                   activities; budget = target + burned), ActivityCard,
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
@@ -112,6 +112,7 @@ ui/
 - ✅ Weight tab: dashboard, history, graph.
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
+- ✅ Custom macro targets (Plus → Objectifs de macros), used by the journal bars.
 - ✅ Physical activity (journal card; burned kcal raise the day's budget). DB v3 via AutoMigration(2 → 3).
 - ✅ Saved meals (journal bookmark icon → "Repas" tab of the search). DB v2 via AutoMigration(1 → 2).
 - ✅ Developer section (Plus → Développeur): demo data / erase everything. Use it to test every screen.

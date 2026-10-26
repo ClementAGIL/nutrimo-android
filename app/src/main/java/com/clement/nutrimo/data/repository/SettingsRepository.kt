@@ -1,4 +1,4 @@
-// App settings in DataStore: backend server, onboarding flag and reminders.
+// App settings in DataStore: backend server, onboarding flag, reminders, backup and macro split.
 package com.clement.nutrimo.data.repository
 
 import android.content.Context
@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.clement.nutrimo.domain.calc.MacroSplit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -33,6 +34,7 @@ data class AppSettings(
     val autoBackup: Boolean = false,
     /** Epoch millis of the last successful server backup, 0 if none. */
     val lastServerBackup: Long = 0,
+    val macroSplit: MacroSplit = MacroSplit.BALANCED,
 )
 
 class SettingsRepository(private val context: Context) {
@@ -49,6 +51,9 @@ class SettingsRepository(private val context: Context) {
         val mealMinute = intPreferencesKey("meal_minute")
         val autoBackup = booleanPreferencesKey("auto_backup")
         val lastServerBackup = longPreferencesKey("last_server_backup")
+        val proteinPct = intPreferencesKey("protein_pct")
+        val carbsPct = intPreferencesKey("carbs_pct")
+        val fatPct = intPreferencesKey("fat_pct")
     }
 
     val settings: Flow<AppSettings> = context.dataStore.data.map { it.toSettings() }
@@ -61,6 +66,12 @@ class SettingsRepository(private val context: Context) {
     }
 
     suspend fun setOnboardingDone(done: Boolean = true) = edit { it[Keys.onboardingDone] = done }
+
+    suspend fun setMacroSplit(split: MacroSplit) = edit {
+        it[Keys.proteinPct] = split.proteinPct
+        it[Keys.carbsPct] = split.carbsPct
+        it[Keys.fatPct] = split.fatPct
+    }
 
     suspend fun setAutoBackup(enabled: Boolean) = edit { it[Keys.autoBackup] = enabled }
 
@@ -102,6 +113,11 @@ class SettingsRepository(private val context: Context) {
             ),
             autoBackup = this[Keys.autoBackup] ?: false,
             lastServerBackup = this[Keys.lastServerBackup] ?: 0,
+            macroSplit = MacroSplit(
+                this[Keys.proteinPct] ?: d.macroSplit.proteinPct,
+                this[Keys.carbsPct] ?: d.macroSplit.carbsPct,
+                this[Keys.fatPct] ?: d.macroSplit.fatPct,
+            ),
         )
     }
 }
