@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 @Serializable object ScannerRoute
 @Serializable data class CustomFoodRoute(val foodId: String? = null, val barcode: String? = null)
 @Serializable data class DayNutrientsRoute(val epochDay: Long)
-@Serializable object CalorieHistoryRoute
+@Serializable object HistoryRoute
 @Serializable object GoalEditRoute
 @Serializable object GoalsRoute
 @Serializable data class RecipeEditRoute(val recipeId: String? = null)

@@ -50,3 +50,7 @@ fun HealthSession.toImported(weightKg: Double): ImportedActivity {
         countsInBudget = exerciseType !in STEP_BASED,
     )
 }
+
+/** Health Connect calories added to the budget: extra steps + workouts other than walks and runs (their steps count). */
+fun healthBudgetKcal(stepsKcal: Double, sessions: List<ImportedActivity>): Double =
+    stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal }

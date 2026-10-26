@@ -94,6 +94,9 @@ interface WaterDao {
     @Query("SELECT * FROM water WHERE date = :date")
     fun observe(date: LocalDate): Flow<WaterEntity?>
 
+    @Query("SELECT * FROM water WHERE date BETWEEN :from AND :to")
+    fun observeRange(from: LocalDate, to: LocalDate): Flow<List<WaterEntity>>
+
     @Query("SELECT * FROM water")
     suspend fun all(): List<WaterEntity>
 

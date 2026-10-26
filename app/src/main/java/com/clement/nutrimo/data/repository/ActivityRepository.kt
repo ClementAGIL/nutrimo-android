@@ -1,15 +1,13 @@
 // Physical activities: logged per day, kcal estimated from the latest weigh-in, added to the day's budget.
 package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DayBurn
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.domain.calc.Activities
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
-
-/** Used when no weigh-in exists yet (should not happen after onboarding). */
-private const val FALLBACK_WEIGHT_KG = 70.0
 
 class ActivityRepository(db: NutrimoDatabase) {
     private val dao = db.activityDao()
@@ -23,7 +21,7 @@ class ActivityRepository(db: NutrimoDatabase) {
     suspend fun add(date: LocalDate, typeKey: String, minutes: Int?, manualKcal: Double?) {
         val met = Activities.byKey(typeKey).met
         val kcal = if (met != null && minutes != null) {
-            Activities.burned(met, weights.latest()?.kg ?: FALLBACK_WEIGHT_KG, minutes)
+            Activities.burned(met, weights.latest()?.kg ?: DEFAULT_WEIGHT_KG, minutes)
         } else {
             manualKcal ?: return
         }

@@ -1,6 +1,7 @@
 // Profile form (sex, birth date, height, activity, water goal), shared by onboarding and the profile screen.
 package com.clement.nutrimo.ui.profile
 
+import com.clement.nutrimo.data.db.DEFAULT_WATER_GOAL_ML
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,14 +23,13 @@ import java.time.LocalDate
 
 private const val MIN_HEIGHT_CM = 100.0
 private const val MAX_HEIGHT_CM = 250.0
-private const val DEFAULT_WATER_ML = 2000
 
 data class ProfileDraft(
     val sex: Sex = Sex.FEMALE,
     val birthDate: LocalDate = LocalDate.now().minusYears(30),
     val height: String = "",
     val activity: ActivityLevel = ActivityLevel.LIGHT,
-    val waterGoal: String = DEFAULT_WATER_ML.toString(),
+    val waterGoal: String = DEFAULT_WATER_GOAL_ML.toString(),
 ) {
     val heightCm: Double? get() = height.toDecimal()?.takeIf { it in MIN_HEIGHT_CM..MAX_HEIGHT_CM }
     val isValid: Boolean get() = heightCm != null
@@ -39,7 +39,7 @@ data class ProfileDraft(
         birthDate = birthDate,
         heightCm = heightCm ?: 0.0,
         activity = activity,
-        waterGoalMl = waterGoal.toDecimal()?.toInt() ?: DEFAULT_WATER_ML,
+        waterGoalMl = waterGoal.toDecimal()?.toInt() ?: DEFAULT_WATER_GOAL_ML,
     )
 
     companion object {

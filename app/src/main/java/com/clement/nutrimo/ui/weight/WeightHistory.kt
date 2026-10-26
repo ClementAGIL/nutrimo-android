@@ -26,8 +26,8 @@ import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.kg
+import com.clement.nutrimo.ui.common.signedKg
 import com.clement.nutrimo.ui.theme.NutrimoColors
 
 @Composable
@@ -72,6 +72,5 @@ private fun DeltaText(delta: Double) {
         delta > 0 -> NutrimoColors.fat
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
-    val sign = if (delta > 0) "+" else ""
-    Text("$sign${fmt(delta)} kg", color = color)
+    Text(signedKg(delta), color = color)
 }

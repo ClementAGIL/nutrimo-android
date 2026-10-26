@@ -57,7 +57,8 @@ domain/
   model/                          Nutrients (scale/plus), enums with French labels, NutrientCatalog (micros),
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
-                                  Trend (linear regression, estimated end), Bmi, RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets)
+                                  Trend (linear regression, estimated end), Bmi, RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets),
+                                  DayGoals (DailyGoal, DayRecord.achieved = null without data, streaks)
 ui/
   NutrimoRoot.kt                  root: onboarding (outside the graph) or NavHost + bottom bar (4 tabs)
   navigation/                     Routes (@Serializable routes + NavResults keys), NavGraph (all destinations)
@@ -70,8 +71,12 @@ ui/
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
                                   activities; budget = target + burned), ActivityCard (manual + imported sessions), StepsCard (install / connect / progress),
                                   JournalCards (summary ring + macro bars, MealCard, WaterCard), EntryUi
-                                  (quantityText, SwipeToDelete), DayNutrientsScreen, CalorieHistoryScreen (7/30-day
-                                  bars vs target, averages, estimated loss = Σ(TDEE − eaten)/7700)
+                                  (quantityText, SwipeToDelete), DayNutrientsScreen
+  history/                        HistoryScreen (journal chart icon): CalendarTab (month grid, one dot per goal: filled =
+                                  achieved, ring = missed, none = no data; day detail; streaks) and ChartsTab (7/30-day bars
+                                  vs goal for calories, sport, steps, water; averages; estimated loss = Σ(TDEE + sport −
+                                  eaten)/7700). HistoryViewModel loads ≥ 180 days (streaks) + Health Connect once per range,
+                                  HistoryRecords merges everything into one DayRecord per day. Past days use today's targets.
   food/                           AddFoodScreen/ViewModel (local instant, backend after 600 ms, OFF only on submit;
                                   barcode lookup), QuickTabs (recents/favorites/custom/recipes), FoodRows,
                                   ItemDetailScreen/ViewModel (diary add/edit, or recipe-ingredient pick),
@@ -123,7 +128,7 @@ ui/
 - ✅ Physical activity (journal card; burned kcal raise the day's budget). DB v3 via AutoMigration(2 → 3).
 - ✅ Saved meals (journal bookmark icon → "Repas" tab of the search). DB v2 via AutoMigration(1 → 2).
 - ✅ Developer section (Plus → Développeur): demo data / erase everything. Use it to test every screen.
-- ✅ Calorie history (journal top bar).
+- ✅ History (journal top bar): goal calendar with streaks (default tab) + charts for calories, sport, steps, water.
 - ✅ Server backup (manual + daily automatic) and restore.
 - ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.

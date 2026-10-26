@@ -1,6 +1,8 @@
 // State of the journal: entries of the selected day grouped by meal, totals, target and water.
 package com.clement.nutrimo.ui.journal
 
+import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
+import com.clement.nutrimo.data.db.DEFAULT_WATER_GOAL_ML
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
@@ -11,6 +13,7 @@ import com.clement.nutrimo.data.health.HEALTH_PERMISSIONS
 import com.clement.nutrimo.data.health.HealthStatus
 import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.data.health.STEPS_PERMISSION
+import com.clement.nutrimo.data.health.healthBudgetKcal
 import com.clement.nutrimo.data.health.toImported
 import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.domain.calc.CalorieTarget
@@ -27,10 +30,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-
-private const val DEFAULT_WATER_GOAL_ML = 2000
-/** Only for estimates before the first weigh-in. */
-private const val DEFAULT_WEIGHT_KG = 70.0
 
 data class JournalUiState(
     val date: LocalDate = LocalDate.now(),
@@ -62,8 +61,7 @@ data class HealthInfo(
     val stepsKcal: Double,
     val sessions: List<ImportedActivity>,
 ) {
-    /** Walks and runs are left out: their steps already count. */
-    val budgetKcal: Double get() = stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal }
+    val budgetKcal: Double get() = healthBudgetKcal(stepsKcal, sessions)
 }
 
 /** Everything stored for one day. */

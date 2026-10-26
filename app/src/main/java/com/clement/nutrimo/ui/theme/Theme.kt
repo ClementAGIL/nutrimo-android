@@ -18,6 +18,7 @@ object NutrimoColors {
     val objective = Color(0xFF8A8A8A)
     val trend = Color(0xFFB36AE2)
     val warning = Color(0xFFE08A00)
+    val water = Color(0xFF29A8E0)
 }
 
 @Composable

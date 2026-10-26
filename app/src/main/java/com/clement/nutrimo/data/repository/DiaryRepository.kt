@@ -27,6 +27,8 @@ class DiaryRepository(
 
     fun water(date: LocalDate): Flow<WaterEntity?> = waterDao.observe(date)
 
+    fun waterBetween(from: LocalDate, to: LocalDate): Flow<List<WaterEntity>> = waterDao.observeRange(from, to)
+
     suspend fun entry(id: String): DiaryEntity? = dao.byId(id)
 
     suspend fun log(date: LocalDate, meal: Meal, item: Loggable, quantity: Double, choice: UnitChoice) {

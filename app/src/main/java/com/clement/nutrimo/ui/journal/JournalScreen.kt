@@ -53,7 +53,7 @@ fun JournalScreen(actions: JournalActions) {
         onPauseOrDispose {}
     }
     ScreenScaffold("Journal", snackbar = snackbar, actions = {
-        IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, "Historique des calories") }
+        IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, "Historique") }
     }) { padding ->
         LazyColumn(
             Modifier.padding(padding),

@@ -44,7 +44,7 @@ val MORE_ENTRIES = listOf(
     MoreEntry("Profil", "Sexe, âge, taille, activité", Icons.Default.Person, ProfileRoute),
     MoreEntry("Nouvel objectif", "Poids cible et rythme", Icons.Default.Flag, GoalEditRoute),
     MoreEntry("Objectifs de macros", "Protéines, glucides, lipides", Icons.Default.PieChart, MacrosRoute),
-    MoreEntry("Pas et séances", "Health Connect : objectif de pas, budget", Icons.Default.DirectionsWalk, StepsRoute),
+    MoreEntry("Pas et sport", "Objectifs de pas et de sport, Health Connect", Icons.Default.DirectionsWalk, StepsRoute),
     MoreEntry("Mes objectifs", "Objectif en cours et archivés", Icons.Default.History, GoalsRoute),
     MoreEntry("Mensurations", "Taille, hanches, poitrine…", Icons.Default.Straighten, MeasurementsRoute),
     MoreEntry("Rappels", "Pesée et saisie des repas", Icons.Default.Notifications, RemindersRoute),

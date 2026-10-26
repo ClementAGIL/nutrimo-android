@@ -7,6 +7,7 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.request.AggregateRequest
@@ -16,6 +17,8 @@ import kotlinx.coroutines.CancellationException
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Period
+import java.time.ZoneId
+import kotlin.reflect.KClass
 
 enum class HealthStatus { AVAILABLE, NEEDS_UPDATE, UNAVAILABLE }
 
@@ -62,15 +65,32 @@ class HealthRepository(private val context: Context) {
     }
 
     /** Workouts of the day, each with the active calories recorded during it (when any). */
-    suspend fun sessionsOn(date: LocalDate): List<HealthSession> {
-        val records = safely { client.readRecords(ReadRecordsRequest(ExerciseSessionRecord::class, dayRange(date, date))).records }
-        return records.orEmpty().map { s ->
-            val kcal = safely {
-                client.aggregate(
-                    AggregateRequest(setOf(ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL), TimeRangeFilter.between(s.startTime, s.endTime)),
-                )[ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL]?.inKilocalories
-            }
-            HealthSession(s.title, s.exerciseType, Duration.between(s.startTime, s.endTime).toMinutes().toInt(), kcal?.takeIf { it > 0 })
+    suspend fun sessionsOn(date: LocalDate): List<HealthSession> = sessionsBetween(date, date).map { it.second }
+
+    /** Workouts between [from] and [to] included, dated by their start. Two reads in total, whatever the range. */
+    suspend fun sessionsBetween(from: LocalDate, to: LocalDate): List<Pair<LocalDate, HealthSession>> {
+        val range = dayRange(from, to)
+        val sessions = readAll(ExerciseSessionRecord::class, range).orEmpty()
+        val calories = if (sessions.isEmpty()) emptyList() else readAll(ActiveCaloriesBurnedRecord::class, range).orEmpty()
+        return sessions.map { s ->
+            // Same app only: a watch and its phone app often both record the workout's calories.
+            val kcal = calories
+                .filter { it.metadata.dataOrigin == s.metadata.dataOrigin && it.startTime < s.endTime && it.endTime > s.startTime }
+                .sumOf { it.energy.inKilocalories }
+            val minutes = Duration.between(s.startTime, s.endTime).toMinutes().toInt()
+            s.startTime.atZone(ZoneId.systemDefault()).toLocalDate() to HealthSession(s.title, s.exerciseType, minutes, kcal.takeIf { it > 0 })
+        }
+    }
+
+    /** Every record of [type] in [range], following the pages; null when unavailable. */
+    private suspend fun <T : Record> readAll(type: KClass<T>, range: TimeRangeFilter): List<T>? = safely {
+        buildList {
+            var token: String? = null
+            do {
+                val page = client.readRecords(ReadRecordsRequest(type, range, pageToken = token))
+                addAll(page.records)
+                token = page.pageToken
+            } while (token != null)
         }
     }
 

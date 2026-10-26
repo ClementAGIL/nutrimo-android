@@ -36,6 +36,8 @@ data class AppSettings(
     val lastServerBackup: Long = 0,
     val macroSplit: MacroSplit = MacroSplit.BALANCED,
     val stepGoal: Int = 10_000,
+    /** Daily calories to burn through sport (manual activities + Health Connect workouts). */
+    val sportGoalKcal: Int = 300,
     /** Off by default: adds Health Connect steps (beyond the baseline) and non-walking workouts to the budget. */
     val healthInBudget: Boolean = false,
 )
@@ -58,6 +60,7 @@ class SettingsRepository(private val context: Context) {
         val carbsPct = intPreferencesKey("carbs_pct")
         val fatPct = intPreferencesKey("fat_pct")
         val stepGoal = intPreferencesKey("step_goal")
+        val sportGoal = intPreferencesKey("sport_goal_kcal")
         val healthInBudget = booleanPreferencesKey("steps_in_budget")
     }
 
@@ -78,8 +81,9 @@ class SettingsRepository(private val context: Context) {
         it[Keys.fatPct] = split.fatPct
     }
 
-    suspend fun setSteps(goal: Int, inBudget: Boolean) = edit {
-        it[Keys.stepGoal] = goal
+    suspend fun setActivityGoals(steps: Int, sportKcal: Int, inBudget: Boolean) = edit {
+        it[Keys.stepGoal] = steps
+        it[Keys.sportGoal] = sportKcal
         it[Keys.healthInBudget] = inBudget
     }
 
@@ -124,6 +128,7 @@ class SettingsRepository(private val context: Context) {
             autoBackup = this[Keys.autoBackup] ?: false,
             lastServerBackup = this[Keys.lastServerBackup] ?: 0,
             stepGoal = this[Keys.stepGoal] ?: d.stepGoal,
+            sportGoalKcal = this[Keys.sportGoal] ?: d.sportGoalKcal,
             healthInBudget = this[Keys.healthInBudget] ?: false,
             macroSplit = MacroSplit(
                 this[Keys.proteinPct] ?: d.macroSplit.proteinPct,

@@ -24,8 +24,13 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   The Pas card has a refresh button; it also refreshes each time you come back to the app.
 - Physical activity: walking, running, cycling, swimming, strength training… with the duration (calories estimated
   from MET values and your weight) or any activity with its kcal; burned calories are added to the day's budget.
-- Calorie history (chart icon in the journal): daily calories vs target over 7 or 30 days, average, days on
-  target, average macros, and the weight loss your logged calories should produce.
+- History (chart icon in the journal):
+  - Calendar (default): one month at a time, a colored dot per daily goal (calories under the budget, weight stable
+    or down, sport calories, steps, water). Filled = achieved, ring = missed, nothing = no data that day (an unlogged
+    day never counts as a success). Tap a day for its details; current and best streak per goal.
+  - Charts: calories, sport, steps and water vs their goal over 7 or 30 days, averages, average macros and the
+    weight loss your logged calories should produce.
+  - Goals: steps and sport in Plus → Pas et sport, water in the profile, calories from the current goal.
 - Food search: instant results on the phone (CIQUAL + foods already used + custom foods + recipes), then the
   Nutrimo server on the home Wi-Fi; away from home, press search on the keyboard to query Open Food Facts.
   Foods you pick are cached on the phone. Recents, favorites (star) and "Mes aliments" tabs.
