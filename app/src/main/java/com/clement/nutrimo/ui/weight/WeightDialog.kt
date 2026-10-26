@@ -21,8 +21,8 @@ import com.clement.nutrimo.ui.common.full
 import com.clement.nutrimo.ui.common.kg
 import com.clement.nutrimo.ui.common.toDecimal
 import com.clement.nutrimo.ui.common.toInput
-import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlinx.coroutines.launch
 
 private val WEIGHT_RANGE = 30.0..400.0
 

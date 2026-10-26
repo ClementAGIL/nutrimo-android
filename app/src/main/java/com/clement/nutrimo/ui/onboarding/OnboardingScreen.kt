@@ -2,13 +2,9 @@
 package com.clement.nutrimo.ui.onboarding
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -22,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.goal.GoalDraft
 import com.clement.nutrimo.ui.goal.GoalForm
@@ -58,10 +55,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
     val vm = appViewModel { c, _ -> OnboardingViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     ScreenScaffold(title = if (state.step == 0) "Bienvenue sur Nutrimo" else "Votre objectif") { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
+        ScrollColumn(padding, spacing = 16.dp) {
             if (state.step == 0) {
                 Text("Quelques informations pour estimer vos besoins caloriques.", style = MaterialTheme.typography.bodyLarge)
                 ProfileForm(state.profile, vm::setProfile)

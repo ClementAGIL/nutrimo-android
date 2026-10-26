@@ -5,11 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
@@ -35,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.data.repository.IngredientLine
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
@@ -53,10 +51,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
     LaunchedEffect(picked) { picked?.let { onPickedConsumed(); vm.addIngredient(it) } }
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
     ScreenScaffold(if (vm.isEdit) "Modifier la recette" else "Nouvelle recette", onBack = onBack, snackbar = snackbar) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        ScrollColumn(padding) {
             OutlinedTextField(draft.name, { v -> vm.update { it.copy(name = v) } }, label = { Text("Nom") }, modifier = Modifier.fillMaxWidth())
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 NumberField(draft.parts, { v -> vm.update { it.copy(parts = v) } }, "Nombre de parts", Modifier.weight(1f))

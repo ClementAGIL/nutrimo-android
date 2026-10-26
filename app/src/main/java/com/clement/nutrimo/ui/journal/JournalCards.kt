@@ -38,7 +38,7 @@ private const val WATER_STEP_ML = 250
 @Composable
 fun SummaryCard(state: JournalUiState, onClick: () -> Unit) {
     val target = state.target?.target
-    SectionCard(modifier = Modifier.clickable(onClick = onClick)) {
+    SectionCard(onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             KcalRing(state.total.kcal, target)
             Column(Modifier.weight(1f)) {

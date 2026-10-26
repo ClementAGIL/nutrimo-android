@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,6 +38,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import com.clement.nutrimo.ui.theme.NutrimoColors
 import androidx.compose.ui.unit.dp
 
 /** Scaffold with a top bar; [onBack] adds a back arrow. */
@@ -66,14 +70,27 @@ fun ScreenScaffold(
     )
 }
 
+/** Card with an optional title; [onClick] makes the whole card clickable (with the card-shaped ripple). */
 @Composable
-fun SectionCard(title: String? = null, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Card(modifier.fillMaxWidth()) {
+fun SectionCard(title: String? = null, onClick: (() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
+    val inner: @Composable ColumnScope.() -> Unit = {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (title != null) Text(title, style = MaterialTheme.typography.titleMedium)
             content()
         }
     }
+    if (onClick != null) Card(onClick = onClick, modifier = Modifier.fillMaxWidth(), content = inner)
+    else Card(Modifier.fillMaxWidth(), content = inner)
+}
+
+/** Scrollable screen body: scaffold [padding] + 16 dp margins, children spaced by [spacing]. */
+@Composable
+fun ScrollColumn(padding: PaddingValues, spacing: Dp = 12.dp, content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(spacing),
+        content = content,
+    )
 }
 
 @Composable
@@ -149,5 +166,5 @@ fun ConfirmDialog(
 
 @Composable
 fun WarningText(text: String) {
-    Text(text, color = com.clement.nutrimo.ui.theme.NutrimoColors.warning, style = MaterialTheme.typography.bodySmall)
+    Text(text, color = NutrimoColors.warning, style = MaterialTheme.typography.bodySmall)
 }

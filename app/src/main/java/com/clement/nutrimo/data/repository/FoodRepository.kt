@@ -73,7 +73,10 @@ class FoodRepository(
         if (s.serverUrl.isNotBlank()) {
             attempt { api.search(s.serverUrl, s.apiKey, query) }?.let { return RemoteResult(it, RemoteSource.BACKEND) }
         }
-        if (!allowOff) return RemoteResult(emptyList(), null, "Serveur injoignable : validez pour chercher sur Open Food Facts")
+        if (!allowOff) {
+            val hint = if (s.serverUrl.isBlank()) "Validez" else "Serveur injoignable : validez"
+            return RemoteResult(emptyList(), null, "$hint pour chercher sur Open Food Facts")
+        }
         return attempt { off.search(query) }?.let { RemoteResult(it, RemoteSource.OFF) }
             ?: RemoteResult(emptyList(), null, "Pas de connexion internet")
     }

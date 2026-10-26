@@ -1,13 +1,8 @@
 // Recipe detail: per part and per 100 g nutrition, ingredients; edit, delete, add to the journal.
 package com.clement.nutrimo.ui.recipe
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -21,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -34,6 +28,7 @@ import com.clement.nutrimo.data.repository.formatParts
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.NutrientTable
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.appViewModel
@@ -70,10 +65,7 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
         IconButton(onClick = { onEdit(vm.id) }) { Icon(Icons.Default.Edit, "Modifier") }
         IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
     }) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        ScrollColumn(padding) {
             Button(onClick = { onLog(vm.id) }, modifier = Modifier.fillMaxWidth()) { Text("Ajouter au journal") }
             SectionCard("${formatParts(d.recipe.parts)} parts · ${fmt(d.totals.weightPerPart, 0)} g par part") {
                 d.lines.forEach { StatRow(it.name, ingredientQuantity(it)) }

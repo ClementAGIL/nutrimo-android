@@ -1,13 +1,8 @@
 // Start a new goal (the current one is archived), prefilled with the latest weigh-in.
 package com.clement.nutrimo.ui.goal
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.toInput
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,10 +55,7 @@ fun GoalEditScreen(onBack: () -> Unit) {
     val draft by vm.draft.collectAsStateWithLifecycle()
     val profile by vm.profile.collectAsStateWithLifecycle()
     ScreenScaffold("Nouvel objectif", onBack = onBack) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
+        ScrollColumn(padding, spacing = 16.dp) {
             GoalForm(draft, { vm.draft.value = it }, profile)
             Button(onClick = { vm.save(onBack) }, enabled = draft.error == null, modifier = Modifier.fillMaxWidth()) {
                 Text("Démarrer cet objectif")

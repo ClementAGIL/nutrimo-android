@@ -2,13 +2,9 @@
 package com.clement.nutrimo.ui.food
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -30,6 +26,7 @@ import com.clement.nutrimo.domain.model.NutrientCatalog
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.appViewModel
@@ -42,10 +39,7 @@ fun CustomFoodScreen(onBack: () -> Unit) {
     ScreenScaffold(if (vm.isEdit) "Modifier l'aliment" else "Nouvel aliment", onBack = onBack, actions = {
         if (vm.isEdit) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
     }) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        ScrollColumn(padding) {
             IdentityCard(draft, vm)
             NutrientsCard(draft, vm)
             MicrosCard(draft, vm)

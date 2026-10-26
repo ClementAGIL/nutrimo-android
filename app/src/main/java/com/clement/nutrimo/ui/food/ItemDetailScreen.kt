@@ -2,13 +2,9 @@
 package com.clement.nutrimo.ui.food
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
@@ -29,6 +25,7 @@ import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.NutrientTable
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.fmt
 
@@ -54,10 +51,7 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
             }
         }
     }) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        ScrollColumn(padding) {
             item.subtitle?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
             item.per100?.let { Text("${fmt(it.kcal, 0)} kcal pour 100 g", style = MaterialTheme.typography.bodySmall) }
             QuantityRow(state, vm)

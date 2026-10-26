@@ -38,8 +38,8 @@ import com.clement.nutrimo.ui.common.day
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.toDecimal
 import com.clement.nutrimo.ui.common.toInput
-import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlinx.coroutines.launch
 
 /** Label and accessors of each measurement, so the list and the dialog share one definition. */
 private data class Field(val label: String, val get: (MeasurementEntity) -> Double?, val set: (MeasurementEntity, Double?) -> MeasurementEntity)

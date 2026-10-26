@@ -2,6 +2,7 @@
 package com.clement.nutrimo.ui.more
 
 import android.Manifest
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -32,10 +33,10 @@ import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.appContainer
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @Composable
 fun RemindersScreen(onBack: () -> Unit) {
@@ -43,16 +44,20 @@ fun RemindersScreen(onBack: () -> Unit) {
     val settingsRepo = appContainer().settings
     val settings by settingsRepo.settings.collectAsStateWithLifecycle(initialValue = null)
     val scope = rememberCoroutineScope()
-    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    // The notification permission only exists from Android 13; before that notifications are allowed by default.
+    val askPermission = {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
     val s = settings ?: return
     ScreenScaffold("Rappels", onBack = onBack) { padding ->
         Column(Modifier.padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             ReminderCard("Pesée hebdomadaire", "Seulement si aucune pesée ce jour-là.", s.weighReminder, withDay = true) { r ->
-                if (r.enabled) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                if (r.enabled) askPermission()
                 scope.launch { settingsRepo.setWeighReminder(r); Reminders.scheduleWeigh(context, r) }
             }
             ReminderCard("Saisie des repas", "Chaque jour, si le journal est vide.", s.mealReminder, withDay = false) { r ->
-                if (r.enabled) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                if (r.enabled) askPermission()
                 scope.launch { settingsRepo.setMealReminder(r); Reminders.scheduleMeal(context, r) }
             }
         }

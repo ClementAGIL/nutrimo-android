@@ -1,26 +1,18 @@
 // About: version, data sources and their licences (attribution is required by ODbL), health disclaimer.
 package com.clement.nutrimo.ui.more
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.BuildConfig
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
     ScreenScaffold("À propos", onBack = onBack) { padding ->
-        Column(
-            Modifier.padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        ScrollColumn(padding) {
             SectionCard("Nutrimo ${BuildConfig.VERSION_NAME}") {
                 Text("Vos données restent sur ce téléphone. Pensez à les exporter (Plus → Sauvegarde).")
             }

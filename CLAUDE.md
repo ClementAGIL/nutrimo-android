@@ -73,7 +73,8 @@ ui/
   weight/                         WeightScreen (3 sub-tabs + FAB), WeightViewModel (progressOf), WeightDashboard,
                                   WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
                                   (series + window) on LineChart (generic Canvas date/value chart)
-  common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components, Pickers,
+  common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components (ScreenScaffold,
+                                  ScrollColumn = standard scrollable screen body, SectionCard(onClick), …), Pickers,
                                   NutrientViews (MacroBars with reference targets, NutrientTable with micros)
   theme/Theme.kt                  Material 3 theme + fixed chart/macro colors
 ```
@@ -105,4 +106,5 @@ ui/
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
 - ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
-- ⏳ Not yet run on a device (no emulator acceleration on the dev PC): test on the phone, then polish.
+- ✅ Installs and launches on the user's phone (Xiaomi, Android 15+); lint clean (only dependency-update notices).
+- ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.
