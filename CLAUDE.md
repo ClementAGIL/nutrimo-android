@@ -105,4 +105,4 @@ ui/
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
 - ✅ Plus tab: server, reminders, JSON backup, measurements, goals, about.
-- ⏳ Polish: device testing, empty states, small UX fixes.
+- ⏳ Not yet run on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

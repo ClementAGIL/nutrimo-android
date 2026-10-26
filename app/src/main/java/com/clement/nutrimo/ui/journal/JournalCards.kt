@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -89,7 +90,8 @@ fun MealCard(
             if (entries.isEmpty()) IconButton(onClick = onCopy) { Icon(Icons.Default.ContentCopy, "Copier depuis la veille") }
             IconButton(onClick = onAdd) { Icon(Icons.Default.Add, "Ajouter") }
         }
-        entries.forEach { EntryRow(it, onEdit, onDelete) }
+        // key(): the swipe state must follow its entry, not its position, once a row is deleted.
+        entries.forEach { entry -> key(entry.id) { EntryRow(entry, onEdit, onDelete) } }
     }
 }
 

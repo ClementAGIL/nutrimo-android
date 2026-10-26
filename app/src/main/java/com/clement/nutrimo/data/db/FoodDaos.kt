@@ -35,8 +35,11 @@ interface FoodDao {
     @Query("SELECT COUNT(*) FROM foods WHERE source = 'CIQUAL'")
     suspend fun ciqualCount(): Int
 
-    /** Only foods worth backing up: custom ones and those the user has used or starred. */
-    @Query("SELECT * FROM foods WHERE source = 'CUSTOM' OR lastUsedAt IS NOT NULL OR isFavorite = 1")
+    /** Foods worth backing up: custom, used, starred, or referenced by a recipe or the diary. */
+    @Query(
+        "SELECT * FROM foods WHERE source = 'CUSTOM' OR lastUsedAt IS NOT NULL OR isFavorite = 1 " +
+            "OR id IN (SELECT foodId FROM recipe_ingredients) OR id IN (SELECT foodId FROM diary)",
+    )
     suspend fun personal(): List<FoodEntity>
 
     @Upsert

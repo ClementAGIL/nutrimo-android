@@ -2,6 +2,8 @@
 package com.clement.nutrimo.data.db
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.clement.nutrimo.domain.model.GoalStatus
@@ -37,7 +39,8 @@ interface WeightDao {
     @Upsert
     suspend fun upsert(weight: WeightEntity)
 
-    @Upsert
+    /** REPLACE also drops a row with the same date (unique index), e.g. when importing a backup. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(weights: List<WeightEntity>)
 
     @Query("DELETE FROM weights WHERE id = :id")
@@ -58,7 +61,7 @@ interface MeasurementDao {
     @Upsert
     suspend fun upsert(measurement: MeasurementEntity)
 
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(measurements: List<MeasurementEntity>)
 
     @Query("DELETE FROM measurements WHERE id = :id")
