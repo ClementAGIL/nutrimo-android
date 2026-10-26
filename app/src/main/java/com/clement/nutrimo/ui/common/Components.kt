@@ -1,0 +1,155 @@
+// Small reusable Compose building blocks shared by the screens.
+package com.clement.nutrimo.ui.common
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+
+/** Scaffold with a top bar; [onBack] adds a back arrow. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScreenScaffold(
+    title: String,
+    onBack: (() -> Unit)? = null,
+    actions: @Composable () -> Unit = {},
+    floatingActionButton: @Composable () -> Unit = {},
+    snackbar: SnackbarHostState = remember { SnackbarHostState() },
+    content: @Composable (PaddingValues) -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(title) },
+                navigationIcon = {
+                    if (onBack != null) {
+                        IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Retour") }
+                    }
+                },
+                actions = { actions() },
+            )
+        },
+        floatingActionButton = floatingActionButton,
+        snackbarHost = { SnackbarHost(snackbar) },
+        content = content,
+    )
+}
+
+@Composable
+fun SectionCard(title: String? = null, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    Card(modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (title != null) Text(title, style = MaterialTheme.typography.titleMedium)
+            content()
+        }
+    }
+}
+
+@Composable
+fun StatRow(label: String, value: String, valueColor: Color = Color.Unspecified) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(label, style = MaterialTheme.typography.bodyMedium)
+        Text(value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = valueColor)
+    }
+}
+
+/** Label, value text and a bar; [progress] is clamped to 0..1. */
+@Composable
+fun ProgressRow(label: String, value: String, progress: Double, color: Color = MaterialTheme.colorScheme.primary) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        StatRow(label, value)
+        LinearProgressIndicator(
+            progress = { progress.toFloat().coerceIn(0f, 1f) },
+            modifier = Modifier.fillMaxWidth().height(10.dp),
+            color = color,
+            strokeCap = StrokeCap.Round,
+            drawStopIndicator = {},
+        )
+    }
+}
+
+/** Text field for decimal numbers; accepts both "," and ".". */
+@Composable
+fun NumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    suffix: String? = null,
+    isError: Boolean = false,
+    supportingText: String? = null,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { text -> onValueChange(text.filter { it.isDigit() || it == ',' || it == '.' }) },
+        label = { Text(label) },
+        suffix = suffix?.let { { Text(it) } },
+        isError = isError,
+        supportingText = supportingText?.let { { Text(it) } },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun EmptyState(text: String, modifier: Modifier = Modifier) {
+    Box(modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
+        Text(text, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+@Composable
+fun ConfirmDialog(
+    title: String,
+    text: String,
+    confirmLabel: String = "Confirmer",
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = { Text(text) },
+        confirmButton = { TextButton(onClick = { onConfirm(); onDismiss() }) { Text(confirmLabel) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },
+    )
+}
+
+@Composable
+fun WarningText(text: String) {
+    Text(text, color = com.clement.nutrimo.ui.theme.NutrimoColors.warning, style = MaterialTheme.typography.bodySmall)
+}

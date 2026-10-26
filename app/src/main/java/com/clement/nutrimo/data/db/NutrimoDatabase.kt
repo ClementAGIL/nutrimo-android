@@ -1,0 +1,32 @@
+// The app's single Room database; all personal data lives here, on the phone.
+package com.clement.nutrimo.data.db
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+
+@Database(
+    entities = [
+        ProfileEntity::class, WeightEntity::class, MeasurementEntity::class, GoalEntity::class, WaterEntity::class,
+        FoodEntity::class, PortionEntity::class, RecipeEntity::class, IngredientEntity::class, DiaryEntity::class,
+    ],
+    version = 1,
+)
+@TypeConverters(Converters::class)
+abstract class NutrimoDatabase : RoomDatabase() {
+    abstract fun profileDao(): ProfileDao
+    abstract fun weightDao(): WeightDao
+    abstract fun measurementDao(): MeasurementDao
+    abstract fun goalDao(): GoalDao
+    abstract fun waterDao(): WaterDao
+    abstract fun foodDao(): FoodDao
+    abstract fun recipeDao(): RecipeDao
+    abstract fun diaryDao(): DiaryDao
+
+    companion object {
+        fun create(context: Context): NutrimoDatabase =
+            Room.databaseBuilder(context, NutrimoDatabase::class.java, "nutrimo.db").build()
+    }
+}
