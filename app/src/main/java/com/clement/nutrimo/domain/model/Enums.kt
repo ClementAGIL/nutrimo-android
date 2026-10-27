@@ -30,7 +30,19 @@ enum class Meal(val label: String) {
     }
 }
 
-enum class FoodSource(val label: String) { CIQUAL("CIQUAL"), OFF("OFF"), CUSTOM("Perso") }
+/** Food ids are "<source>:<key>", e.g. "off:3017620422003" or "custom:<uuid>" (same ids as the Nutrimo API). */
+enum class FoodSource(val label: String) {
+    CIQUAL("CIQUAL"),
+    OFF("OFF"),
+    CUSTOM("Perso"),
+    ;
+
+    private val prefix get() = "${name.lowercase()}:"
+
+    fun id(key: String) = prefix + key
+
+    fun owns(id: String) = id.startsWith(prefix)
+}
 
 /** How a diary quantity is expressed: grams, recipe parts, or a number of a named portion. */
 enum class QuantityUnit { GRAM, PART, PORTION }

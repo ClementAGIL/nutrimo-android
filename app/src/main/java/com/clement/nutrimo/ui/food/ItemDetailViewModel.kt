@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.DiaryEntity
+import com.clement.nutrimo.domain.model.FoodSource
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
@@ -66,7 +67,7 @@ class ItemDetailViewModel(private val c: AppContainer, handle: SavedStateHandle)
             quantity = entry?.quantity?.toInput() ?: if (unit?.unit == QuantityUnit.GRAM) DEFAULT_GRAMS else "1",
             meal = entry?.meal ?: route.meal.takeIf { it.isNotEmpty() }?.let(Meal::valueOf) ?: Meal.LUNCH,
             favorite = foodId?.let { c.foods.food(it)?.isFavorite } ?: recipeId?.let { c.recipes.recipe(it)?.isFavorite } ?: false,
-            isCustom = foodId?.startsWith("custom:") == true,
+            isCustom = foodId?.let(FoodSource.CUSTOM::owns) == true,
         )
     }
 

@@ -1,6 +1,7 @@
 // Remote food sources: the user's Nutrimo API on the PC, and the public Open Food Facts API as a fallback.
 package com.clement.nutrimo.data.network
 
+import com.clement.nutrimo.domain.model.FoodSource
 import com.clement.nutrimo.domain.model.NutrientCatalog
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -78,7 +79,7 @@ internal fun mapOffProduct(p: JsonObject): FoodDto? {
         n.num(offKey)?.let { key to it * (MICRO_FACTOR[NutrientCatalog.unitOf(key)] ?: 1.0) }
     }.toMap()
     return FoodDto(
-        id = "off:$code", source = "off", name = name, brand = p.str("brands")?.substringBefore(',')?.trim(),
+        id = FoodSource.OFF.id(code), source = "off", name = name, brand = p.str("brands")?.substringBefore(',')?.trim(),
         barcode = code, servingLabel = p.str("serving_size"), servingG = p.num("serving_quantity"),
         kcal = kcal, fat = n.num("fat_100g"), satFat = n.num("saturated-fat_100g"), carbs = n.num("carbohydrates_100g"),
         sugars = n.num("sugars_100g"), fiber = n.num("fiber_100g"), protein = n.num("proteins_100g"),

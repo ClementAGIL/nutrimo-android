@@ -58,7 +58,7 @@ data class CustomFoodDraft(
             sugars = macro("sugars"), fiber = macro("fiber"), protein = macro("protein"), salt = macro("salt"),
             micros = micros.mapNotNull { (k, v) -> v.toDecimal()?.let { k to it } }.toMap(),
         )
-        val base = existing ?: FoodEntity(id = "custom:${newId()}", source = FoodSource.CUSTOM, name = name, per100 = per100, searchText = "")
+        val base = existing ?: FoodEntity(id = FoodSource.CUSTOM.id(newId()), source = FoodSource.CUSTOM, name = name, per100 = per100, searchText = "")
         return base.copy(
             name = name.trim(),
             brand = brand.trim().ifEmpty { null },
