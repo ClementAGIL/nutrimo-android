@@ -14,6 +14,7 @@ import com.clement.nutrimo.domain.calc.DayRecord
 import com.clement.nutrimo.domain.calc.KCAL_PER_KG
 import com.clement.nutrimo.ui.common.ChoiceChips
 import com.clement.nutrimo.ui.common.EmptyState
+import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
@@ -42,7 +43,7 @@ fun ChartsTab(state: HistoryState, onDays: (Int) -> Unit) {
     ScrollColumn(PaddingValues()) {
         ChoiceChips(CHART_PERIODS, state.chartDays, { "$it jours" }, onDays)
         if (state.chartRecords.isEmpty()) return@ScrollColumn EmptyState("Aucune donnée sur cette période.")
-        Text("Barres : valeur du jour · pointillés : objectif", style = MaterialTheme.typography.bodySmall)
+        HintText("Barres : valeur du jour · pointillés : objectif")
         METRICS.forEach { MetricChart(it, state) }
         HistoryStats(state)
     }
@@ -60,7 +61,7 @@ private fun HistoryState.goalValue(goal: DailyGoal): Double? = when (goal) {
 private fun MetricChart(metric: Metric, state: HistoryState) {
     val bars = state.chartRecords.mapNotNull { r -> metric.value(r)?.let { ChartPoint(r.date, it) } }
     SectionCard(metric.title) {
-        if (bars.isEmpty()) return@SectionCard Text("Aucune donnée", style = MaterialTheme.typography.bodySmall)
+        if (bars.isEmpty()) return@SectionCard HintText("Aucune donnée")
         val end = state.today.plusDays(1)
         val goal = state.goalValue(metric.goal)
         val top = maxOf(bars.maxOf { it.value }, goal ?: 0.0) * 1.1

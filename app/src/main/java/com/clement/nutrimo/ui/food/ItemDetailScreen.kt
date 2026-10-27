@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.Dropdown
+import com.clement.nutrimo.ui.common.HintText
+import com.clement.nutrimo.ui.common.IntroText
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.NutrientTable
 import com.clement.nutrimo.ui.common.ScreenScaffold
@@ -53,8 +54,8 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
         }
     }) { padding ->
         ScrollColumn(padding) {
-            item.subtitle?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-            item.per100?.let { Text("${fmt(it.kcal, 0)} kcal pour 100 g", style = MaterialTheme.typography.bodySmall) }
+            item.subtitle?.let { IntroText(it) }
+            item.per100?.let { HintText("${fmt(it.kcal, 0)} kcal pour 100 g") }
             QuantityRow(state, vm)
             if (!vm.route.forRecipe) Dropdown("Repas", state.meal, Meal.entries, { it.label }, vm::setMeal, Modifier.fillMaxWidth())
             state.preview?.let { NutrientTable(it, "Pour cette quantité") }

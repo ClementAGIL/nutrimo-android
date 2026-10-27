@@ -65,7 +65,7 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -
             GoalSettingsButton(onGoalSettings)
         }
         MacroBars(state.total, target?.let { state.macroSplit.grams(it) })
-        Text("Toucher pour le détail des nutriments", style = MaterialTheme.typography.bodySmall)
+        HintText("Toucher pour le détail des nutriments")
     }
 }
 
