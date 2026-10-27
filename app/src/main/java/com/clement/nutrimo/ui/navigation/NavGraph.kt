@@ -1,8 +1,10 @@
 // The navigation graph: every destination and how screens navigate to each other.
 package com.clement.nutrimo.ui.navigation
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -70,25 +72,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
 
 /** Search → (scanner) → quantity screen, and custom foods. */
 private fun NavGraphBuilder.foodDestinations(nav: NavHostController, back: () -> Unit) {
-    composable<AddFoodRoute> { entry ->
-        val route = entry.toRoute<AddFoodRoute>()
-        val scanned by entry.savedStateHandle.getStateFlow<String?>(NavResults.BARCODE, null).collectAsStateWithLifecycle()
-        val detail = { foodId: String?, recipeId: String? ->
-            nav.navigate(ItemDetailRoute(foodId, recipeId, route.epochDay, route.meal, forRecipe = route.forRecipe))
-        }
-        AddFoodScreen(
-            AddFoodActions(
-                onBack = back,
-                onFood = { detail(it, null) },
-                onRecipe = { detail(null, it) },
-                onScan = { nav.navigate(ScannerRoute) },
-                onCreate = { nav.navigate(CustomFoodRoute(barcode = it)) },
-                onLogged = { nav.popBackStack<JournalRoute>(inclusive = false) },
-            ),
-            scannedBarcode = scanned,
-            onBarcodeConsumed = { entry.savedStateHandle[NavResults.BARCODE] = null },
-        )
-    }
+    composable<AddFoodRoute> { entry -> AddFoodDestination(entry, nav, back) }
     composable<ItemDetailRoute> {
         ItemDetailScreen(
             ItemDetailActions(
@@ -109,6 +93,28 @@ private fun NavGraphBuilder.foodDestinations(nav: NavHostController, back: () ->
         })
     }
     composable<CustomFoodRoute> { CustomFoodScreen(onBack = back) }
+}
+
+/** The search screen; a scanned barcode comes back through NavResults.BARCODE. */
+@Composable
+private fun AddFoodDestination(entry: NavBackStackEntry, nav: NavHostController, back: () -> Unit) {
+    val route = entry.toRoute<AddFoodRoute>()
+    val scanned by entry.savedStateHandle.getStateFlow<String?>(NavResults.BARCODE, null).collectAsStateWithLifecycle()
+    val detail = { foodId: String?, recipeId: String? ->
+        nav.navigate(ItemDetailRoute(foodId, recipeId, route.epochDay, route.meal, forRecipe = route.forRecipe))
+    }
+    AddFoodScreen(
+        AddFoodActions(
+            onBack = back,
+            onFood = { detail(it, null) },
+            onRecipe = { detail(null, it) },
+            onScan = { nav.navigate(ScannerRoute) },
+            onCreate = { nav.navigate(CustomFoodRoute(barcode = it)) },
+            onLogged = { nav.popBackStack<JournalRoute>(inclusive = false) },
+        ),
+        scannedBarcode = scanned,
+        onBarcodeConsumed = { entry.savedStateHandle[NavResults.BARCODE] = null },
+    )
 }
 
 /** Recipe detail and editor; the editor receives picked ingredients through NavResults.INGREDIENT. */

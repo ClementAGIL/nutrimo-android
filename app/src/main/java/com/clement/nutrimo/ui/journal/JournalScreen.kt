@@ -59,36 +59,40 @@ fun JournalScreen(actions: JournalActions) {
     }
     ScreenScaffold("Journal", snackbar = snackbar, actions = {
         IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, "Historique") }
-    }) { padding ->
-        LazyColumn(
-            Modifier.padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            item { DayBar(state.date, vm::shiftDay) { vm.setDate(LocalDate.now()) } }
-            item { SummaryCard(state, { actions.onDetails(state.date) }) { actions.onGoalSettings(GoalEditRoute) } }
-            items(Meal.entries) { meal ->
-                val entries = state.meals[meal].orEmpty()
-                MealCard(
-                    meal,
-                    entries,
-                    MealCardActions(
-                        onAdd = { actions.onAdd(state.date, meal) },
-                        onEdit = actions.onEdit,
-                        onDelete = vm::delete,
-                        onCopy = { vm.copyFromPreviousDay(meal) },
-                        onSave = { name -> vm.saveMeal(name, entries) },
-                    ),
-                )
-            }
-            item { StepsCard(state.health, state.targets.steps, state.healthInBudget, vm::refreshHealth) { actions.onGoalSettings(StepsRoute) } }
-            item {
-                ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.targets.sportKcal) {
-                    actions.onGoalSettings(StepsRoute)
-                }
-            }
-            item { WaterCard(state.waterMl, state.targets.waterMl, vm::addWater) { actions.onGoalSettings(ProfileRoute) } }
+    }) { padding -> JournalList(state, vm, actions, padding) }
+}
+
+/** The day: date bar, summary, the four meals, then steps, activities and water. */
+@Composable
+private fun JournalList(state: JournalUiState, vm: JournalViewModel, actions: JournalActions, padding: PaddingValues) {
+    LazyColumn(
+        Modifier.padding(padding),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item { DayBar(state.date, vm::shiftDay) { vm.setDate(LocalDate.now()) } }
+        item { SummaryCard(state, { actions.onDetails(state.date) }) { actions.onGoalSettings(GoalEditRoute) } }
+        items(Meal.entries) { meal ->
+            val entries = state.meals[meal].orEmpty()
+            MealCard(
+                meal,
+                entries,
+                MealCardActions(
+                    onAdd = { actions.onAdd(state.date, meal) },
+                    onEdit = actions.onEdit,
+                    onDelete = vm::delete,
+                    onCopy = { vm.copyFromPreviousDay(meal) },
+                    onSave = { name -> vm.saveMeal(name, entries) },
+                ),
+            )
         }
+        item { StepsCard(state.health, state.targets.steps, state.healthInBudget, vm::refreshHealth) { actions.onGoalSettings(StepsRoute) } }
+        item {
+            ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.targets.sportKcal) {
+                actions.onGoalSettings(StepsRoute)
+            }
+        }
+        item { WaterCard(state.waterMl, state.targets.waterMl, vm::addWater) { actions.onGoalSettings(ProfileRoute) } }
     }
 }
 
