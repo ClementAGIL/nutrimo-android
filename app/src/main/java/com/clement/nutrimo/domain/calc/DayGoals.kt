@@ -14,7 +14,15 @@ enum class DailyGoal(val label: String, val skipsEmptyDays: Boolean = false) {
     WATER("Eau"),
 }
 
-data class GoalTargets(val steps: Int, val sportKcal: Int, val waterMl: Int)
+const val DEFAULT_STEP_GOAL = 10_000
+const val DEFAULT_SPORT_GOAL_KCAL = 300
+const val DEFAULT_WATER_GOAL_ML = 2000
+
+data class GoalTargets(
+    val steps: Int = DEFAULT_STEP_GOAL,
+    val sportKcal: Int = DEFAULT_SPORT_GOAL_KCAL,
+    val waterMl: Int = DEFAULT_WATER_GOAL_ML,
+)
 
 /** Everything known about one day; null fields mean "nothing recorded". */
 data class DayRecord(

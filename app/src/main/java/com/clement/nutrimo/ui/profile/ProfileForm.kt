@@ -1,7 +1,6 @@
 // Profile form (sex, birth date, height, activity, water goal), shared by onboarding and the profile screen.
 package com.clement.nutrimo.ui.profile
 
-import com.clement.nutrimo.data.db.DEFAULT_WATER_GOAL_ML
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.ProfileEntity
+import com.clement.nutrimo.domain.calc.DEFAULT_WATER_GOAL_ML
 import com.clement.nutrimo.domain.model.ActivityLevel
 import com.clement.nutrimo.domain.model.Sex
 import com.clement.nutrimo.ui.common.ChoiceChips

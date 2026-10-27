@@ -81,13 +81,13 @@ fun JournalScreen(actions: JournalActions) {
                     ),
                 )
             }
-            item { StepsCard(state.health, state.stepGoal, state.healthInBudget, vm::refreshHealth) { actions.onGoalSettings(StepsRoute) } }
+            item { StepsCard(state.health, state.targets.steps, state.healthInBudget, vm::refreshHealth) { actions.onGoalSettings(StepsRoute) } }
             item {
-                ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.sportGoalKcal) {
+                ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.targets.sportKcal) {
                     actions.onGoalSettings(StepsRoute)
                 }
             }
-            item { WaterCard(state.waterMl, state.waterGoalMl, vm::addWater) { actions.onGoalSettings(ProfileRoute) } }
+            item { WaterCard(state.waterMl, state.targets.waterMl, vm::addWater) { actions.onGoalSettings(ProfileRoute) } }
         }
     }
 }

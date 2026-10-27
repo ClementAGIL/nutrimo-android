@@ -13,7 +13,7 @@ import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
-import kotlinx.coroutines.CancellationException
+import com.clement.nutrimo.data.nullOnError
 import java.time.Duration
 import java.time.LocalDate
 import java.time.Period
@@ -46,12 +46,12 @@ class HealthRepository(private val context: Context) {
     }
 
     suspend fun granted(): Set<String> =
-        if (status() != HealthStatus.AVAILABLE) emptySet() else safely { client.permissionController.getGrantedPermissions() }.orEmpty()
+        if (status() != HealthStatus.AVAILABLE) emptySet() else nullOnError { client.permissionController.getGrantedPermissions() }.orEmpty()
 
     suspend fun canReadSteps(): Boolean = STEPS_PERMISSION in granted()
 
     /** Steps of one day (deduplicated across sources by Health Connect), or null when unavailable. */
-    suspend fun stepsOn(date: LocalDate): Long? = safely {
+    suspend fun stepsOn(date: LocalDate): Long? = nullOnError {
         client.aggregate(AggregateRequest(setOf(StepsRecord.COUNT_TOTAL), dayRange(date, date)))[StepsRecord.COUNT_TOTAL] ?: 0
     }
 
@@ -59,7 +59,7 @@ class HealthRepository(private val context: Context) {
     suspend fun dailySteps(from: LocalDate, to: LocalDate): Map<LocalDate, Long> {
         if (!canReadSteps()) return emptyMap()
         val request = AggregateGroupByPeriodRequest(setOf(StepsRecord.COUNT_TOTAL), dayRange(from, to), Period.ofDays(1))
-        return safely {
+        return nullOnError {
             client.aggregateGroupByPeriod(request).associate { it.startTime.toLocalDate() to (it.result[StepsRecord.COUNT_TOTAL] ?: 0) }
         }.orEmpty()
     }
@@ -83,7 +83,7 @@ class HealthRepository(private val context: Context) {
     }
 
     /** Every record of [type] in [range], following the pages; null when unavailable. */
-    private suspend fun <T : Record> readAll(type: KClass<T>, range: TimeRangeFilter): List<T>? = safely {
+    private suspend fun <T : Record> readAll(type: KClass<T>, range: TimeRangeFilter): List<T>? = nullOnError {
         buildList {
             var token: String? = null
             do {
@@ -96,13 +96,4 @@ class HealthRepository(private val context: Context) {
 
     private fun dayRange(from: LocalDate, to: LocalDate) =
         TimeRangeFilter.between(from.atStartOfDay(), to.plusDays(1).atStartOfDay())
-}
-
-/** Health Connect can throw (permission revoked, provider killed, rate limit): treat it as "no data". */
-private suspend fun <T> safely(block: suspend () -> T): T? = try {
-    block()
-} catch (e: CancellationException) {
-    throw e
-} catch (_: Exception) {
-    null
 }

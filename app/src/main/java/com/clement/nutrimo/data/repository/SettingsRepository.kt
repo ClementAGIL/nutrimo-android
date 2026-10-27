@@ -9,6 +9,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.clement.nutrimo.data.db.ProfileEntity
+import com.clement.nutrimo.domain.calc.DEFAULT_SPORT_GOAL_KCAL
+import com.clement.nutrimo.domain.calc.DEFAULT_STEP_GOAL
+import com.clement.nutrimo.domain.calc.DEFAULT_WATER_GOAL_ML
+import com.clement.nutrimo.domain.calc.GoalTargets
 import com.clement.nutrimo.domain.calc.MacroSplit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -35,12 +40,16 @@ data class AppSettings(
     /** Epoch millis of the last successful server backup, 0 if none. */
     val lastServerBackup: Long = 0,
     val macroSplit: MacroSplit = MacroSplit.BALANCED,
-    val stepGoal: Int = 10_000,
+    val stepGoal: Int = DEFAULT_STEP_GOAL,
     /** Daily calories to burn through sport (manual activities + Health Connect workouts). */
-    val sportGoalKcal: Int = 300,
+    val sportGoalKcal: Int = DEFAULT_SPORT_GOAL_KCAL,
     /** Off by default: adds Health Connect steps (beyond the baseline) and non-walking workouts to the budget. */
     val healthInBudget: Boolean = false,
 )
+
+/** The daily goals; the water goal lives in the profile. */
+fun AppSettings.goalTargets(profile: ProfileEntity?) =
+    GoalTargets(stepGoal, sportGoalKcal, profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML)
 
 class SettingsRepository(private val context: Context) {
     private object Keys {

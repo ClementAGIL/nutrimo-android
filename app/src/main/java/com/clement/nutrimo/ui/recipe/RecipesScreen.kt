@@ -27,16 +27,15 @@ import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.kcal
-import kotlinx.coroutines.flow.SharingStarted
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 data class RecipeSummary(val recipe: RecipeEntity, val kcalPerPart: Double?, val useCount: Int)
 
 class RecipesViewModel(c: AppContainer) : ViewModel() {
     val recipes = c.recipes.recipesWithUses
         .map { list -> list.map { RecipeSummary(it.recipe, c.recipes.totals(it.recipe.id)?.perPart?.kcal, it.useCount) } }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .stateWhileSubscribed(viewModelScope, emptyList())
 }
 
 @Composable

@@ -11,12 +11,11 @@ import com.clement.nutrimo.data.db.RecipeEntity
 import com.clement.nutrimo.data.network.FoodDto
 import com.clement.nutrimo.data.repository.RemoteSource
 import com.clement.nutrimo.domain.model.Meal
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import com.clement.nutrimo.ui.navigation.AddFoodRoute
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -39,11 +38,11 @@ data class SearchUiState(
 class AddFoodViewModel(private val c: AppContainer, handle: SavedStateHandle) : ViewModel() {
     val route = handle.toRoute<AddFoodRoute>()
     val state = MutableStateFlow(SearchUiState())
-    val recent = c.foods.recent.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-    val favorites = c.foods.favorites.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-    val custom = c.foods.custom.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-    val savedMeals = c.savedMeals.meals.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-    val allRecipes = c.recipes.recipes.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val recent = c.foods.recent.stateWhileSubscribed(viewModelScope, emptyList())
+    val favorites = c.foods.favorites.stateWhileSubscribed(viewModelScope, emptyList())
+    val custom = c.foods.custom.stateWhileSubscribed(viewModelScope, emptyList())
+    val savedMeals = c.savedMeals.meals.stateWhileSubscribed(viewModelScope, emptyList())
+    val allRecipes = c.recipes.recipes.stateWhileSubscribed(viewModelScope, emptyList())
     private var searchJob: Job? = null
 
     fun onQuery(q: String) {

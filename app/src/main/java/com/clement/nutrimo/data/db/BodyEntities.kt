@@ -7,6 +7,7 @@ package com.clement.nutrimo.data.db
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.clement.nutrimo.domain.calc.DEFAULT_WATER_GOAL_ML
 import com.clement.nutrimo.domain.model.ActivityLevel
 import com.clement.nutrimo.domain.model.GoalMode
 import com.clement.nutrimo.domain.model.GoalStatus
@@ -19,7 +20,6 @@ import java.util.UUID
 fun newId(): String = UUID.randomUUID().toString()
 fun now(): Long = System.currentTimeMillis()
 
-const val DEFAULT_WATER_GOAL_ML = 2000
 
 /** Used for calorie estimates before the first weigh-in (should not happen after onboarding). */
 const val DEFAULT_WEIGHT_KG = 70.0

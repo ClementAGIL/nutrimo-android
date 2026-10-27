@@ -14,10 +14,9 @@ import com.clement.nutrimo.domain.calc.GoalMath
 import com.clement.nutrimo.domain.calc.GoalProgress
 import com.clement.nutrimo.domain.calc.WeightPoint
 import com.clement.nutrimo.domain.model.GoalStatus
-import kotlinx.coroutines.flow.SharingStarted
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -46,11 +45,11 @@ class WeightViewModel(private val c: AppContainer) : ViewModel() {
             bmi = if (profile != null && current != null) Bmi.of(current, profile.heightCm) else null,
             target = target,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WeightUiState())
+    }.stateWhileSubscribed(viewModelScope, WeightUiState())
 
     /** Newest first. */
     val measurements: StateFlow<List<MeasurementEntity>> =
-        c.body.measurementHistory.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        c.body.measurementHistory.stateWhileSubscribed(viewModelScope, emptyList())
 
     suspend fun existingOn(date: LocalDate): WeightEntity? = c.body.weightOn(date)
 

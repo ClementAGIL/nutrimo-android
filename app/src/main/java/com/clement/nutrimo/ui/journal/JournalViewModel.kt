@@ -2,7 +2,6 @@
 package com.clement.nutrimo.ui.journal
 
 import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
-import com.clement.nutrimo.data.db.DEFAULT_WATER_GOAL_ML
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
@@ -15,19 +14,20 @@ import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.data.health.STEPS_PERMISSION
 import com.clement.nutrimo.data.health.healthBudgetKcal
 import com.clement.nutrimo.data.health.toImported
+import com.clement.nutrimo.data.repository.goalTargets
 import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.domain.calc.CalorieTarget
+import com.clement.nutrimo.domain.calc.GoalTargets
 import com.clement.nutrimo.domain.calc.MacroSplit
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -37,12 +37,10 @@ data class JournalUiState(
     val total: Nutrients = Nutrients.ZERO,
     val target: CalorieTarget? = null,
     val waterMl: Int = 0,
-    val waterGoalMl: Int = DEFAULT_WATER_GOAL_ML,
     val activities: List<ActivityEntity> = emptyList(),
     val macroSplit: MacroSplit = MacroSplit.BALANCED,
     val health: HealthInfo? = null,
-    val sportGoalKcal: Int = 300,
-    val stepGoal: Int = 10_000,
+    val targets: GoalTargets = GoalTargets(),
     val healthInBudget: Boolean = false,
 ) {
     /** kcal added to the target: logged activities, plus Health Connect data when the user opted in. */
@@ -86,15 +84,13 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
             total = Nutrients.sum(d.entries.map { it.nutrients }),
             target = target,
             waterMl = d.water?.ml ?: 0,
-            waterGoalMl = profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML,
             activities = d.activities,
             macroSplit = settings.macroSplit,
             health = healthInfo,
-            stepGoal = settings.stepGoal,
-            sportGoalKcal = settings.sportGoalKcal,
+            targets = settings.goalTargets(profile),
             healthInBudget = settings.healthInBudget,
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), JournalUiState())
+    }.stateWhileSubscribed(viewModelScope, JournalUiState())
 
     fun shiftDay(days: Long) = setDate(date.value.plusDays(days))
 

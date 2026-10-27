@@ -2,27 +2,26 @@
 package com.clement.nutrimo.ui.history
 
 import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
-import com.clement.nutrimo.data.db.DEFAULT_WATER_GOAL_ML
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.data.health.toImported
+import com.clement.nutrimo.data.repository.goalTargets
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.DailyGoal
 import com.clement.nutrimo.domain.calc.DayRecord
 import com.clement.nutrimo.domain.calc.GoalTargets
 import com.clement.nutrimo.domain.calc.Streak
 import com.clement.nutrimo.domain.calc.streak
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -36,7 +35,7 @@ data class HistoryState(
     val records: Map<LocalDate, DayRecord> = emptyMap(),
     val totals: List<DayTotal> = emptyList(),
     val target: CalorieTarget? = null,
-    val targets: GoalTargets = GoalTargets(10_000, 300, DEFAULT_WATER_GOAL_ML),
+    val targets: GoalTargets = GoalTargets(),
     val month: YearMonth = YearMonth.now(),
     val selected: LocalDate = LocalDate.now(),
     val chartDays: Int = CHART_PERIODS.first(),
@@ -76,10 +75,10 @@ class HistoryViewModel(private val c: AppContainer) : ViewModel() {
             records = buildRecords(l, h, target?.target, settings.healthInBudget, kg),
             totals = l.totals,
             target = target,
-            targets = GoalTargets(settings.stepGoal, settings.sportGoalKcal, profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML),
+            targets = settings.goalTargets(profile),
         )
     }.combine(browse) { s, b -> s.copy(month = b.month, selected = b.selected, chartDays = b.chartDays) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HistoryState())
+        .stateWhileSubscribed(viewModelScope, HistoryState())
 
     init {
         // Health Connect is not observable: read once per loaded range.

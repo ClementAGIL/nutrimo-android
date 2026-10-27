@@ -12,11 +12,11 @@ import com.clement.nutrimo.data.network.NutrimoApi
 import com.clement.nutrimo.data.network.OffApi
 import com.clement.nutrimo.data.network.servingPortion
 import com.clement.nutrimo.data.network.toEntity
+import com.clement.nutrimo.data.nullOnError
 import com.clement.nutrimo.domain.model.FoodSource
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.Portion
 import com.clement.nutrimo.domain.model.normalized
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -71,13 +71,13 @@ class FoodRepository(
     suspend fun searchRemote(query: String, allowOff: Boolean): RemoteResult {
         val s = settings.current()
         if (s.serverUrl.isNotBlank()) {
-            attempt { api.search(s.serverUrl, s.apiKey, query) }?.let { return RemoteResult(it, RemoteSource.BACKEND) }
+            nullOnError { api.search(s.serverUrl, s.apiKey, query) }?.let { return RemoteResult(it, RemoteSource.BACKEND) }
         }
         if (!allowOff) {
             val hint = if (s.serverUrl.isBlank()) "Validez" else "Serveur injoignable : validez"
             return RemoteResult(emptyList(), null, "$hint pour chercher sur Open Food Facts")
         }
-        return attempt { off.search(query) }?.let { RemoteResult(it, RemoteSource.OFF) }
+        return nullOnError { off.search(query) }?.let { RemoteResult(it, RemoteSource.OFF) }
             ?: RemoteResult(emptyList(), null, "Pas de connexion internet")
     }
 
@@ -85,8 +85,8 @@ class FoodRepository(
     suspend fun findByBarcode(code: String): FoodEntity? {
         dao.byBarcode(code)?.let { return it }
         val s = settings.current()
-        val dto = (if (s.serverUrl.isNotBlank()) attempt { api.barcode(s.serverUrl, s.apiKey, code) } else null)
-            ?: attempt { off.product(code) }
+        val dto = (if (s.serverUrl.isNotBlank()) nullOnError { api.barcode(s.serverUrl, s.apiKey, code) } else null)
+            ?: nullOnError { off.product(code) }
         return dto?.let { cache(it) }
     }
 
@@ -135,10 +135,3 @@ class FoodRepository(
 }
 
 /** Runs a network call; null on any failure except coroutine cancellation. */
-private suspend fun <T> attempt(block: suspend () -> T): T? = try {
-    block()
-} catch (e: CancellationException) {
-    throw e
-} catch (_: Exception) {
-    null
-}
