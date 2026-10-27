@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,7 +17,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.data.repository.IngredientLine
+import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -101,15 +100,10 @@ private fun TotalsCard(draft: RecipeDraft) {
 private fun QuantityDialog(line: IngredientLine, onSave: (Double) -> Unit, onDismiss: () -> Unit) {
     var text by remember { mutableStateOf(line.ingredient.quantity.toInput()) }
     val isPart = line.ingredient.subRecipeId != null
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(line.name) },
-        text = { NumberField(text, { text = it }, "Quantité", suffix = if (isPart) "part(s)" else "g") },
-        confirmButton = {
-            TextButton(onClick = { text.toDecimal()?.takeIf { it > 0 }?.let(onSave); onDismiss() }) { Text("OK") }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },
-    )
+    val quantity = text.toDecimal()?.takeIf { it > 0 }
+    FormDialog(line.name, onDismiss, { quantity?.let(onSave) }, canConfirm = quantity != null) {
+        NumberField(text, { text = it }, "Quantité", suffix = if (isPart) "part(s)" else "g")
+    }
 }
 
 fun ingredientQuantity(line: IngredientLine): String =

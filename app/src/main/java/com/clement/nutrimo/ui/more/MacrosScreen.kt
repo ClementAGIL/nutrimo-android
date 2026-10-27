@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.domain.calc.MACRO_PRESETS
 import com.clement.nutrimo.domain.calc.MacroSplit
+import com.clement.nutrimo.ui.common.ChoiceChips
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -41,11 +41,7 @@ fun MacrosScreen(onBack: () -> Unit) {
     ScreenScaffold("Objectifs de macros", onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText("Part de vos calories pour chaque macronutriment.")
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                MACRO_PRESETS.forEach { (label, preset) ->
-                    FilterChip(selected = split == preset, onClick = { split = preset }, label = { Text(label) })
-                }
-            }
+            ChoiceChips(MACRO_PRESETS, MACRO_PRESETS.find { it.second == split }, { it.first }) { split = it.second }
             PercentFields(split) { split = it }
             if (split.total != 100) WarningText("Total : ${split.total} % (doit faire 100 %)")
             target?.let { t ->

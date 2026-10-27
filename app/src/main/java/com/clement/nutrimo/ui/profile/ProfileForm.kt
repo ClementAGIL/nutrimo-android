@@ -4,16 +4,14 @@ package com.clement.nutrimo.ui.profile
 import com.clement.nutrimo.data.db.DEFAULT_WATER_GOAL_ML
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.domain.model.ActivityLevel
 import com.clement.nutrimo.domain.model.Sex
+import com.clement.nutrimo.ui.common.ChoiceChips
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.NumberField
@@ -50,11 +48,7 @@ data class ProfileDraft(
 @Composable
 fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Sex.entries.forEach { sex ->
-                FilterChip(selected = draft.sex == sex, onClick = { onChange(draft.copy(sex = sex)) }, label = { Text(sex.label) })
-            }
-        }
+        ChoiceChips(Sex.entries, draft.sex, { it.label }) { onChange(draft.copy(sex = it)) }
         DateField(
             label = "Date de naissance",
             date = draft.birthDate,

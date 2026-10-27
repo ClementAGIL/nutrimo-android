@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +25,7 @@ import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.Dropdown
+import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ProgressRow
@@ -84,22 +83,15 @@ private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: ()
     var minutes by remember { mutableStateOf("30") }
     var manual by remember { mutableStateOf("") }
     val valid = if (type.met != null) minutes.toDecimal()?.let { it > 0 } == true else manual.toDecimal()?.let { it > 0 } == true
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Activité") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Dropdown("Type", type, Activities.TYPES, { it.label }, { type = it }, Modifier.fillMaxWidth())
-                if (type.met != null) NumberField(minutes, { minutes = it }, "Durée", Modifier.fillMaxWidth(), "min")
-                else NumberField(manual, { manual = it }, "Calories dépensées", Modifier.fillMaxWidth(), "kcal")
-            }
-        },
-        confirmButton = {
-            TextButton(enabled = valid, onClick = {
-                onAdd(type.key, minutes.toDecimal()?.toInt()?.takeIf { type.met != null }, manual.toDecimal())
-                onDismiss()
-            }) { Text("Ajouter") }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },
-    )
+    FormDialog(
+        "Activité", onDismiss,
+        { onAdd(type.key, minutes.toDecimal()?.toInt()?.takeIf { type.met != null }, manual.toDecimal()) },
+        confirmLabel = "Ajouter", canConfirm = valid,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Dropdown("Type", type, Activities.TYPES, { it.label }, { type = it }, Modifier.fillMaxWidth())
+            if (type.met != null) NumberField(minutes, { minutes = it }, "Durée", Modifier.fillMaxWidth(), "min")
+            else NumberField(manual, { manual = it }, "Calories dépensées", Modifier.fillMaxWidth(), "kcal")
+        }
+    }
 }

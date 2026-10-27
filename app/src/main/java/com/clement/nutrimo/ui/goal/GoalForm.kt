@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.domain.calc.Energy
 import com.clement.nutrimo.domain.model.GoalMode
+import com.clement.nutrimo.ui.common.ChoiceChips
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.SectionCard
@@ -52,14 +52,8 @@ fun GoalForm(draft: GoalDraft, onChange: (GoalDraft) -> Unit, profile: ProfileEn
 
 @Composable
 private fun PaceChooser(draft: GoalDraft, onChange: (GoalDraft) -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        (PACE_PRESETS + CUSTOM_PACE).forEach { p ->
-            FilterChip(
-                selected = draft.preset == p,
-                onClick = { onChange(draft.copy(preset = p)) },
-                label = { Text(if (p == CUSTOM_PACE) "Autre" else "${fmt(p)} kg") },
-            )
-        }
+    ChoiceChips(PACE_PRESETS + CUSTOM_PACE, draft.preset, { if (it == CUSTOM_PACE) "Autre" else "${fmt(it)} kg" }) {
+        onChange(draft.copy(preset = it))
     }
     if (draft.preset == CUSTOM_PACE) {
         NumberField(draft.customPace, { onChange(draft.copy(customPace = it)) }, "Rythme", Modifier.fillMaxWidth(), "kg / semaine")

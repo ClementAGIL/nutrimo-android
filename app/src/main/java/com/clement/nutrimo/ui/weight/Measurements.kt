@@ -10,13 +10,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +27,7 @@ import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.FAB_CLEARANCE
+import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.day
 import com.clement.nutrimo.ui.common.fmt
@@ -73,22 +72,12 @@ fun MeasurementList(list: List<MeasurementEntity>, onEdit: (MeasurementEntity) -
 fun MeasurementDialog(initial: MeasurementEntity, onSave: (MeasurementEntity) -> Unit, onDismiss: () -> Unit) {
     var date by remember { mutableStateOf(initial.date) }
     val texts = remember { MEASUREMENT_FIELDS.map { f -> mutableStateOf(f.get(initial)?.toInput().orEmpty()) } }
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Mensurations") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                DateField("Date", date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
-                MEASUREMENT_FIELDS.forEachIndexed { i, f -> NumberField(texts[i].value, { texts[i].value = it }, f.label, Modifier.fillMaxWidth(), "cm") }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = {
-                val filled = MEASUREMENT_FIELDS.foldIndexed(initial.copy(date = date)) { i, m, f -> f.set(m, texts[i].value.toDecimal()) }
-                onSave(filled)
-                onDismiss()
-            }) { Text("Enregistrer") }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },
-    )
+    FormDialog("Mensurations", onDismiss, {
+        onSave(MEASUREMENT_FIELDS.foldIndexed(initial.copy(date = date)) { i, m, f -> f.set(m, texts[i].value.toDecimal()) })
+    }, confirmLabel = "Enregistrer") {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            DateField("Date", date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
+            MEASUREMENT_FIELDS.forEachIndexed { i, f -> NumberField(texts[i].value, { texts[i].value = it }, f.label, Modifier.fillMaxWidth(), "cm") }
+        }
+    }
 }

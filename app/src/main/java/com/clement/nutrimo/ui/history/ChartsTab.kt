@@ -1,12 +1,9 @@
 // Charts tab: daily bars against the goal line for calories, sport, steps and water over 7 or 30 days, plus averages.
 package com.clement.nutrimo.ui.history
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.domain.calc.DailyGoal
 import com.clement.nutrimo.domain.calc.DayRecord
 import com.clement.nutrimo.domain.calc.KCAL_PER_KG
+import com.clement.nutrimo.ui.common.ChoiceChips
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
@@ -42,9 +40,7 @@ private val METRICS = listOf(
 @Composable
 fun ChartsTab(state: HistoryState, onDays: (Int) -> Unit) {
     ScrollColumn(PaddingValues()) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            CHART_PERIODS.forEach { d -> FilterChip(selected = state.chartDays == d, onClick = { onDays(d) }, label = { Text("$d jours") }) }
-        }
+        ChoiceChips(CHART_PERIODS, state.chartDays, { "$it jours" }, onDays)
         if (state.chartRecords.isEmpty()) return@ScrollColumn EmptyState("Aucune donnée sur cette période.")
         Text("Barres : valeur du jour · pointillés : objectif", style = MaterialTheme.typography.bodySmall)
         METRICS.forEach { MetricChart(it, state) }
