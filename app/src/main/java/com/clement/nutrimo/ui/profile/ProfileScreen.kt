@@ -1,13 +1,9 @@
 // Edit the profile used for the calorie target.
 package com.clement.nutrimo.ui.profile
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -40,9 +37,7 @@ fun ProfileScreen(onBack: () -> Unit) {
     ScreenScaffold("Profil", onBack = onBack) { padding ->
         ScrollColumn(padding, spacing = 16.dp) {
             ProfileForm(draft) { vm.draft.value = it }
-            Button(onClick = { vm.save(onBack) }, enabled = draft.isValid, modifier = Modifier.fillMaxWidth()) {
-                Text("Enregistrer")
-            }
+            WideButton("Enregistrer", { vm.save(onBack) }, enabled = draft.isValid)
         }
     }
 }

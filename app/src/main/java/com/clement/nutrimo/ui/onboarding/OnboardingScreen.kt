@@ -4,7 +4,6 @@ package com.clement.nutrimo.ui.onboarding
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +19,7 @@ import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.goal.GoalDraft
 import com.clement.nutrimo.ui.goal.GoalForm
@@ -62,9 +62,7 @@ fun OnboardingScreen(onDone: () -> Unit) {
             if (state.step == 0) {
                 Text("Quelques informations pour estimer vos besoins caloriques.", style = MaterialTheme.typography.bodyLarge)
                 ProfileForm(state.profile, vm::setProfile)
-                Button(onClick = { vm.setStep(1) }, enabled = state.profile.isValid, modifier = Modifier.fillMaxWidth()) {
-                    Text("Continuer")
-                }
+                WideButton("Continuer", { vm.setStep(1) }, enabled = state.profile.isValid)
             } else {
                 GoalForm(state.goal, vm::setGoal, state.profile.toEntity())
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

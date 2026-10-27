@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +28,7 @@ import com.clement.nutrimo.ui.common.ProgressBar
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.full
 import com.clement.nutrimo.ui.common.kcal
@@ -45,7 +45,7 @@ fun WeightDashboard(state: WeightUiState, onNewGoal: () -> Unit, onGoals: () -> 
         val progress = state.progress
         if (state.goal == null || progress == null) {
             SectionCard("Aucun objectif en cours") {
-                Button(onClick = onNewGoal, modifier = Modifier.fillMaxWidth()) { Text("Définir un objectif") }
+                WideButton("Définir un objectif", onNewGoal)
             }
         } else {
             if (state.goalReached) GoalReachedCard(onAchieved)

@@ -26,6 +26,7 @@ import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.theme.NutrimoColors
@@ -54,9 +55,7 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
             }
             !info.canReadSteps -> {
                 HintText("Nutrimo peut lire vos pas et vos séances de sport enregistrés par le téléphone, Google Fit, Mi Fitness… via Health Connect.")
-                OutlinedButton(onClick = { permission.launch(HEALTH_PERMISSIONS) }, modifier = Modifier.fillMaxWidth()) {
-                    Text("Connecter Health Connect")
-                }
+                WideButton("Connecter Health Connect", { permission.launch(HEALTH_PERMISSIONS) }, outlined = true)
             }
             else -> {
                 StepsProgress(info, goal, inBudget)

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,6 +28,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.WarningText
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
 
 @Composable
@@ -45,9 +45,7 @@ fun CustomFoodScreen(onBack: () -> Unit) {
             MicrosCard(draft, vm)
             PortionsCard(draft, vm)
             if (draft.missing.isNotEmpty()) WarningText("Obligatoire : ${draft.missing.joinToString(", ")}")
-            Button(onClick = { vm.save(onBack) }, enabled = draft.missing.isEmpty(), modifier = Modifier.fillMaxWidth()) {
-                Text("Enregistrer")
-            }
+            WideButton("Enregistrer", { vm.save(onBack) }, enabled = draft.missing.isEmpty())
         }
     }
     if (confirmDelete) {

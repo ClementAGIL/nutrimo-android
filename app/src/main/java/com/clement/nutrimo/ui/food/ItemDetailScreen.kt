@@ -26,6 +26,7 @@ import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.NutrientTable
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.fmt
 
@@ -77,15 +78,11 @@ private fun QuantityRow(state: ItemDetailState, vm: ItemDetailViewModel) {
 private fun Buttons(state: ItemDetailState, vm: ItemDetailViewModel, actions: ItemDetailActions) {
     val enabled = state.amount != null
     when {
-        vm.route.forRecipe -> Button(onClick = { vm.ingredientResult()?.let(actions.onPicked) }, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-            Text("Ajouter à la recette")
-        }
+        vm.route.forRecipe -> WideButton("Ajouter à la recette", { vm.ingredientResult()?.let(actions.onPicked) }, enabled = enabled)
         state.entry != null -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = { vm.delete(actions.onDone) }, modifier = Modifier.weight(1f)) { Text("Supprimer") }
             Button(onClick = { vm.save(actions.onDone) }, enabled = enabled, modifier = Modifier.weight(1f)) { Text("Enregistrer") }
         }
-        else -> Button(onClick = { vm.save(actions.onDone) }, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
-            Text("Ajouter au journal")
-        }
+        else -> WideButton("Ajouter au journal", { vm.save(actions.onDone) }, enabled = enabled)
     }
 }

@@ -1,15 +1,12 @@
 // Recipe detail: per part and per 100 g nutrition, ingredients; edit, delete, add to the journal.
 package com.clement.nutrimo.ui.recipe
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +28,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.kcal
@@ -66,7 +64,7 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
         IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
     }) { padding ->
         ScrollColumn(padding) {
-            Button(onClick = { onLog(vm.id) }, modifier = Modifier.fillMaxWidth()) { Text("Ajouter au journal") }
+            WideButton("Ajouter au journal", { onLog(vm.id) })
             SectionCard("${formatParts(d.recipe.parts)} parts · ${fmt(d.totals.weightPerPart, 0)} g par part") {
                 d.lines.forEach { StatRow(it.name, ingredientQuantity(it)) }
             }

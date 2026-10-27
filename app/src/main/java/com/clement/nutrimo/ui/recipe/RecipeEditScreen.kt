@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -35,6 +33,7 @@ import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.kcal
@@ -60,7 +59,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
             IngredientsCard(draft.lines, onEdit = { editing = it }, onRemove = vm::remove, onAdd = onAddIngredient)
             TotalsCard(draft)
             draft.error?.let { WarningText(it) }
-            Button(onClick = { vm.save(onBack) }, enabled = draft.error == null, modifier = Modifier.fillMaxWidth()) { Text("Enregistrer") }
+            WideButton("Enregistrer", { vm.save(onBack) }, enabled = draft.error == null)
         }
     }
     editing?.let { i -> draft.lines.getOrNull(i)?.let { QuantityDialog(it, { q -> vm.setQuantity(i, q) }, { editing = null }) } }
@@ -81,7 +80,7 @@ private fun IngredientsCard(lines: List<IngredientLine>, onEdit: (Int) -> Unit, 
                 IconButton(onClick = { onRemove(i) }) { Icon(Icons.Default.Close, "Retirer") }
             }
         }
-        OutlinedButton(onClick = onAdd, modifier = Modifier.fillMaxWidth()) { Text("Ajouter un ingrédient") }
+        WideButton("Ajouter un ingrédient", onAdd, outlined = true)
     }
 }
 
