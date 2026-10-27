@@ -1,12 +1,12 @@
 // Macro targets: presets or custom percentages, with the resulting grams and protein per kg.
 package com.clement.nutrimo.ui.more
 
+import com.clement.nutrimo.ui.common.IntroText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +40,7 @@ fun MacrosScreen(onBack: () -> Unit) {
     LaunchedEffect(Unit) { split = c.settings.current().macroSplit }
     ScreenScaffold("Objectifs de macros", onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            Text("Part de vos calories pour chaque macronutriment.", style = MaterialTheme.typography.bodyMedium)
+            IntroText("Part de vos calories pour chaque macronutriment.")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 MACRO_PRESETS.forEach { (label, preset) ->
                     FilterChip(selected = split == preset, onClick = { split = preset }, label = { Text(label) })

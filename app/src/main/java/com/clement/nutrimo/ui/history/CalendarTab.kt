@@ -1,6 +1,7 @@
 // Calendar tab: month grid with one dot per goal and day, the selected day's detail and the goal streaks.
 package com.clement.nutrimo.ui.history
 
+import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -141,11 +142,9 @@ private fun Streaks(state: HistoryState) {
             val unit = if (goal.skipsEmptyDays) "pesée" else "jour"
             GoalRow(goal, true, "${plural(s.current, unit)} · record ${s.best}")
         }
-        Text(
+        HintText(
             "Jours consécutifs où l'objectif est atteint. Un jour sans donnée interrompt la série, sauf aujourd'hui " +
                 "(la journée n'est pas finie). Le poids compte les pesées stables ou en baisse.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

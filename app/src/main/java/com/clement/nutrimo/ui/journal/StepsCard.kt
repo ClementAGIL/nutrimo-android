@@ -1,6 +1,7 @@
 // Journal card for the day's steps from Health Connect: install / connect prompts, then progress to the goal.
 package com.clement.nutrimo.ui.journal
 
+import com.clement.nutrimo.ui.common.HintText
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -81,5 +81,5 @@ private fun StepsProgress(info: HealthInfo, goal: Int, inBudget: Boolean) {
 
 @Composable
 private fun Hint(text: String) {
-    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    HintText(text)
 }

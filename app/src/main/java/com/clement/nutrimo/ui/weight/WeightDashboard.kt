@@ -1,6 +1,7 @@
 // Dashboard tab: goal and time progress bars, and the key figures of the current goal.
 package com.clement.nutrimo.ui.weight
 
+import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -85,7 +86,7 @@ private fun PercentProgress(title: String, progress: Double, detail: String, col
             ProgressBar(progress, color, Modifier.weight(1f))
             Text(percent(progress, 1), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
         }
-        Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        HintText(detail)
     }
 }
 
@@ -104,10 +105,8 @@ private fun FiguresCard(state: WeightUiState, p: GoalProgress) {
         state.target?.let { StatRow("Objectif calorique", "${kcal(it.target)} / jour") }
         StatRow("Date prévue", goal.endDate.full())
         StatRow("Estimation (tendance)", estimate(p))
-        Text(
+        HintText(
             "L'estimation prolonge la droite de tendance de vos pesées depuis le début de l'objectif.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

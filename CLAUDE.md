@@ -2,6 +2,10 @@
 
 Guidance for Claude (and any contributor) working in this repository. `AGENTS.md` points here.
 
+## Pending refactor
+
+See docs/REMAINING.md (code-health review in progress: what is done, what is left).
+
 ## What this project is
 
 **Nutrimo**, a French weight-loss Android app: calorie counter (foods from CIQUAL / Open Food Facts / custom),
@@ -90,11 +94,16 @@ ui/
   weight/                         WeightScreen (Poids / Mensurations switch, each with sub-tabs; FAB adds to the shown one),
                                   Measurements (MEASUREMENT_FIELDS shared by list, dialog and charts), MeasurementCharts
                                   (one line chart per measurement, reuses windowOf), WeightViewModel (progressOf), WeightDashboard,
-                                  WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab
-                                  (series + window) on LineChart (generic Canvas date/value chart: lines, dots, daily bars)
-  common/                         ViewModels (appViewModel), Format (fr numbers/dates), Components (ScreenScaffold,
-                                  ScrollColumn = standard scrollable screen body, SectionCard(onClick), CardHeader, GoalSettingsButton, …), Pickers,
-                                  NutrientViews (MacroBars with reference targets, NutrientTable with micros)
+                                  WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab (series)
+  common/                         Shared UI, split by role (look here before writing a new widget):
+                                  Layout (ScreenScaffold, ScrollColumn = standard scrollable body, SectionCard, CardHeader,
+                                  AppTabs, EmptyState), Rows (StatRow, ProgressRow, ProgressBar, SwitchRow, GoalSettingsButton),
+                                  Inputs (NumberField, ChoiceChips, WideButton), Texts (IntroText, HintText, WarningText),
+                                  Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog), StatusRunner (action →
+                                  status message / busy), Pickers (DateField, Dropdown), Format (fr numbers/dates, dateTime,
+                                  signed), ViewModels (appViewModel), NutrientViews (MacroBars, NutrientTable)
+  common/chart/                   LineChart (generic Canvas date/value chart: lines, dots, daily bars), ChartPeriods
+                                  (ChartPeriod + PeriodChips, windowOf, ChartLegend); used by weight, measurements, history
   theme/Theme.kt                  brand color schemes (cards = surface, page = background), shapes, bold titles + fixed chart colors
                                   (SectionCard: white, 20 dp corners, 1 dp elevation; AppTabs / top bar use the page color)
 ```

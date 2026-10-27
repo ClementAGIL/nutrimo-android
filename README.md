@@ -71,6 +71,11 @@ Requirements: JDK 17, Android SDK (platform 36). Create `local.properties` with
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
+## Code
+
+Architecture, conventions and the shared UI kit (`ui/common`: layout, rows, inputs, dialogs, charts) are described in
+`CLAUDE.md`.
+
 ## Data sources and licences
 
 - CIQUAL 2020, ANSES (Licence Ouverte / Etalab) — bundled in `app/src/main/assets/ciqual_foods.json`.

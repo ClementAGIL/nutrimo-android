@@ -22,10 +22,10 @@ import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.grams
 import com.clement.nutrimo.ui.common.kcal
-import com.clement.nutrimo.ui.weight.ChartPoint
-import com.clement.nutrimo.ui.weight.ChartSeries
-import com.clement.nutrimo.ui.weight.ChartWindow
-import com.clement.nutrimo.ui.weight.LineChart
+import com.clement.nutrimo.ui.common.chart.ChartPoint
+import com.clement.nutrimo.ui.common.chart.ChartSeries
+import com.clement.nutrimo.ui.common.chart.ChartWindow
+import com.clement.nutrimo.ui.common.chart.LineChart
 import com.clement.nutrimo.ui.theme.NutrimoColors
 import kotlin.math.ceil
 

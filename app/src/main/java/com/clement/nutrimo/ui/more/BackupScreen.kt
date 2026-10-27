@@ -1,6 +1,7 @@
 // Export all personal data to a JSON file, or import one (rows with the same id are replaced).
 package com.clement.nutrimo.ui.more
 
+import com.clement.nutrimo.ui.common.IntroText
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,10 +66,9 @@ fun BackupScreen(onBack: () -> Unit) {
     }
     ScreenScaffold("Sauvegarde", onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            Text(
+            IntroText(
                 "Vos données (profil, objectifs, pesées, mensurations, journal, recettes, aliments perso) sont " +
                     "stockées sur ce téléphone. Sauvegardez-les sur votre PC ou dans un fichier.",
-                style = MaterialTheme.typography.bodyMedium,
             )
             ServerCard(run)
             SectionCard("Fichier") {

@@ -1,6 +1,7 @@
 // Cards of the journal: daily summary (kcal ring + macros), one card per meal, water.
 package com.clement.nutrimo.ui.journal
 
+import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -129,7 +130,7 @@ private fun EntryRow(entry: DiaryEntity, onEdit: (DiaryEntity) -> Unit, onDelete
         ) {
             Column(Modifier.weight(1f)) {
                 Text(entry.label, maxLines = 1)
-                Text(quantityText(entry), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                HintText(quantityText(entry))
             }
             Text(kcal(entry.nutrients.kcal))
         }
