@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.DiaryEntity
@@ -48,19 +49,10 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -
     val target = state.budget
     SectionCard(onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            KcalRing(state.total.kcal, target)
+            KcalRing(state.total.kcal, target, zoneColor(state.kcalZone) ?: MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f)) {
                 Text("Mangé : ${kcal(state.total.kcal)}")
-                target?.let {
-                    Text("${if (state.burned > 0) "Budget" else "Objectif"} : ${kcal(it)}")
-                    if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité et de pas", style = MaterialTheme.typography.bodySmall)
-                    val left = it - state.total.kcal
-                    Text(
-                        if (left >= 0) "Reste : ${kcal(left)}" else "Dépassement : ${kcal(-left)}",
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (left >= 0) NutrimoColors.weight else NutrimoColors.fat,
-                    )
-                }
+                if (target != null) KcalBalance(state, target)
             }
             GoalSettingsButton(onGoalSettings)
         }
@@ -69,14 +61,36 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -
     }
 }
 
+/** Budget, maintenance and what is left; over the goal but under maintenance is yellow (still losing), not red. */
 @Composable
-private fun KcalRing(eaten: Double, target: Double?) {
+private fun KcalBalance(state: JournalUiState, budget: Double) {
+    Text("${if (state.burned > 0) "Budget" else "Objectif"} : ${kcal(budget)}")
+    if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité et de pas", style = MaterialTheme.typography.bodySmall)
+    state.maintenance?.let { Text("Maintenance : ${kcal(it)}", style = MaterialTheme.typography.bodySmall) }
+    val eaten = state.total.kcal
+    val maintenanceLeft = (state.maintenance ?: eaten) - eaten
+    val text = when (state.kcalZone) {
+        KcalZone.UNDER_MAINTENANCE -> "Au-dessus de l'objectif : ${kcal(eaten - budget)}\nencore ${kcal(maintenanceLeft)} sous la maintenance"
+        KcalZone.OVER_MAINTENANCE -> "Dépassement : ${kcal(eaten - budget)}"
+        else -> "Reste : ${kcal(budget - eaten)}"
+    }
+    Text(text, fontWeight = FontWeight.SemiBold, color = zoneColor(state.kcalZone) ?: NutrimoColors.weight)
+}
+
+private fun zoneColor(zone: KcalZone?) = when (zone) {
+    KcalZone.UNDER_MAINTENANCE -> NutrimoColors.caution
+    KcalZone.OVER_MAINTENANCE -> NutrimoColors.fat
+    else -> null
+}
+
+@Composable
+private fun KcalRing(eaten: Double, target: Double?, color: Color) {
     Box(contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             progress = { if (target != null && target > 0) (eaten / target).toFloat().coerceIn(0f, 1f) else 0f },
             modifier = Modifier.size(84.dp),
             strokeWidth = 8.dp,
-            color = if (target != null && eaten > target) NutrimoColors.fat else MaterialTheme.colorScheme.primary,
+            color = color,
         )
         Text(fmt(eaten, 0), style = MaterialTheme.typography.titleLarge)
     }

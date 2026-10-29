@@ -43,7 +43,23 @@ data class JournalUiState(
 
     /** What can be eaten today: the calorie target plus what was burned. */
     val budget: Double? get() = target?.let { it.target + burned }
+
+    /** What keeps the weight stable today: TDEE plus what was burned. */
+    val maintenance: Double? get() = target?.let { it.tdee + burned }
+
+    val kcalZone: KcalZone? get() {
+        val b = budget ?: return null
+        val m = maintenance ?: return null
+        return when {
+            total.kcal <= b -> KcalZone.UNDER_BUDGET
+            total.kcal <= m -> KcalZone.UNDER_MAINTENANCE
+            else -> KcalZone.OVER_MAINTENANCE
+        }
+    }
 }
+
+/** Where the day's intake stands: on pace, still losing (slower), or above maintenance. */
+enum class KcalZone { UNDER_BUDGET, UNDER_MAINTENANCE, OVER_MAINTENANCE }
 
 /** Everything stored for one day. */
 private data class DayData(val date: LocalDate, val entries: List<DiaryEntity>, val water: WaterEntity?, val activities: List<ActivityEntity>)

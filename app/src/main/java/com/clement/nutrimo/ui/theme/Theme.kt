@@ -23,6 +23,8 @@ object NutrimoColors {
     val trend = Color(0xFFB36AE2)
     val warning = Color(0xFFE08A00)
     val water = Color(0xFF29A8E0)
+    /** Over the calorie goal but still under maintenance: still losing, just slower. */
+    val caution = Color(0xFFE8B923)
 
     // Daily goals keep the same color in the journal and the history calendar.
     val steps = fat
