@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -68,13 +69,13 @@ private fun KcalBalance(state: JournalUiState, budget: Double) {
     if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité et de pas", style = MaterialTheme.typography.bodySmall)
     state.maintenance?.let { Text("Maintenance : ${kcal(it)}", style = MaterialTheme.typography.bodySmall) }
     val eaten = state.total.kcal
-    val maintenanceLeft = (state.maintenance ?: eaten) - eaten
-    val text = when (state.kcalZone) {
-        KcalZone.UNDER_MAINTENANCE -> "Au-dessus de l'objectif : ${kcal(eaten - budget)}\nencore ${kcal(maintenanceLeft)} sous la maintenance"
-        KcalZone.OVER_MAINTENANCE -> "Dépassement : ${kcal(eaten - budget)}"
-        else -> "Reste : ${kcal(budget - eaten)}"
+    val (text, style) = when (state.kcalZone) {
+        // The yellow ring already says "still under maintenance": the text stays short and discreet.
+        KcalZone.UNDER_MAINTENANCE -> "Au-dessus de l'objectif : ${kcal(eaten - budget)}" to MaterialTheme.typography.bodySmall
+        KcalZone.OVER_MAINTENANCE -> "Dépassement : ${kcal(eaten - budget)}" to LocalTextStyle.current
+        else -> "Reste : ${kcal(budget - eaten)}" to LocalTextStyle.current
     }
-    Text(text, fontWeight = FontWeight.SemiBold, color = zoneColor(state.kcalZone) ?: NutrimoColors.weight)
+    Text(text, style = style, fontWeight = FontWeight.SemiBold, color = zoneColor(state.kcalZone) ?: NutrimoColors.weight)
 }
 
 private fun zoneColor(zone: KcalZone?) = when (zone) {

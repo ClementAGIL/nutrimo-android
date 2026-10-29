@@ -23,6 +23,8 @@ data class LocalHistory(
 data class HealthHistory(
     val steps: Map<LocalDate, Long> = emptyMap(),
     val sessions: Map<LocalDate, List<ImportedActivity>> = emptyMap(),
+    /** Null when the calorie permissions are missing: the step estimate is used instead. */
+    val activeKcal: Map<LocalDate, Double>? = null,
 )
 
 /**
@@ -40,7 +42,7 @@ fun buildRecords(local: LocalHistory, health: HealthHistory, target: Double?, he
     return dates.associateWith { date ->
         val sessions = health.sessions[date].orEmpty()
         val steps = health.steps[date]
-        val fromHealth = if (healthInBudget) healthBudgetKcal(steps?.let { Activities.stepsKcal(it, kg) } ?: 0.0, sessions) else 0.0
+        val fromHealth = if (healthInBudget) healthBudgetKcal(health.activeKcal?.let { it[date] ?: 0.0 }, steps?.let { Activities.stepsKcal(it, kg) } ?: 0.0, sessions) else 0.0
         val burned = manual[date] ?: 0.0
         DayRecord(
             date = date,

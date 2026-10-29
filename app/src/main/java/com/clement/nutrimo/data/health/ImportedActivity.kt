@@ -51,6 +51,10 @@ fun HealthSession.toImported(weightKg: Double): ImportedActivity {
     )
 }
 
-/** Health Connect calories added to the budget: extra steps + workouts other than walks and runs (their steps count). */
-fun healthBudgetKcal(stepsKcal: Double, sessions: List<ImportedActivity>): Double =
-    stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal }
+/**
+ * Health Connect calories added to the budget: the day's active calories measured by the user's apps when the sport
+ * and calorie permissions are granted (they already include workouts), otherwise our estimate = extra steps +
+ * workouts other than walks and runs.
+ */
+fun healthBudgetKcal(activeKcal: Double?, stepsKcal: Double, sessions: List<ImportedActivity>): Double =
+    activeKcal ?: (stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal })

@@ -80,6 +80,17 @@ Requirements: JDK 17, Android SDK (platform 36). Create `local.properties` with
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
+Release build (no debug tools, faster):
+
+```
+./gradlew assembleRelease
+adb install -r app/build/outputs/apk/release/app-release.apk
+```
+
+The release is signed with the debug key (`~/.android/debug.keystore`): it installs over a debug build without
+uninstalling, so the data on the phone is kept. Keep that key: another PC's key would force an uninstall (data loss;
+export a backup first).
+
 ## Code
 
 Architecture, conventions and the shared UI kit (`ui/common`: layout, rows, inputs, dialogs, charts) are described in

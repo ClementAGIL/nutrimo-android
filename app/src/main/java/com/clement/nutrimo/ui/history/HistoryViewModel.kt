@@ -100,6 +100,6 @@ class HistoryViewModel(private val c: AppContainer) : ViewModel() {
     private suspend fun readHealth(from: LocalDate): HealthHistory {
         val kg = c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG
         val sessions = c.health.sessionsBetween(from, today).groupBy({ it.first }, { it.second.toImported(kg) })
-        return HealthHistory(c.health.dailySteps(from, today), sessions)
+        return HealthHistory(c.health.dailySteps(from, today), sessions, c.health.dailyActiveKcal(from, today))
     }
 }

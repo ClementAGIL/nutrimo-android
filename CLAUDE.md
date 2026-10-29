@@ -26,6 +26,7 @@ No unit tests for now (decided with the user).
 | ------------------------------- | ----------------------------------------------------------- |
 | `./gradlew assembleDebug`       | Build `app/build/outputs/apk/debug/app-debug.apk`           |
 | `./gradlew installDebug`        | Build and install on the connected phone (adb)              |
+| `./gradlew assembleRelease`     | `app-release.apk`, signed with the debug key (installs over debug, keeps data) |
 | `./gradlew lint`                | Android lint                                                |
 
 `local.properties` must contain `sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk` (forward slashes).

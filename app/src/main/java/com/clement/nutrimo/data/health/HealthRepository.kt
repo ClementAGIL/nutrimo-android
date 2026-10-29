@@ -24,12 +24,14 @@ enum class HealthStatus { AVAILABLE, NEEDS_UPDATE, UNAVAILABLE }
 
 val STEPS_PERMISSION: String = HealthPermission.getReadPermission(StepsRecord::class)
 
-/** Asked together in one Health Connect screen; steps are the minimum, the rest is optional. */
-val HEALTH_PERMISSIONS: Set<String> = setOf(
-    STEPS_PERMISSION,
+/** With both, Health Connect's calories replace our step estimate in the budget. */
+val KCAL_PERMISSIONS: Set<String> = setOf(
     HealthPermission.getReadPermission(ExerciseSessionRecord::class),
     HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
 )
+
+/** Asked together in one Health Connect screen; steps are the minimum, the rest is optional. */
+val HEALTH_PERMISSIONS: Set<String> = setOf(STEPS_PERMISSION) + KCAL_PERMISSIONS
 
 const val HEALTH_CONNECT_PACKAGE = "com.google.android.apps.healthdata"
 
@@ -62,6 +64,25 @@ class HealthRepository(private val context: Context) {
         return nullOnError {
             client.aggregateGroupByPeriod(request).associate { it.startTime.toLocalDate() to (it.result[StepsRecord.COUNT_TOTAL] ?: 0) }
         }.orEmpty()
+    }
+
+    /** Active calories of one day measured by the user's apps (0 when nothing recorded); null without [KCAL_PERMISSIONS]. */
+    suspend fun activeKcalOn(date: LocalDate): Double? {
+        if (!granted().containsAll(KCAL_PERMISSIONS)) return null
+        val metric = ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL
+        return nullOnError { client.aggregate(AggregateRequest(setOf(metric), dayRange(date, date)))[metric]?.inKilocalories ?: 0.0 }
+    }
+
+    /** Active calories per day between [from] and [to] included (days with nothing recorded are absent); null without [KCAL_PERMISSIONS]. */
+    suspend fun dailyActiveKcal(from: LocalDate, to: LocalDate): Map<LocalDate, Double>? {
+        if (!granted().containsAll(KCAL_PERMISSIONS)) return null
+        val metric = ActiveCaloriesBurnedRecord.ACTIVE_CALORIES_TOTAL
+        val request = AggregateGroupByPeriodRequest(setOf(metric), dayRange(from, to), Period.ofDays(1))
+        return nullOnError {
+            client.aggregateGroupByPeriod(request).mapNotNull { day ->
+                day.result[metric]?.inKilocalories?.let { day.startTime.toLocalDate() to it }
+            }.toMap()
+        }
     }
 
     /** Workouts of the day, each with the active calories recorded during it (when any). */

@@ -87,7 +87,8 @@ private fun GoalsCard(form: ActivityGoalsForm) {
             "Votre niveau d'activité inclut déjà la marche quotidienne : seuls les pas au-delà de " +
                 "${fmt(STEPS_BASELINE.toDouble(), 0)} sont comptés (≈ 0,04 kcal par pas pour 90 kg). " +
                 "Les séances de marche et de course ne s'ajoutent pas (leurs pas comptent déjà). " +
-                "Ne notez pas à la main une séance déjà importée.",
+                "Si vous autorisez le sport et les calories dans Health Connect, les calories actives de vos applis " +
+                "(montre, Mi Fitness…) remplacent cette estimation. Ne notez pas à la main une séance déjà importée.",
         )
     }
 }

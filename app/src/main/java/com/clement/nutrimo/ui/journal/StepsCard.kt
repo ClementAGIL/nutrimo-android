@@ -60,7 +60,7 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
             else -> {
                 StepsProgress(info, goal, inBudget)
                 if (!info.allGranted) TextButton(onClick = { permission.launch(HEALTH_PERMISSIONS) }) {
-                    Text("Autoriser aussi les séances de sport")
+                    Text("Autoriser aussi le sport et les calories")
                 }
             }
         }
@@ -72,6 +72,9 @@ private fun StepsProgress(info: HealthInfo, goal: Int, inBudget: Boolean) {
     val steps = info.steps ?: 0
     ProgressRow("${fmt(steps.toDouble(), 0)} / ${fmt(goal.toDouble(), 0)} pas", "", steps.toDouble() / goal, NutrimoColors.steps)
     val detail = when {
+        // Measured calories replace our step estimate (see healthBudgetKcal), so the estimate is not shown.
+        info.activeKcal != null && inBudget -> "${kcal(info.activeKcal)} actives selon Health Connect, ajoutées au budget."
+        info.activeKcal != null -> "${kcal(info.activeKcal)} actives selon Health Connect (non ajoutées au budget, voir Plus → Pas)."
         steps <= STEPS_BASELINE -> "Les pas au-delà de ${fmt(STEPS_BASELINE.toDouble(), 0)} comptent comme activité."
         inBudget -> "≈ ${kcal(info.stepsKcal)} ajoutées au budget (pas au-delà de ${fmt(STEPS_BASELINE.toDouble(), 0)})."
         else -> "≈ ${kcal(info.stepsKcal)} dépensées en plus (non ajoutées au budget, voir Plus → Pas)."

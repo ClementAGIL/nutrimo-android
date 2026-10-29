@@ -21,6 +21,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            // Personal sideloaded app: signed with the debug key so a release installs over a debug build
+            // (same signature) without uninstalling, which would erase the on-phone data.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
