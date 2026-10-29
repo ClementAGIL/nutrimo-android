@@ -1,4 +1,4 @@
-// Developer section: load the demo history, or erase every personal data (back to onboarding).
+// Developer section: replay the feature tour, load the demo history, or erase every personal data (back to onboarding).
 package com.clement.nutrimo.ui.more
 
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,13 +32,17 @@ private enum class DevAction(val button: String, val confirmTitle: String, val c
 }
 
 @Composable
-fun DevScreen(onBack: () -> Unit) {
+fun DevScreen(onBack: () -> Unit, onShowIntro: () -> Unit) {
     val c = appContainer()
     var confirm by remember { mutableStateOf<DevAction?>(null) }
     // App scope: leaving the screen must not stop the wipe or the load half-way.
     val runner = rememberStatusRunner(c.appScope)
     ScreenScaffold("Développeur", onBack = onBack) { padding ->
         ScrollColumn(padding) {
+            SectionCard("Présentation") {
+                IntroText("La présentation des fonctionnalités ne s'affiche qu'au premier lancement.")
+                WideButton("Revoir la présentation", onShowIntro)
+            }
             SectionCard("Données de démo") {
                 IntroText(
                     "Remplace toutes vos données par un historique fictif : profil, 2 objectifs, 5 mois de pesées, " +

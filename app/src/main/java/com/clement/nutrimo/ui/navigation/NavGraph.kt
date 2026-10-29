@@ -25,6 +25,7 @@ import com.clement.nutrimo.ui.journal.JournalScreen
 import com.clement.nutrimo.ui.more.AboutScreen
 import com.clement.nutrimo.ui.more.BackupScreen
 import com.clement.nutrimo.ui.more.DevScreen
+import com.clement.nutrimo.ui.onboarding.IntroScreen
 import com.clement.nutrimo.ui.more.MacrosScreen
 import com.clement.nutrimo.ui.more.MoreScreen
 import com.clement.nutrimo.ui.more.RemindersScreen
@@ -65,7 +66,8 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     composable<ServerRoute> { ServerScreen(onBack = back) }
     composable<BackupRoute> { BackupScreen(onBack = back) }
     composable<AboutRoute> { AboutScreen(onBack = back) }
-    composable<DevRoute> { DevScreen(onBack = back) }
+    composable<DevRoute> { DevScreen(onBack = back, onShowIntro = { nav.navigate(IntroRoute) }) }
+    composable<IntroRoute> { IntroScreen(onDone = back) }
     composable<MacrosRoute> { MacrosScreen(onBack = back) }
     composable<StepsRoute> { StepsScreen(onBack = back) }
 }

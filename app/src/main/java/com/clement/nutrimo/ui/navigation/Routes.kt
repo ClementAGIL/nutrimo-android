@@ -35,6 +35,7 @@ import kotlinx.serialization.Serializable
 @Serializable object BackupRoute
 @Serializable object AboutRoute
 @Serializable object DevRoute
+@Serializable object IntroRoute
 @Serializable object MacrosRoute
 @Serializable object StepsRoute
 

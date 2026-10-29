@@ -1,4 +1,5 @@
-"""Generates the launcher icon (happy flower, dark green) as vector drawables + an HTML preview.
+"""Generates the launcher icon (happy flower, dark green), its themed variant and the animated splash icon
+as vector drawables, plus an HTML preview (icons + splash animation frames).
 
 Usage: python tools/launcher_icon.py app/src/main/res <preview.html>
 """
@@ -21,8 +22,9 @@ class Path:
 
 
 class Group:
-    def __init__(self, children, tx=0, ty=0, rot=0, px=0, py=0, scale=1):
-        self.children, self.tx, self.ty, self.rot, self.px, self.py, self.scale = children, tx, ty, rot, px, py, scale
+    def __init__(self, children, tx=0, ty=0, rot=0, px=0, py=0, scale=1, sx=None, sy=None, name=None):
+        self.children, self.tx, self.ty, self.rot, self.px, self.py = children, tx, ty, rot, px, py
+        self.sx, self.sy, self.name = scale if sx is None else sx, scale if sy is None else sy, name
 
 
 def T(x, y, *c):
@@ -67,18 +69,23 @@ def leaf_grad(x0, y0, x1, y1):
     return ("linear", x0, y0, x1, y1, "#D6F7E3", "#6CC794")
 
 
-def color_icon():
+def color_parts():
+    """The color drawing split into the parts the splash animates, in drawing order."""
     cx, cy = CENTER
-    out = [Path(STEM, stroke=LIGHT_GREEN, width=3),
-           Path(LEAF_L, grad=leaf_grad(37, 64, 54, 80)), Path(LEAF_R, grad=leaf_grad(54, 64, 71, 80))]
-    for i in range(10):
-        out.append(R(i * 36, cx, cy, Path(ellipse(cx, cy - 9, 3.6, 7), fill=PETALS[i % 3], stroke="#FFFFFF", width=0.8)))
-    out.append(Path(circle(cx, cy, 6.5), grad=("radial", 52.7, 54.05, 10.4, "#FFE08A", "#F2B824")))
-    out.append(face())
-    for x, y, c, s, r in BOXES:
-        out.append(T(x, y, R(r, 0, 0, Path(rrect(-s/2, -s/2, s, s, s*0.27), fill=c)), S(s/10, Path(CHECK, stroke="#FFFFFF", width=1.7))))
-    out += party()
-    return out
+    parts = {"stem": [Path(STEM, stroke=LIGHT_GREEN, width=3),
+                      Path(LEAF_L, grad=leaf_grad(37, 64, 54, 80)), Path(LEAF_R, grad=leaf_grad(54, 64, 71, 80))],
+             "petals": [R(i * 36, cx, cy, Path(ellipse(cx, cy - 9, 3.6, 7), fill=PETALS[i % 3], stroke="#FFFFFF", width=0.8))
+                        for i in range(10)],
+             "center": [Path(circle(cx, cy, 6.5), grad=("radial", 52.7, 54.05, 10.4, "#FFE08A", "#F2B824")), face()]}
+    for i, (x, y, c, s, r) in enumerate(BOXES):
+        parts[f"box{i}"] = [T(x, y, R(r, 0, 0, Path(rrect(-s/2, -s/2, s, s, s*0.27), fill=c)),
+                              S(s/10, Path(CHECK, stroke="#FFFFFF", width=1.7)))]
+    parts["party"] = party()
+    return parts
+
+
+def color_icon():
+    return [n for part in color_parts().values() for n in part]
 
 
 def face():
@@ -151,10 +158,16 @@ def vd_node(n, ind="    "):
     a = []
     if n.tx or n.ty:
         a += [f'android:translateX="{f(n.tx)}"', f'android:translateY="{f(n.ty)}"']
+    if n.name:
+        a.append(f'android:name="{n.name}"')
+    if n.px or n.py:
+        a += [f'android:pivotX="{f(n.px)}"', f'android:pivotY="{f(n.py)}"']
     if n.rot:
-        a += [f'android:rotation="{f(n.rot)}"', f'android:pivotX="{f(n.px)}"', f'android:pivotY="{f(n.py)}"']
-    if n.scale != 1:
-        a += [f'android:scaleX="{f(n.scale)}"', f'android:scaleY="{f(n.scale)}"']
+        a.append(f'android:rotation="{f(n.rot)}"')
+    if n.sx != 1:
+        a.append(f'android:scaleX="{f(n.sx)}"')
+    if n.sy != 1:
+        a.append(f'android:scaleY="{f(n.sy)}"')
     inner = "".join(vd_node(c, ind + "    ") for c in n.children)
     return f"{ind}<group {' '.join(a)}>\n{inner}{ind}</group>\n"
 
@@ -193,7 +206,8 @@ def svg_node(n):
         if n.stroke:
             s += f' stroke="{n.stroke}" stroke-width="{n.width}" stroke-linecap="round" stroke-linejoin="round"'
         return s + "/>"
-    t = f"translate({n.tx} {n.ty}) rotate({n.rot} {n.px} {n.py}) scale({n.scale})"
+    # Same order as a VectorDrawable group: scale, then rotate (both around the pivot), then translate.
+    t = f"translate({n.tx + n.px} {n.ty + n.py}) rotate({n.rot}) scale({n.sx} {n.sy}) translate({-n.px} {-n.py})"
     return f'<g transform="{t}">' + "".join(svg_node(c) for c in n.children) + "</g>"
 
 
@@ -203,14 +217,74 @@ def svg(nodes, bg):
     return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72"><defs>{"".join(GRAD_IDS)}</defs><rect width="108" height="108" fill="{bg}"/>{body}</svg>'
 
 
+# ---------- animated splash icon ----------
+SPLASH_MS = 1000
+# part -> (pivot, {property: (from, to)}, start ms, duration ms, interpolator)
+SPLASH = {
+    "stem": ((54, 86), {"scaleY": (0, 1)}, 0, 300, "decelerate"),
+    "petals": (CENTER, {"scaleX": (0, 1), "scaleY": (0, 1), "rotation": (-90, 0)}, 200, 450, "overshoot"),
+    "center": (CENTER, {"scaleX": (0, 1), "scaleY": (0, 1)}, 450, 250, "overshoot"),
+    "box0": (BOXES[0][:2], {"scaleX": (0, 1), "scaleY": (0, 1)}, 550, 200, "overshoot"),
+    "box1": (BOXES[1][:2], {"scaleX": (0, 1), "scaleY": (0, 1)}, 650, 200, "overshoot"),
+    "box2": (BOXES[2][:2], {"scaleX": (0, 1), "scaleY": (0, 1)}, 750, 200, "overshoot"),
+    "party": (CENTER, {"scaleX": (0, 1), "scaleY": (0, 1)}, 700, 300, "decelerate"),
+}
+INTERPOLATORS = {"decelerate": "@android:interpolator/decelerate_cubic", "overshoot": "@android:interpolator/overshoot"}
+
+
+def ease(kind, t):
+    if kind == "decelerate":
+        return 1 - (1 - t) ** 3
+    t -= 1
+    return t * t * (3 * t + 2) + 1  # OvershootInterpolator, tension 2
+
+
+def splash_nodes(t_ms=None):
+    """Animated parts wrapped in named groups; t_ms=None gives the initial (hidden) state the drawable starts in."""
+    out = []
+    for name, children in color_parts().items():
+        (px, py), props, start, dur, kind = SPLASH[name]
+        k = 0 if t_ms is None or t_ms < start else ease(kind, min((t_ms - start) / dur, 1))
+        v = {p: a + (b - a) * k for p, (a, b) in props.items()}
+        out.append(Group(children, px=px, py=py, rot=v.get("rotation", 0), sx=v.get("scaleX", 1), sy=v.get("scaleY", 1), name=name))
+    return out
+
+
+def avd():
+    targets = []
+    for name, (_, props, start, dur, kind) in SPLASH.items():
+        anims = "".join(
+            f'                <objectAnimator android:propertyName="{p}" android:valueFrom="{a}" android:valueTo="{b}"\n'
+            f'                    android:startOffset="{start}" android:duration="{dur}" android:valueType="floatType"\n'
+            f'                    android:interpolator="{INTERPOLATORS[kind]}" />\n' for p, (a, b) in props.items())
+        targets.append(f'    <target android:name="{name}">\n        <aapt:attr name="android:animation">\n'
+                       f'            <set>\n{anims}            </set>\n        </aapt:attr>\n    </target>\n')
+    return ('<?xml version="1.0" encoding="utf-8"?>\n'
+            "<!-- Splash icon: the stem grows, the petals spin open, the face appears, the goals get checked, confetti bursts."
+            " Generated by tools/launcher_icon.py: edit the script, not this file. -->\n"
+            '<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
+            '    xmlns:aapt="http://schemas.android.com/aapt"\n'
+            '    android:drawable="@drawable/splash_icon_vector">\n'
+            f"{''.join(targets)}</animated-vector>\n")
+
+
+def write(path, text):
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
+
 if __name__ == "__main__":
     res, preview = sys.argv[1], sys.argv[2]
-    with open(f"{res}/drawable/ic_launcher_foreground.xml", "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(vd(color_icon(), "Launcher icon: a happy flower (habit-colored petals) celebrating its checked goals."))
-    with open(f"{res}/drawable/ic_launcher_monochrome.xml", "w", encoding="utf-8", newline="\n") as fh:
-        fh.write(vd(mono_icon(), "Themed (monochrome) launcher icon: line-art version of the happy flower."))
+    write(f"{res}/drawable/ic_launcher_foreground.xml",
+          vd(color_icon(), "Launcher icon: a happy flower (habit-colored petals) celebrating its checked goals."))
+    write(f"{res}/drawable/ic_launcher_monochrome.xml", vd(mono_icon(), "Themed (monochrome) launcher icon: solid happy flower."))
+    write(f"{res}/drawable/splash_icon_vector.xml", vd(splash_nodes(), "Splash icon, initial state: animated by splash_icon.xml."))
+    write(f"{res}/drawable/splash_icon.xml", avd())
     color, mono = svg(color_icon(), BG), svg(mono_icon(), "#3A4A42")
-    cells = "".join(f'<div style="width:{s}px;height:{s}px;border-radius:{r};overflow:hidden;display:inline-block;margin:8px">{c}</div>'
-                    for c in (color, mono) for s, r in ((220, "50%"), (120, "30%"), (48, "50%")))
-    with open(preview, "w", encoding="utf-8") as fh:
-        fh.write(f'<!DOCTYPE html><html><body style="background:#F1F6F3;margin:16px">{cells}</body></html>')
+
+    def cell(c, size, radius):
+        return f'<div style="width:{size}px;height:{size}px;border-radius:{radius};overflow:hidden;display:inline-block;margin:6px">{c}</div>'
+
+    icons = "".join(cell(c, size, r) for c in (color, mono) for size, r in ((220, "50%"), (120, "30%"), (48, "50%")))
+    frames = "".join(cell(svg(splash_nodes(t), BG), 120, "50%") + f"<small>{t}</small>" for t in range(0, SPLASH_MS + 1, 100))
+    write(preview, f'<!DOCTYPE html><html><body style="background:#F1F6F3;margin:16px;font-family:sans-serif">{icons}<div>{frames}</div></body></html>')

@@ -48,7 +48,7 @@ val MORE_ENTRIES = listOf(
     MoreEntry("Serveur", "Adresse de nutrimo-api sur le Wi-Fi", Icons.Default.Dns, ServerRoute),
     MoreEntry("Sauvegarde", "Exporter / importer vos données", Icons.Default.Backup, BackupRoute),
     MoreEntry("À propos", "Sources des données et licences", Icons.Default.Info, AboutRoute),
-    MoreEntry("Développeur", "Données de démo, tout effacer", Icons.Default.Science, DevRoute),
+    MoreEntry("Développeur", "Présentation, données de démo, tout effacer", Icons.Default.Science, DevRoute),
 )
 
 @Composable

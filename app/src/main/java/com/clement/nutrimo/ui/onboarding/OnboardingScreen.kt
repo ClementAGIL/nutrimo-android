@@ -1,4 +1,4 @@
-// First launch: profile, then current weight + first goal. Saves everything and opens the journal.
+// First launch: feature tour, profile, then current weight + first goal. Saves everything and opens the journal.
 package com.clement.nutrimo.ui.onboarding
 
 import androidx.activity.compose.BackHandler
@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class OnboardingState(val step: Int = 0, val profile: ProfileDraft = ProfileDraft(), val goal: GoalDraft = GoalDraft())
+data class OnboardingState(val intro: Boolean = true, val step: Int = 0, val profile: ProfileDraft = ProfileDraft(), val goal: GoalDraft = GoalDraft())
 
 class OnboardingViewModel(private val c: AppContainer) : ViewModel() {
     val state = MutableStateFlow(OnboardingState())
@@ -37,6 +37,7 @@ class OnboardingViewModel(private val c: AppContainer) : ViewModel() {
     fun setProfile(p: ProfileDraft) = state.update { it.copy(profile = p) }
     fun setGoal(g: GoalDraft) = state.update { it.copy(goal = g) }
     fun setStep(step: Int) = state.update { it.copy(step = step) }
+    fun setIntro(shown: Boolean) = state.update { it.copy(intro = shown) }
 
     fun finish(onDone: () -> Unit) {
         val s = state.value
@@ -55,8 +56,9 @@ class OnboardingViewModel(private val c: AppContainer) : ViewModel() {
 fun OnboardingScreen(onDone: () -> Unit) {
     val vm = appViewModel { c, _ -> OnboardingViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
-    // Back on the goal step returns to the profile instead of closing the app and losing the input.
-    BackHandler(enabled = state.step == 1) { vm.setStep(0) }
+    if (state.intro) return IntroScreen(onDone = { vm.setIntro(false) })
+    // Back returns to the previous step instead of closing the app and losing the input.
+    BackHandler { if (state.step == 1) vm.setStep(0) else vm.setIntro(true) }
     ScreenScaffold(title = if (state.step == 0) "Bienvenue sur Nutrimo" else "Votre objectif") { padding ->
         ScrollColumn(padding, spacing = 16.dp) {
             if (state.step == 0) {
