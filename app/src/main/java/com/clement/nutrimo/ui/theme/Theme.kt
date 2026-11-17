@@ -29,6 +29,8 @@ object NutrimoColors {
     // Daily goals keep the same color in the journal and the history calendar.
     val steps = fat
     val sport = trend
+    /** "Journée notée": sunny yellow, the mood of the day. */
+    val journal = caution
 }
 
 // Cards use `surface` and screens `background`: white cards on a light green-grey page (dark: lifted cards).
