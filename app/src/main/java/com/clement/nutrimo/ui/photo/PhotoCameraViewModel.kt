@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.MeasurementEntity
+import com.clement.nutrimo.domain.calc.VALID_WEIGHT_KG
 import com.clement.nutrimo.domain.model.PhotoPose
 import com.clement.nutrimo.ui.navigation.PhotoCameraRoute
 import com.clement.nutrimo.util.UiText
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.time.LocalDate
 
 private const val GHOST_SIDE = 1200
@@ -91,12 +93,19 @@ class PhotoCameraViewModel(private val c: AppContainer, handle: SavedStateHandle
         val shot = s.shot ?: return
         state.update { it.copy(saving = true) }
         viewModelScope.launch {
-            c.photos.save(today, s.pose, s.front, s.note, shot)
-            s.weight.toDecimal()?.let { kg -> if (c.body.weightOn(today)?.kg != kg) c.body.saveWeight(today, kg) }
-            messages.tryEmit(uiText(R.string.photo_camera_saved, uiText(s.pose.label)))
-            val next = PhotoPose.entries[(s.pose.ordinal + 1) % PhotoPose.entries.size]
-            state.update { it.copy(shot = null, note = "", saving = false) }
-            setPose(next)
+            try {
+                c.photos.save(today, s.pose, s.front, s.note, shot)
+                // Only a plausible weight becomes a weigh-in (same range as the weigh-in dialog).
+                s.weight.toDecimal()?.takeIf { it in VALID_WEIGHT_KG }?.let { kg -> if (c.body.weightOn(today)?.kg != kg) c.body.saveWeight(today, kg) }
+                messages.tryEmit(uiText(R.string.photo_camera_saved, uiText(s.pose.label)))
+                val next = PhotoPose.entries[(s.pose.ordinal + 1) % PhotoPose.entries.size]
+                state.update { it.copy(shot = null, note = "") }
+                setPose(next)
+            } catch (e: IOException) {
+                messages.tryEmit(uiText(R.string.error_generic, e.message.orEmpty()))
+            } finally {
+                state.update { it.copy(saving = false) }
+            }
         }
     }
 }

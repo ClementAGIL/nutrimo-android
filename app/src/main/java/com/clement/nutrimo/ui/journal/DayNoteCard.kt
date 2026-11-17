@@ -146,6 +146,8 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
                 )
             }
         }
+        // Inside the dialog: its content is composed in its own window, after the caller.
+        LaunchedEffect(Unit) { focus.requestFocus() }
         // Inside the editor's window, so it shows above it.
         if (confirmLeave) {
             ConfirmDialog(
@@ -157,5 +159,4 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
             )
         }
     }
-    LaunchedEffect(Unit) { focus.requestFocus() }
 }

@@ -73,7 +73,7 @@ private fun QuantityRow(state: ItemDetailState, vm: ItemDetailViewModel) {
         NumberField(state.quantity, vm::setQuantity, stringResource(R.string.common_quantite), Modifier.weight(1f), isError = state.amount == null)
         val unit = state.unit
         if (state.entry == null && unit != null) {
-            Dropdown(stringResource(R.string.item_detail_unite), unit, state.units, { it.label }, vm::setUnit, Modifier.weight(1.4f))
+            Dropdown(stringResource(R.string.item_detail_unite), unit, state.units, { it.label.asString() }, vm::setUnit, Modifier.weight(1.4f))
         }
     }
 }

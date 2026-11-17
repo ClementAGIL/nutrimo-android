@@ -67,7 +67,8 @@ private fun MetricChart(metric: Metric, state: HistoryState) {
         if (bars.isEmpty()) return@SectionCard HintText(stringResource(R.string.charts_aucune_donnee))
         val end = state.today.plusDays(1)
         val goal = state.goalValue(metric.goal)
-        val top = maxOf(bars.maxOf { it.value }, goal ?: 0.0) * 1.1
+        // At least one step high: all-zero bars without a goal would give an empty (0..0) value range.
+        val top = maxOf(bars.maxOf { it.value }, goal ?: 0.0, metric.yStep) * 1.1
         val goalLine = goal?.let { listOf(ChartSeries(listOf(ChartPoint(state.chartFrom, it), ChartPoint(end, it)), NutrimoColors.objective, dashed = true)) }
         LineChart(
             series = goalLine.orEmpty(),

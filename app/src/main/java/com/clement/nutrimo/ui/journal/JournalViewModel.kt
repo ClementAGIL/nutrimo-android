@@ -110,7 +110,10 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
 
     /** Health Connect is not observable: re-read on resume, on day change and after granting the permission. */
     fun refreshHealth() = viewModelScope.launch {
-        health.value = c.health.day(date.value, c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG)
+        val day = date.value
+        val info = c.health.day(day, c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG)
+        // Switching days quickly: a slow read for the previous day must not replace the shown day's data.
+        if (date.value == day) health.value = info
     }
 
     fun delete(entry: DiaryEntity) = viewModelScope.launch { c.diary.delete(entry.id) }
@@ -135,5 +138,5 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
     /** Saves "Ma journée" of the shown day (an emptied one is deleted). */
     fun saveDayNote(note: DayNoteEntity) = viewModelScope.launch { c.dayNotes.save(note.copy(date = date.value)) }
 
-    fun addWater(deltaMl: Int) = viewModelScope.launch { c.diary.addWater(date.value, state.value.waterMl, deltaMl) }
+    fun addWater(deltaMl: Int) = viewModelScope.launch { c.diary.addWater(date.value, deltaMl) }
 }

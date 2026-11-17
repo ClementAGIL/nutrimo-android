@@ -34,6 +34,9 @@ object Activities {
      */
     fun stepsKcal(steps: Long, weightKg: Double): Double = (steps - STEPS_BASELINE).coerceAtLeast(0) * KCAL_PER_STEP_PER_KG * weightKg
 
-    /** kcal = MET × body weight (kg) × duration (h). */
-    fun burned(met: Double, weightKg: Double, minutes: Int): Double = met * weightKg * minutes / 60.0
+    /**
+     * Net kcal = (MET − 1) × body weight (kg) × duration (h): the resting energy (1 MET) is already in the
+     * maintenance, so counting the gross value would add it twice (Health Connect's active calories are net too).
+     */
+    fun burned(met: Double, weightKg: Double, minutes: Int): Double = (met - 1).coerceAtLeast(0.0) * weightKg * minutes / 60.0
 }

@@ -6,6 +6,7 @@ import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.db.SavedMealEntity
 import com.clement.nutrimo.data.db.SavedMealItemEntity
+import com.clement.nutrimo.data.db.now
 import com.clement.nutrimo.domain.model.Meal
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -33,12 +34,13 @@ class SavedMealRepository(private val db: NutrimoDatabase) {
     /** Adds every item of the saved meal to [date] / [meal]; returns how many were added. */
     suspend fun logInto(mealId: String, date: LocalDate, meal: Meal): Int {
         val items = dao.items(mealId)
+        val at = now()
         diary.upsertAll(
-            items.map {
+            items.mapIndexed { i, item ->
                 DiaryEntity(
-                    date = date, meal = meal, foodId = it.foodId, recipeId = it.recipeId, label = it.label,
-                    quantity = it.quantity, unit = it.unit, portionLabel = it.portionLabel, portionGrams = it.portionGrams,
-                    nutrients = it.nutrients,
+                    date = date, meal = meal, foodId = item.foodId, recipeId = item.recipeId, label = item.label,
+                    quantity = item.quantity, unit = item.unit, portionLabel = item.portionLabel, portionGrams = item.portionGrams,
+                    nutrients = item.nutrients, createdAt = at + i, updatedAt = at,
                 )
             },
         )

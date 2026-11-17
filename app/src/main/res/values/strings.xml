@@ -647,4 +647,8 @@
         <item quantity="many">%1$d pesées</item>
         <item quantity="other">%1$d pesées</item>
     </plurals>
+    <string name="weight_history_delete_text">%1$s le %2$s</string>
+    <string name="custom_food_barcode">Code-barres</string>
+    <string name="common_optional">facultatif</string>
+    <string name="profile_form_water_error">Au moins %1$s ml</string>
 </resources>

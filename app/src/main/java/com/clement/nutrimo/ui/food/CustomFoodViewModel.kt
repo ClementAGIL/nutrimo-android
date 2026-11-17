@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /** One nutrient input; [required] ones are those of the French nutrition label. */
+private const val MICRO_DECIMALS = 4
+
 data class NutrientField(val key: String, @StringRes val label: Int, val unit: String, val required: Boolean)
 
 val MACRO_FIELDS = listOf(
@@ -84,7 +86,8 @@ data class CustomFoodDraft(
             return CustomFoodDraft(
                 id = food.id, name = food.name, brand = food.brand.orEmpty(), barcode = food.barcode.orEmpty(),
                 macros = values.mapNotNull { (k, v) -> v?.let { k to it.toInput() } }.toMap(),
-                micros = n.micros.mapValues { it.value.toInput() },
+                // Vitamins can be tiny (0,004 mg): more decimals than the macros, or editing would round them to 0.
+                micros = n.micros.mapValues { it.value.toInput(MICRO_DECIMALS) },
                 portions = portions.map { PortionDraft(it.label, it.grams.toInput()) },
             )
         }

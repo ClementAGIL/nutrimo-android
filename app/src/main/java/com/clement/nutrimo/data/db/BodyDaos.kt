@@ -82,6 +82,10 @@ interface GoalDao {
     @Query("SELECT * FROM goals")
     suspend fun all(): List<GoalEntity>
 
+    /** Archives every active goal except [keepId] (closed today). */
+    @Query("UPDATE goals SET status = 'ARCHIVED', closedDate = :today, updatedAt = :at WHERE status = 'ACTIVE' AND id != :keepId")
+    suspend fun archiveActiveExcept(keepId: String, today: LocalDate, at: Long)
+
     @Upsert
     suspend fun upsert(goal: GoalEntity)
 
@@ -96,6 +100,9 @@ interface WaterDao {
 
     @Query("SELECT * FROM water WHERE date BETWEEN :from AND :to")
     fun observeRange(from: LocalDate, to: LocalDate): Flow<List<WaterEntity>>
+
+    @Query("SELECT * FROM water WHERE date = :date")
+    suspend fun get(date: LocalDate): WaterEntity?
 
     @Query("SELECT * FROM water")
     suspend fun all(): List<WaterEntity>

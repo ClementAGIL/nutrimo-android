@@ -3,6 +3,7 @@ package com.clement.nutrimo.data.repository
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.room.withTransaction
 import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
@@ -36,7 +37,7 @@ data class RemoteResult(val items: List<FoodDto>, val source: RemoteSource?, val
 
 class FoodRepository(
     private val context: Context,
-    db: NutrimoDatabase,
+    private val db: NutrimoDatabase,
     private val http: Http,
     private val settings: SettingsRepository,
 ) {
@@ -128,7 +129,8 @@ class FoodRepository(
 
     suspend fun markUsed(id: String) = dao.markUsed(id, now())
 
-    suspend fun saveCustom(food: FoodEntity, portions: List<PortionEntity>) {
+    /** In one transaction: a failure never leaves the food without its portions. */
+    suspend fun saveCustom(food: FoodEntity, portions: List<PortionEntity>) = db.withTransaction {
         dao.upsert(food.copy(updatedAt = now()))
         dao.deletePortions(food.id)
         dao.upsertPortions(portions.map { it.copy(foodId = food.id) })
@@ -136,5 +138,3 @@ class FoodRepository(
 
     suspend fun delete(id: String) = dao.delete(id)
 }
-
-/** Runs a network call; null on any failure except coroutine cancellation. */

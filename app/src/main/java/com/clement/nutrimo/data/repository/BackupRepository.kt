@@ -18,9 +18,11 @@ import com.clement.nutrimo.data.db.SavedMealEntity
 import com.clement.nutrimo.data.db.SavedMealItemEntity
 import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.data.db.WeightEntity
+import com.clement.nutrimo.data.db.now
 import com.clement.nutrimo.util.fail
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.time.LocalDate
 
 /** Bump when the format changes; import refuses newer versions. */
 const val BACKUP_VERSION = 1
@@ -92,6 +94,8 @@ class BackupRepository(private val db: NutrimoDatabase, json: Json) {
             db.savedMealDao().upsertItems(b.savedMealItems)
             db.activityDao().upsertAll(b.activities)
             db.dayNoteDao().upsertAll(b.dayNotes)
+            // The phone and the backup may each have their own active goal: only the most recent stays active.
+            db.goalDao().active()?.let { db.goalDao().archiveActiveExcept(it.id, LocalDate.now(), now()) }
         }
         return BackupSummary(b.weights.size, b.diary.size, b.recipes.size, b.foods.size)
     }

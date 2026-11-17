@@ -47,7 +47,7 @@ fun WeightHistory(weights: List<WeightEntity>, vm: WeightViewModel) {
     }
     editing?.let { WeightDialog(vm, it.date, it.kg, onDismiss = { editing = null }) }
     deleting?.let {
-        ConfirmDialog(stringResource(R.string.weight_history_supprimer_pesee), "${kg(it.kg)} le ${it.date.day()}", stringResource(R.string.common_supprimer), { vm.delete(it.id) }, { deleting = null })
+        ConfirmDialog(stringResource(R.string.weight_history_supprimer_pesee), stringResource(R.string.weight_history_delete_text, kg(it.kg), it.date.day()), stringResource(R.string.common_supprimer), { vm.delete(it.id) }, { deleting = null })
     }
 }
 

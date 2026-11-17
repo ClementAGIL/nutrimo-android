@@ -59,7 +59,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 NumberField(draft.parts, { v -> vm.update { it.copy(parts = v) } }, stringResource(R.string.recipe_edit_nombre_parts), Modifier.weight(1f))
                 NumberField(draft.cookedWeight, { v -> vm.update { it.copy(cookedWeight = v) } }, stringResource(R.string.recipe_edit_poids_cuit), Modifier.weight(1f), "g",
-                    supportingText = "facultatif")
+                    supportingText = stringResource(R.string.common_optional))
             }
             IngredientsCard(draft.lines, onEdit = { editing = it }, onRemove = vm::remove, onAdd = onAddIngredient)
             TotalsCard(draft)

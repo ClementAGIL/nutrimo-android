@@ -5,7 +5,6 @@ import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.QuantityUnit
-import com.clement.nutrimo.domain.model.UnitChoice
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -84,7 +83,8 @@ class DemoDiary(private val c: AppContainer, private val random: Random, private
 
     private suspend fun log(date: LocalDate, meal: Meal, item: Item) {
         val loggable = cache.getOrPut(item.id) { if (item.isRecipe) c.recipes.loggable(item.id) else c.foods.loggable(item.id) } ?: return
-        val unit = if (item.isRecipe) UnitChoice(QuantityUnit.PART, "part(s)") else UnitChoice(QuantityUnit.GRAM, "g")
+        val wanted = if (item.isRecipe) QuantityUnit.PART else QuantityUnit.GRAM
+        val unit = loggable.units.firstOrNull { it.unit == wanted } ?: return
         val amount = if (item.isRecipe) item.amount else Math.round(item.amount * random.nextDouble(1 - QUANTITY_SPREAD, 1 + QUANTITY_SPREAD)).toDouble()
         c.diary.log(date, meal, loggable, amount, unit)
     }

@@ -61,7 +61,7 @@ data/
                                   photos on the 1st, EncouragementWorker = loadDayRecords + Encouragement.pick). Adding a
                                   reminder = one ReminderKind entry + one worker + one card title in RemindersScreen
   repository/                     DayRecords (LocalHistory + HealthHistory -> buildRecords; HealthRepository.history,
-                                  AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (MET × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
+                                  AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (net (MET − 1) × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
                                   nutrition, cycle check), Diary (entries + water), Backup (JSON export/import),
                                   Photo (files/photos/<id>.jpg at 2,500 px + thumbs/, upright and never mirrored; storage),
@@ -71,7 +71,7 @@ domain/
   model/                          Nutrients (scale/plus), enums with French labels, NutrientCatalog (micros),
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
-                                  Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets),
+                                  Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day; VALID_WEIGHT_KG = range of every weigh-in / goal input), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table; burned = net (MET − 1) kcal: the resting part is in the TDEE), Macros (MacroSplit % → grams, presets),
                                   Encouragement (pick: weight news > open streak > proud today > proud yesterday > hard moment >
                                   gentle; gender-neutral wording, tested in app/src/test), DayGoals (DailyGoal incl. JOURNAL = mood or text in "Ma journée", GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
                                   streaks; AppSettings.goalTargets(profile) builds the targets)
@@ -219,5 +219,9 @@ ui/
   History streaks computed once, imports sorted.
 - ✅ Every screen goes through a ViewModel; all UI text in strings.xml (≈ 620 strings + plurals), UiText for text
   built outside composables; lint clean (no errors).
+- ✅ Full review: fixed water double-tap loss, copied-entry order, two active goals after a backup merge,
+  gross MET calories (now net), Health Connect day mix-up, NaN progress bars (0 goal), Play Store crash, editor
+  focus crash, stuck search spinner / photo save, unvalidated weights from the photo screen, photo timeline
+  spanning the whole weigh-in history; last texts moved to resources. 35 unit tests.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

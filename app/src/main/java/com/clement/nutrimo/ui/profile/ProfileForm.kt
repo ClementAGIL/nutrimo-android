@@ -22,6 +22,7 @@ import com.clement.nutrimo.util.toInput
 import java.time.LocalDate
 
 private const val MIN_HEIGHT_CM = 100.0
+private const val MIN_WATER_ML = 250
 private const val MAX_HEIGHT_CM = 250.0
 
 data class ProfileDraft(
@@ -32,14 +33,15 @@ data class ProfileDraft(
     val waterGoal: String = DEFAULT_WATER_GOAL_ML.toString(),
 ) {
     val heightCm: Double? get() = height.toDecimal()?.takeIf { it in MIN_HEIGHT_CM..MAX_HEIGHT_CM }
-    val isValid: Boolean get() = heightCm != null
+    val waterMl: Int? get() = waterGoal.toDecimal()?.toInt()?.takeIf { it >= MIN_WATER_ML }
+    val isValid: Boolean get() = heightCm != null && waterMl != null
 
     fun toEntity() = ProfileEntity(
         sex = sex,
         birthDate = birthDate,
         heightCm = heightCm ?: 0.0,
         activity = activity,
-        waterGoalMl = waterGoal.toDecimal()?.toInt() ?: DEFAULT_WATER_GOAL_ML,
+        waterGoalMl = waterMl ?: DEFAULT_WATER_GOAL_ML,
     )
 
     companion object {
@@ -79,6 +81,8 @@ fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
             onValueChange = { onChange(draft.copy(waterGoal = it)) },
             label = stringResource(R.string.profile_form_objectif_eau_par_jour),
             suffix = "ml",
+            isError = draft.waterMl == null,
+            supportingText = if (draft.waterMl == null) stringResource(R.string.profile_form_water_error, MIN_WATER_ML) else null,
             modifier = Modifier.fillMaxWidth(),
         )
     }

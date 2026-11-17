@@ -85,7 +85,8 @@ private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: ()
     var type by remember { mutableStateOf(Activities.TYPES.first()) }
     var minutes by remember { mutableStateOf("30") }
     var manual by remember { mutableStateOf("") }
-    val valid = if (type.met != null) minutes.toDecimal()?.let { it > 0 } == true else manual.toDecimal()?.let { it > 0 } == true
+    // Minutes are whole ("0,5" would round to 0 and log nothing).
+    val valid = if (type.met != null) minutes.toDecimal()?.let { it >= 1 } == true else manual.toDecimal()?.let { it > 0 } == true
     FormDialog(
         stringResource(R.string.activity_activite), onDismiss,
         { onAdd(type.key, minutes.toDecimal()?.toInt()?.takeIf { type.met != null }, manual.toDecimal()) },

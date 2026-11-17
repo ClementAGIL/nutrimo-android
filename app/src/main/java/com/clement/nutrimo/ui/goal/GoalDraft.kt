@@ -4,6 +4,7 @@ package com.clement.nutrimo.ui.goal
 import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.GoalEntity
 import com.clement.nutrimo.domain.calc.GoalMath
+import com.clement.nutrimo.domain.calc.VALID_WEIGHT_KG
 import com.clement.nutrimo.domain.model.GoalMode
 import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.toDecimal
@@ -25,8 +26,8 @@ data class GoalDraft(
     val customPace: String = "",
     val endDate: LocalDate = LocalDate.now().plusMonths(3),
 ) {
-    val start: Double? get() = startKg.toDecimal()?.takeIf { it in 30.0..400.0 }
-    val target: Double? get() = targetKg.toDecimal()?.takeIf { it in 30.0..400.0 }
+    val start: Double? get() = startKg.toDecimal()?.takeIf { it in VALID_WEIGHT_KG }
+    val target: Double? get() = targetKg.toDecimal()?.takeIf { it in VALID_WEIGHT_KG }
 
     /** kg/week, from the preset / custom field, or from the end date. */
     val pace: Double?

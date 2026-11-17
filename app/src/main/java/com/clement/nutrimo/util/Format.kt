@@ -39,4 +39,4 @@ fun dateTime(millis: Long): String = Instant.ofEpochMilli(millis).atZone(ZoneId.
 fun String.toDecimal(): Double? = trim().replace(',', '.').toDoubleOrNull()
 
 /** Text for an editable field: "72.5" → "72,5", whole numbers without decimals. */
-fun Double.toInput(): String = fmt(this, 2)
+fun Double.toInput(decimals: Int = 2): String = fmt(this, decimals)

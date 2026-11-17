@@ -54,10 +54,12 @@ fun PhotoTimeline(state: PhotosUiState, onSelect: (LocalDate) -> Unit) {
     val days = state.days
     if (days.isEmpty()) return
     val today = LocalDate.now()
-    val first = minOf(days.first().date, state.weights.firstOrNull()?.date ?: today).minusDays(MARGIN_DAYS)
+    // From the first photo: an old weigh-in history (years) would make the timeline huge and flatten the curve.
+    val first = days.first().date.minusDays(MARGIN_DAYS)
     val last = maxOf(days.last().date, today).plusDays(MARGIN_DAYS)
     val span = ChronoUnit.DAYS.between(first, last).coerceAtLeast(1)
-    val kgs = state.weights.map { it.kg } + days.mapNotNull { it.kg }
+    val shown = state.weights.filter { !it.date.isBefore(first) && !it.date.isAfter(last) }
+    val kgs = shown.map { it.kg } + days.mapNotNull { it.kg }
     val measurer = rememberTextMeasurer()
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
     val ringColor = MaterialTheme.colorScheme.primary
@@ -82,7 +84,7 @@ fun PhotoTimeline(state: PhotosUiState, onSelect: (LocalDate) -> Unit) {
                     (kgs.minOrNull() ?: 0.0) - 1, (kgs.maxOrNull() ?: 0.0) + 1,
                 )
                 drawMonths(scale, last, measurer, labelColor)
-                drawWeights(scale, state.weights)
+                drawWeights(scale, shown)
                 days.forEach { drawPhotoPoint(scale, it, state, ringColor, measurer) }
             }
         }

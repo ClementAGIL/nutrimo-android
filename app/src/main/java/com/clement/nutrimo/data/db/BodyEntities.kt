@@ -21,7 +21,6 @@ import java.util.UUID
 fun newId(): String = UUID.randomUUID().toString()
 fun now(): Long = System.currentTimeMillis()
 
-
 /** Used for calorie estimates before the first weigh-in (should not happen after onboarding). */
 const val DEFAULT_WEIGHT_KG = 70.0
 

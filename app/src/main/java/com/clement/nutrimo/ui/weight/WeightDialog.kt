@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.R
+import com.clement.nutrimo.domain.calc.VALID_WEIGHT_KG
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.FormDialog
@@ -26,7 +27,6 @@ import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-private val WEIGHT_RANGE = 30.0..400.0
 
 @Composable
 fun WeightDialog(
@@ -41,7 +41,7 @@ fun WeightDialog(
     var text by remember { mutableStateOf(initialKg?.toInput() ?: "") }
     var replacing by remember { mutableStateOf<Double?>(null) }
     val scope = rememberCoroutineScope()
-    val value = text.toDecimal()?.takeIf { it in WEIGHT_RANGE }
+    val value = text.toDecimal()?.takeIf { it in VALID_WEIGHT_KG }
     val save = { kg: Double -> vm.save(date, kg); onDismiss() }
 
     if (replacing != null) {

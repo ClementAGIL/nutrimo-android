@@ -1,4 +1,4 @@
-// Journal tab: day switcher, daily summary, the 4 meals and water.
+// Journal tab: day switcher, daily summary, the 4 meals, steps, activities, water and "Ma journée".
 package com.clement.nutrimo.ui.journal
 
 import androidx.compose.foundation.layout.Arrangement

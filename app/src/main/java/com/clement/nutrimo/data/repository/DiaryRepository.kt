@@ -1,6 +1,7 @@
 // Food diary (entries with a nutrient snapshot) and daily water.
 package com.clement.nutrimo.data.repository
 
+import androidx.room.withTransaction
 import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
 class DiaryRepository(
-    db: NutrimoDatabase,
+    private val db: NutrimoDatabase,
     private val foods: FoodRepository,
     private val recipes: RecipeRepository,
 ) {
@@ -61,12 +62,17 @@ class DiaryRepository(
     /** Copies the entries of [meal] from [from] to [to]; returns how many were copied. */
     suspend fun copyMeal(from: LocalDate, to: LocalDate, meal: Meal): Int {
         val source = dao.meal(from, meal)
-        dao.upsertAll(source.map { it.copy(id = newId(), date = to, createdAt = now(), updatedAt = now()) })
+        val at = now()
+        // One millisecond apart: the journal sorts by createdAt, so the copies keep the original order.
+        dao.upsertAll(source.mapIndexed { i, e -> e.copy(id = newId(), date = to, createdAt = at + i, updatedAt = at) })
         return source.size
     }
 
     suspend fun hasEntries(date: LocalDate): Boolean = dao.countOn(date) > 0
 
-    suspend fun addWater(date: LocalDate, current: Int, deltaMl: Int) =
+    /** Adds [deltaMl] (negative to remove) to the stored amount, never below 0. */
+    suspend fun addWater(date: LocalDate, deltaMl: Int) = db.withTransaction {
+        val current = waterDao.get(date)?.ml ?: 0
         waterDao.upsert(WaterEntity(date, (current + deltaMl).coerceAtLeast(0)))
+    }
 }

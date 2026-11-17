@@ -1,14 +1,16 @@
 // Something that can be logged in the diary or used as an ingredient: a food or a recipe.
 package com.clement.nutrimo.domain.model
 
+import com.clement.nutrimo.R
 import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.uiText
 import java.text.Normalizer
 
 data class Portion(val label: String, val grams: Double)
 
 /** A way to express a quantity of a [Loggable] (grams, parts of a recipe, or a named portion). */
-data class UnitChoice(val unit: QuantityUnit, val label: String, val portion: Portion? = null)
+data class UnitChoice(val unit: QuantityUnit, val label: UiText, val portion: Portion? = null)
 
 data class Loggable(
     val foodId: String? = null,
@@ -24,10 +26,10 @@ data class Loggable(
 ) {
     val units: List<UnitChoice>
         get() = buildList {
-            if (perPart != null) add(UnitChoice(QuantityUnit.PART, "part(s)"))
+            if (perPart != null) add(UnitChoice(QuantityUnit.PART, uiText(R.string.common_parts_unit)))
             if (per100 != null) {
-                add(UnitChoice(QuantityUnit.GRAM, "g"))
-                portions.forEach { add(UnitChoice(QuantityUnit.PORTION, portionLabel(it), it)) }
+                add(UnitChoice(QuantityUnit.GRAM, UiText.Raw("g")))
+                portions.forEach { add(UnitChoice(QuantityUnit.PORTION, UiText.Raw(portionLabel(it)), it)) }
             }
         }
 
@@ -43,7 +45,6 @@ private fun portionLabel(p: Portion): String {
     val grams = fmt(p.grams)
     return if (p.label.replace(" ", "").contains("${grams}g")) p.label else "${p.label} ($grams g)"
 }
-
 
 /** Lowercase without accents, so "Pâté" matches "pate". */
 fun String.normalized(): String =

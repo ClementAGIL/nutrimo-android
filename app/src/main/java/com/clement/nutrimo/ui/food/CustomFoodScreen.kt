@@ -60,7 +60,7 @@ private fun IdentityCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
     SectionCard {
         OutlinedTextField(d.name, { v -> vm.update { it.copy(name = v) } }, label = { Text(stringResource(R.string.custom_food_nom)) }, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(d.brand, { v -> vm.update { it.copy(brand = v) } }, label = { Text(stringResource(R.string.custom_food_marque)) }, modifier = Modifier.fillMaxWidth())
-        NumberField(d.barcode, { v -> vm.update { it.copy(barcode = v.filter(Char::isDigit)) } }, "Code-barres", Modifier.fillMaxWidth())
+        NumberField(d.barcode, { v -> vm.update { it.copy(barcode = v.filter(Char::isDigit)) } }, stringResource(R.string.custom_food_barcode), Modifier.fillMaxWidth())
     }
 }
 

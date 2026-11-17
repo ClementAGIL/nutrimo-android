@@ -39,12 +39,15 @@ import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.kcal
 import com.clement.nutrimo.util.kg
 import com.clement.nutrimo.util.signedKg
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Locale
 
-private val WEEK_DAYS = listOf("L", "M", "M", "J", "V", "S", "D")
+/** Monday first, one letter each, in the phone's language. */
+private val WEEK_DAYS = DayOfWeek.entries.map { it.getDisplayName(TextStyle.NARROW, Locale.getDefault()) }
 private val MONTH_TITLE = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRANCE)
 private val CELL_SHAPE = RoundedCornerShape(8.dp)
 private const val FUTURE_ALPHA = 0.4f

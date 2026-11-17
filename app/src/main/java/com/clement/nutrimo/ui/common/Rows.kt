@@ -57,7 +57,8 @@ fun ProgressRow(label: String, value: String, progress: Double, color: Color = M
 @Composable
 fun ProgressBar(progress: Double, color: Color, modifier: Modifier = Modifier) {
     LinearProgressIndicator(
-        progress = { progress.toFloat().coerceIn(0f, 1f) },
+        // A 0 goal gives NaN or infinity: show an empty bar instead of an invalid one.
+        progress = { progress.takeIf { it.isFinite() }?.toFloat()?.coerceIn(0f, 1f) ?: 0f },
         modifier = modifier.height(10.dp),
         color = color,
         strokeCap = StrokeCap.Round,

@@ -25,8 +25,7 @@ data class MacroSplit(val proteinPct: Int, val carbsPct: Int, val fatPct: Int) {
 
 data class MacroGrams(val protein: Double, val carbs: Double, val fat: Double)
 
-/** Common splits offered as one-tap presets. */
-/** Label (string resource) to split. */
+/** Common splits offered as one-tap presets: label (string resource) to split. */
 val MACRO_PRESETS: List<Pair<Int, MacroSplit>> = listOf(
     R.string.macro_preset_balanced to MacroSplit.BALANCED,
     R.string.macro_preset_high_protein to MacroSplit(35, 35, 30),

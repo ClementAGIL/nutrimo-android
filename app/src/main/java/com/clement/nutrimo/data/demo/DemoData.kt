@@ -112,7 +112,7 @@ class DemoData(private val c: AppContainer) {
     }
 
     private suspend fun water() {
-        for (daysAgo in 0 until WATER_DAYS) c.diary.addWater(today.minusDays(daysAgo), 0, 250 * random.nextInt(5, 11))
+        for (daysAgo in 0 until WATER_DAYS) c.diary.addWater(today.minusDays(daysAgo), 250 * random.nextInt(5, 11))
     }
 
     /** A walk, run or bike ride about every third day. */

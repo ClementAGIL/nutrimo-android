@@ -51,7 +51,8 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
             info.status == HealthStatus.NEEDS_UPDATE -> {
                 HintText(stringResource(R.string.steps_installez_ou_mettez_jour_health))
                 OutlinedButton(
-                    onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE)).setPackage("com.android.vending")) },
+                    // Phones without the Play Store app have nothing to open the link: ignore instead of crashing.
+                    onClick = { runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE)).setPackage("com.android.vending")) } },
                     modifier = Modifier.fillMaxWidth(),
                 ) { Text(stringResource(R.string.steps_ouvrir_play_store)) }
             }

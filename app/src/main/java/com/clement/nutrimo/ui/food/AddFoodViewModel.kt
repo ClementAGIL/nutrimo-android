@@ -77,15 +77,15 @@ class AddFoodViewModel(private val c: AppContainer, handle: SavedStateHandle) : 
 
     private suspend fun searchRemote(q: String, allowOff: Boolean) {
         state.update { it.copy(loading = true) }
-        val result = c.foods.searchRemote(q, allowOff)
-        val localIds = state.value.local.map { it.id }.toSet()
-        state.update {
-            it.copy(
-                remote = result.items.filter { dto -> dto.id !in localIds },
-                remoteSource = result.source,
-                remoteError = result.error,
-                loading = false,
-            )
+        try {
+            val result = c.foods.searchRemote(q, allowOff)
+            val localIds = state.value.local.map { it.id }.toSet()
+            state.update {
+                it.copy(remote = result.items.filter { dto -> dto.id !in localIds }, remoteSource = result.source, remoteError = result.error)
+            }
+        } finally {
+            // Also when the next keystroke cancels this search: the spinner must not stay on.
+            state.update { it.copy(loading = false) }
         }
     }
 

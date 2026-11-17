@@ -39,9 +39,9 @@ fun NumberField(
     )
 }
 
-/** One chip per option, the [selected] one highlighted (periods, presets, sex…). */
+/** One chip per option, the [selected] one highlighted (periods, presets, sex…); [label] is composable, so options
+ * can be resource strings. */
 @Composable
-/** [label] is composable, so options can be resource strings. */
 fun <T> ChoiceChips(options: List<T>, selected: T?, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         options.forEach { option -> FilterChip(selected = option == selected, onClick = { onSelect(option) }, label = { Text(label(option)) }) }
