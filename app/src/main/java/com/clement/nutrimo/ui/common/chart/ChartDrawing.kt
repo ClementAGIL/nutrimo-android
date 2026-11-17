@@ -32,13 +32,20 @@ private const val BAND_ALPHA = 0.16f
 /** Beyond this visible span the date labels show month and year instead of day and month. */
 private const val LONG_SPAN_DAYS = 240f
 private val MONTH_YEAR = DateTimeFormatter.ofPattern("MM/yyyy", Locale.FRANCE)
+/** Where months without data were left out (gap axis). */
+private const val BREAK_MARK = "…"
 
-internal fun Density.plotArea(width: Float, height: Float, markerRows: Int, window: ChartWindow) = PlotArea(
-    PLOT_LEFT.toPx(), PLOT_TOP.toPx(), width - PLOT_RIGHT.toPx(), height - PLOT_BOTTOM.toPx() - markerRows * MARKER_ROW.toPx(), window,
+internal fun Density.plotArea(width: Float, height: Float, markerRows: Int, window: ChartWindow, axis: GapAxis? = null) = PlotArea(
+    PLOT_LEFT.toPx(), PLOT_TOP.toPx(), width - PLOT_RIGHT.toPx(), height - PLOT_BOTTOM.toPx() - markerRows * MARKER_ROW.toPx(), window, axis,
 )
 
-internal class PlotArea(val left: Float, val top: Float, val right: Float, val bottom: Float, val w: ChartWindow) {
-    fun x(date: LocalDate) = left + (right - left) * ChronoUnit.DAYS.between(w.start, date) / w.days
+/** With [axis], dates are placed on it (long gaps collapsed); otherwise linearly between the window's dates. */
+internal class PlotArea(val left: Float, val top: Float, val right: Float, val bottom: Float, val w: ChartWindow, val axis: GapAxis? = null) {
+    fun x(date: LocalDate): Float =
+        if (axis != null) at(axis.place(date)) else left + (right - left) * ChronoUnit.DAYS.between(w.start, date) / w.days
+
+    /** x of a position on [axis], in days from its left edge. */
+    fun at(position: Long): Float = left + (right - left) * position / (axis?.totalDays ?: 1L)
     fun y(value: Double) = bottom - (bottom - top) * ((value - w.min) / (w.max - w.min)).toFloat()
     fun dateAt(x: Float): LocalDate = w.start.plusDays(((x - left) / (right - left) * w.days).roundToLong().coerceIn(0, w.days.toLong()))
 }
@@ -65,20 +72,47 @@ internal fun DrawScope.drawGrid(area: PlotArea, measurer: TextMeasurer, style: T
         val label = measurer.measure(fmt(value), style)
         drawText(label, topLeft = Offset(area.left - label.size.width - 4.dp.toPx(), y - label.size.height / 2))
     }
-    for (i in 0..X_TICKS) {
+    val labelTop = area.bottom + laneHeight + 4.dp.toPx()
+    if (area.axis != null) drawGapAxis(area, area.axis, measurer, style, color, labelTop)
+    else for (i in 0..X_TICKS) {
         val date = area.w.start.plusDays((area.w.days * i / X_TICKS).toLong())
-        val x = area.x(date)
         val label = measurer.measure(if (area.w.days > LONG_SPAN_DAYS) date.format(MONTH_YEAR) else date.short(), style)
-        val left = (x - label.size.width / 2).coerceIn(0f, size.width - label.size.width)
-        drawText(label, topLeft = Offset(left, area.bottom + laneHeight + 4.dp.toPx()))
+        val left = (area.x(date) - label.size.width / 2).coerceIn(0f, size.width - label.size.width)
+        drawText(label, topLeft = Offset(left, labelTop))
     }
     if (laneHeight > 0f) {
         val y = area.bottom + laneHeight
         drawLine(color, Offset(area.left, y), Offset(area.right, y), strokeWidth = 1f)
     }
     val today = LocalDate.now()
-    if (!today.isBefore(area.w.start) && !today.isAfter(area.w.end)) {
+    val todayShown = area.axis?.position(today) != null || area.axis == null && !today.isBefore(area.w.start) && !today.isAfter(area.w.end)
+    if (todayShown) {
         drawLine(color, Offset(area.x(today), area.top), Offset(area.x(today), area.bottom), strokeWidth = 2f)
+    }
+}
+
+/**
+ * Gap axis: a label at the start of each kept period (skipped when it would overlap the previous one), and a dashed
+ * line with "…" at each break where months without data were left out.
+ */
+private fun DrawScope.drawGapAxis(area: PlotArea, axis: GapAxis, measurer: TextMeasurer, style: TextStyle, color: Color, labelTop: Float) {
+    val long = axis.totalDays > LONG_SPAN_DAYS || axis.breaks.isNotEmpty()
+    var lastRight = Float.NEGATIVE_INFINITY
+    axis.segments.forEach { range ->
+        val date = range.start
+        val label = measurer.measure(if (long) date.format(MONTH_YEAR) else date.short(), style)
+        val left = area.x(date).coerceIn(0f, size.width - label.size.width)
+        if (left > lastRight + 4.dp.toPx()) {
+            drawText(label, topLeft = Offset(left, labelTop))
+            lastRight = left + label.size.width
+        }
+    }
+    val dash = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 4.dp.toPx()))
+    val mark = measurer.measure(BREAK_MARK, style.copy(fontSize = style.fontSize * 1.4f))
+    axis.breaks.forEach { middle ->
+        val x = area.at(middle)
+        drawLine(color, Offset(x, area.top), Offset(x, area.bottom), strokeWidth = 1.5f, pathEffect = dash)
+        drawText(mark, topLeft = Offset(x - mark.size.width / 2, area.bottom - mark.size.height))
     }
 }
 

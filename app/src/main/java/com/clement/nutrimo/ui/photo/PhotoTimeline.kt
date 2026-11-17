@@ -1,5 +1,5 @@
 // Horizontal photo timeline: the weight curve with one point per photo day, scrollable, months along the bottom.
-// Long stretches without photos are collapsed into a short "…" break (see TimelineAxis).
+// Long stretches without photos are collapsed into a short "…" break (see GapAxis).
 package com.clement.nutrimo.ui.photo
 
 import androidx.compose.foundation.Canvas
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clement.nutrimo.data.db.WeightEntity
+import com.clement.nutrimo.ui.common.chart.GapAxis
 import com.clement.nutrimo.ui.theme.NutrimoColors
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -47,7 +48,7 @@ private val MONTH = DateTimeFormatter.ofPattern("MMM yy", Locale.FRANCE)
 private const val BREAK_MARK = "…"
 
 /** Maps dates (through the axis, breaks included) and weights to the canvas. */
-private class TimelineScale(val axis: TimelineAxis, val width: Float, val top: Float, val bottom: Float, val min: Double, val max: Double) {
+private class TimelineScale(val axis: GapAxis, val width: Float, val top: Float, val bottom: Float, val min: Double, val max: Double) {
     /** Null for a date inside a collapsed stretch. */
     fun x(date: LocalDate): Float? = axis.position(date)?.let { at(it) }
     fun at(position: Long): Float = width * position / axis.totalDays
@@ -58,7 +59,8 @@ private class TimelineScale(val axis: TimelineAxis, val width: Float, val top: F
 fun PhotoTimeline(state: PhotosUiState, onSelect: (LocalDate) -> Unit) {
     val days = state.days
     if (days.isEmpty()) return
-    val axis = remember(days) { TimelineAxis(days.map { it.date }, LocalDate.now()) }
+    // Today keeps a place at the right end, even long after the last photo.
+    val axis = remember(days) { GapAxis(days.map { it.date } + LocalDate.now()) }
     // Only the weigh-ins of the kept periods: years of older history would flatten the curve.
     val shown = state.weights.filter { w -> axis.segments.any { w.date in it } }
     val kgs = shown.map { it.kg } + days.mapNotNull { it.kg }

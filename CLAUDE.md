@@ -123,7 +123,7 @@ ui/
                                   FLAG_SECURE), CameraPreview (CameraX 4:3 preview + capture -> upright Bitmap), PhotoCamera
                                   Screen/ViewModel (pose chips, front/back, ghost of the last photo of the pose at 30 %, timer
                                   0/3/10 s; PhotoReview: note, day's weight, measurements; then the next pose), PhotosScreen/
-                                  ViewModel (pose filter, PhotoTimeline = scrollable weight curve with photo points on a TimelineAxis (periods
+                                  ViewModel (pose filter, PhotoTimeline = scrollable weight curve with photo points on a GapAxis (periods
                                   around photos + today kept day by day, > 183 days without photo = 12-day "…" break; tested), A/B slots,
                                   PhotoDayCard), PhotoCompareScreen/ViewModel (side by side or B over A with opacity; each photo
                                   has its own ZoomState), PhotoImages (thumbnails / larger images loaded off the main thread)
@@ -135,6 +135,8 @@ ui/
                                   status message / busy), Pickers (DateField, Dropdown), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
   common/chart/                   LineChart (public types + composable of the generic Canvas date/value chart; drawing in
                                   ChartDrawing (PlotArea, bands, grid, bars, lines, drawMarkerShape shared with the legend),
+                                  GapAxis (dates with > 183 days without data collapsed into "…" breaks; LineChart(axis =)
+                                  for the measurement charts, also the photo timeline; tested),
                                   zoomPan in ChartGestures): lines, dots, daily bars, ChartBand value zones,
                                   ChartMarker in a lane under the plot (one row per kind),
                                   zoomBounds + onZoom = pinch-zoom / sideways drag-pan, selected

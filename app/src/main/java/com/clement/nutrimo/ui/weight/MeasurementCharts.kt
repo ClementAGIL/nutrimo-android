@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -22,11 +23,13 @@ import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.chart.ChartPeriod
 import com.clement.nutrimo.ui.common.chart.ChartPoint
 import com.clement.nutrimo.ui.common.chart.ChartSeries
+import com.clement.nutrimo.ui.common.chart.GapAxis
 import com.clement.nutrimo.ui.common.chart.LineChart
 import com.clement.nutrimo.ui.common.chart.PeriodChips
 import com.clement.nutrimo.ui.common.chart.windowOf
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.signed
+import java.time.LocalDate
 
 @Composable
 fun MeasurementCharts(list: List<MeasurementEntity>) {
@@ -51,6 +54,8 @@ private fun MeasurementChart(field: MeasurementField, points: List<ChartPoint>, 
     SectionCard(stringResource(field.label)) {
         StatRow(stringResource(R.string.measurement_charts_actuel), "${fmt(points.last().value)} cm")
         if (points.size > 1) StatRow(stringResource(R.string.measurement_charts_evolution_sur_periode), signed(points.last().value - points.first().value, "cm"))
-        LineChart(series, windowOf(series, period), Modifier.fillMaxWidth().height(180.dp))
+        // Months without measurements (more than 6 in a row) shrink to a short "…" break; today keeps its place.
+        val axis = remember(points) { GapAxis(points.map { it.date } + LocalDate.now()) }
+        LineChart(series, windowOf(series, period), Modifier.fillMaxWidth().height(180.dp), axis = axis)
     }
 }

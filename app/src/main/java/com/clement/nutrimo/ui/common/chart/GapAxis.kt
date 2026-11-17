@@ -1,21 +1,21 @@
-// Horizontal axis of the photo timeline: the periods around the photos (and today) are kept day by day, while a long
-// stretch without any photo is collapsed into a short break. Pure logic, tested in TimelineAxisTest.
-package com.clement.nutrimo.ui.photo
+// Date axis with gaps: the periods around the data dates are kept day by day, while a long stretch without data is
+// collapsed into a short break. Used by the photo timeline and the measurement charts. Pure logic, tested in GapAxisTest.
+package com.clement.nutrimo.ui.common.chart
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-/** More than this without a photo (about 6 months) is drawn as a short break instead of the empty months. */
-internal const val GAP_DAYS = 183L
+/** More than this without data (about 6 months) is drawn as a short break instead of the empty months. */
+const val GAP_DAYS = 183L
 
-/** Days kept on each side of a photo day (and of today), so points don't touch a break or an edge. */
-internal const val MARGIN_DAYS = 10L
+/** Days kept on each side of a data date, so points don't touch a break or an edge. */
+const val MARGIN_DAYS = 10L
 
 /** Width of a break, counted in days of the axis. */
-internal const val BREAK_DAYS = 12L
+const val BREAK_DAYS = 12L
 
-/** [photoDates] must not be empty; [today] always gets a visible place at the right end. */
-internal class TimelineAxis(photoDates: List<LocalDate>, today: LocalDate) {
+/** [dates] (data days, plus e.g. today to keep a place for it) must not be empty. */
+class GapAxis(dates: List<LocalDate>) {
     /** Visible date ranges, oldest first (both ends included). */
     val segments: List<ClosedRange<LocalDate>>
 
@@ -29,7 +29,7 @@ internal class TimelineAxis(photoDates: List<LocalDate>, today: LocalDate) {
     private val offsets: List<Long>
 
     init {
-        val anchors = (photoDates + today).distinct().sorted()
+        val anchors = dates.distinct().sorted()
         val kept = mutableListOf<ClosedRange<LocalDate>>()
         var start = anchors.first().minusDays(MARGIN_DAYS)
         anchors.zipWithNext().forEach { (a, b) ->
@@ -55,6 +55,17 @@ internal class TimelineAxis(photoDates: List<LocalDate>, today: LocalDate) {
         offsets = starts
         breaks = middles
         totalDays = position.coerceAtLeast(1)
+    }
+
+    /** Like [position], but a date inside a collapsed stretch is placed in the middle of its break. */
+    fun place(date: LocalDate): Long {
+        position(date)?.let { return it }
+        val next = segments.indexOfFirst { date < it.start }
+        return when {
+            next < 0 -> totalDays
+            next == 0 -> 0
+            else -> breaks[next - 1]
+        }
     }
 
     /** Position of [date] in days from the left edge, or null when it falls in a collapsed stretch. */

@@ -63,6 +63,8 @@ fun LineChart(
     /** Enables pinch to zoom and horizontal drag to pan, within these dates; [onZoom] gets the new visible dates. */
     zoomBounds: ClosedRange<LocalDate>? = null,
     onZoom: ((LocalDate, LocalDate) -> Unit)? = null,
+    /** Collapses long stretches without data into short breaks (not combined with [onTap] / zoom). */
+    axis: GapAxis? = null,
 ) {
     val measurer = rememberTextMeasurer()
     val labelStyle = TextStyle(fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -78,7 +80,7 @@ fun LineChart(
     }
     val zoom = if (zoomBounds == null || onZoom == null) Modifier else Modifier.zoomPan(window, zoomBounds, onZoom)
     Canvas(modifier.then(zoom).then(tap)) {
-        val area = plotArea(size.width, size.height, rows.size, window)
+        val area = plotArea(size.width, size.height, rows.size, window, axis)
         clipRect(area.left, area.top, area.right, area.bottom) {
             bands.forEach { drawBand(area, it, measurer, labelStyle) }
         }
