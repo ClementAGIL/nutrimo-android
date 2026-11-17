@@ -4,7 +4,7 @@ package com.clement.nutrimo.ui.goal
 import com.clement.nutrimo.data.db.GoalEntity
 import com.clement.nutrimo.domain.calc.GoalMath
 import com.clement.nutrimo.domain.model.GoalMode
-import com.clement.nutrimo.ui.common.toDecimal
+import com.clement.nutrimo.util.toDecimal
 import java.time.LocalDate
 
 /** Pace presets in kg/week; [CUSTOM_PACE] selects the free field. */

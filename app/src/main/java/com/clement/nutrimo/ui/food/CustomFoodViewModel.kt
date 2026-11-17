@@ -12,9 +12,9 @@ import com.clement.nutrimo.data.db.newId
 import com.clement.nutrimo.data.network.searchTextOf
 import com.clement.nutrimo.domain.model.FoodSource
 import com.clement.nutrimo.domain.model.Nutrients
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
 import com.clement.nutrimo.ui.navigation.CustomFoodRoute
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

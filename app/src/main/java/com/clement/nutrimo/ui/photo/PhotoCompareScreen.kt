@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.kg
-import com.clement.nutrimo.ui.common.short
+import com.clement.nutrimo.util.kg
+import com.clement.nutrimo.util.short
 
 private const val DEFAULT_OPACITY = 0.5f
 

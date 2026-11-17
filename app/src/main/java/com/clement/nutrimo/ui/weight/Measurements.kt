@@ -29,11 +29,11 @@ import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.NumberField
-import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import java.time.LocalDate
 
 /** Label, chart color and accessors of each measurement, so the list, the charts and the dialog share one definition. */

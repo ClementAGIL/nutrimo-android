@@ -13,9 +13,9 @@ import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
 import com.clement.nutrimo.domain.model.QuantityUnit
 import com.clement.nutrimo.domain.model.UnitChoice
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
 import com.clement.nutrimo.ui.navigation.ItemDetailRoute
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

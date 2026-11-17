@@ -28,6 +28,7 @@ No unit tests for now (decided with the user).
 | `./gradlew installDebug`        | Build and install on the connected phone (adb)              |
 | `./gradlew assembleRelease`     | `app-release.apk`, signed with the debug key (installs over debug, keeps data) |
 | `./gradlew lint`                | Android lint                                                |
+| `./gradlew :app:testDebugUnitTest` | Unit tests (JUnit 4, `app/src/test`): pure logic only      |
 
 `local.properties` must contain `sdk.dir=C:/Users/<you>/AppData/Local/Android/Sdk` (forward slashes).
 
@@ -52,11 +53,13 @@ data/
   demo/                           DemoData (wipe + realistic history: profile, 2 goals, 5 months of weigh-ins, measurements,
                                   water, custom food, recipes incl. a sub-recipe), DemoDiary (30 days of meals, fixed CIQUAL ids),
                                   DemoPhotos (drawn silhouettes, 5 sessions x 3 poses, slimmer with the weight)
-  reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
-                                  only when nothing was logged today), photo worker (daily job, notifies on the 1st when no
-                                  photo this month; on by default, planned at app start with KEEP), EncouragementWorker (daily, own
-                                  "Encouragements" channel, on by default, KEEP at app start: loadDayRecords + Encouragement.pick).
-                                  Reminders.canNotify; RemindersScreen shows a banner + button when the permission is missing
+  reminders/                      ReminderKind (every reminder described once: settings key prefix, work name, notification
+                                  id, channel, defaults, weekly; nextRun = pure next-run time), Reminders (channels,
+                                  schedule(kind) / scheduleAll at app start with KEEP, canNotify, notify), ReminderScheduler
+                                  (container: save + re-plan, used by RemindersViewModel), ReminderWorkers (ReminderWorker
+                                  base: check(today) -> notification or null; weigh-in / meals only when nothing logged,
+                                  photos on the 1st, EncouragementWorker = loadDayRecords + Encouragement.pick). Adding a
+                                  reminder = one ReminderKind entry + one worker + one card title in RemindersScreen
   repository/                     DayRecords (LocalHistory + HealthHistory -> buildRecords; HealthRepository.history,
                                   AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (MET × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
@@ -97,7 +100,7 @@ ui/
   history/                        HistoryScreen (journal chart icon): CalendarTab (month grid, one dot per goal: filled =
                                   achieved, ring = missed, none = no data; day detail; streaks) and ChartsTab (7/30-day bars
                                   vs goal for calories, sport, steps, water; averages; estimated loss = Σ(TDEE + sport −
-                                  eaten)/7700). HistoryViewModel loads ≥ 180 days (streaks) + Health Connect once per range,
+                                  eaten)/7700). HistoryViewModel loads ≥ 180 days (streaks, computed once per data change) + Health Connect once per range,
                                   data/repository/DayRecords merges everything into one DayRecord per day. Past days use today's targets.
   food/                           AddFoodScreen/ViewModel (local instant, backend after 600 ms, OFF only on submit;
                                   barcode lookup), QuickTabs (recents/favorites/custom/recipes), FoodRows,
@@ -107,8 +110,9 @@ ui/
   recipe/                         RecipesScreen (favorites first, then by use count = diary entries, counted live in SQL; kcal/part), RecipeViewScreen (per part / 100 g, delete warns
                                   about parent recipes), RecipeEditScreen/ViewModel (ingredients picked through
                                   AddFood(forRecipe) → ItemDetail → NavResults.INGREDIENT; cycle check)
-  weight/                         WeightScreen = hub: WeightHubChart (weight + goal + trend over Bmi.ZONES bands; chips = presetRange, last weigh-in at 3/4
-                                  width; pinch / drag = custom dates, marker lane
+  weight/                         WeightScreen = hub: WeightHubChart (weight + goal + trend over Bmi.ZONES bands; pinch / drag =
+                                  custom dates; WeightHubModel = pure, tested: presetRange (last weigh-in at 3/4 width),
+                                  trendLineDates, nearestDay + HubDay), marker lane
                                   under the plot: diamond = measurement day, ring = photo day; tap -> DayBubble with links), Bilan / Mensurations / Photos buttons, "+" menu
                                   (weigh-in, measurements, photo). WeightScreens: WeighBilanScreen (WeightDashboard + history
                                   link), WeighHistoryScreen, MeasurementsScreen (list / charts tabs). Measurements
@@ -127,13 +131,17 @@ ui/
                                   AppTabs, EmptyState), Rows (StatRow, ProgressRow, ProgressBar, SwitchRow, GoalSettingsButton),
                                   Inputs (NumberField, ChoiceChips, WideButton), Texts (IntroText, HintText, WarningText),
                                   Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog, InfoButton = ⓘ opening a help dialog: use it instead of long HintText in crowded cards), StatusRunner (action →
-                                  status message / busy), Pickers (DateField, Dropdown), Format (fr numbers/dates, dateTime,
-                                  signed), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
-  common/chart/                   LineChart (generic Canvas date/value chart: lines, dots, daily bars, ChartBand value zones,
+                                  status message / busy), Pickers (DateField, Dropdown), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
+  common/chart/                   LineChart (public types + composable of the generic Canvas date/value chart; drawing in
+                                  ChartDrawing (PlotArea, bands, grid, bars, lines, drawMarkerShape shared with the legend),
+                                  zoomPan in ChartGestures): lines, dots, daily bars, ChartBand value zones,
                                   ChartMarker in a lane under the plot (one row per kind),
                                   zoomBounds + onZoom = pinch-zoom / sideways drag-pan, selected
                                   day, onTap(date, xOf)), ChartPeriods (ChartPeriod + PeriodChips, windowOf(period) and windowOf(start, end) for a zoomed view, ChartLegend with
                                   marker symbols); used by weight, measurements, history
+  ../util/Format.kt               (package util, pure Kotlin) French numbers/dates: fmt, count (thousands), kcal, kg, signed,
+                                  percent, day/full/short, dateTime, toDecimal/toInput. The only formatter: UI and domain
+                                  text (Encouragement, Loggable, recipe parts) all use it
   theme/Theme.kt                  brand color schemes (cards = surface, page = background), shapes, bold titles + fixed chart colors
                                   (NutrimoColors; daily goals, same in journal and calendar: calories orange, weight green,
                                   sport purple, steps pink, water sky blue, "Journée notée" sunny yellow)
@@ -154,7 +162,9 @@ ui/
 ## Code quality rules
 
 - Short files (< ~300 lines) and functions (< ~40 lines), one job each. Split screens into small composables.
-- No copy-paste: shared UI goes to `ui/common`, shared math to `domain/calc`.
+- No copy-paste: shared UI goes to `ui/common`, shared math to `domain/calc`, number/date text to `util/Format.kt`.
+- Pure logic (no Compose / Android) lives in its own file so it can be unit-tested (`app/src/test`, JUnit 4):
+  e.g. `WeightHubModel`, `Encouragement`, `nextRun`.
 - Constants in `UPPER_SNAKE_CASE` at the top of the file. Comments explain why. No commented-out code.
 - Every file starts with a one-line comment saying what it is for.
 - Launcher icon (happy flower, dark green): `res/drawable/ic_launcher_foreground.xml`, `ic_launcher_monochrome.xml` and the
@@ -189,6 +199,9 @@ ui/
   (allowBackup=false + data_extraction_rules): nothing leaves the phone except the user's export / server backup.
   To test on the phone: camera framing, front-camera orientation, lock prompt, timeline taps.
 - ✅ Daily encouragement notification + "Ma journée" (mood + one text; "Journée notée" goal in the calendar and streaks). DB v5 via AutoMigration(4 -> 5).
-  Unit tests: app/src/test (JUnit 4), run with gradlew :app:testDebugUnitTest.
+  Unit tests: app/src/test (JUnit 4), run with gradlew :app:testDebugUnitTest (30 tests).
+- ✅ Code review refactor: one ReminderKind table (reminders, settings keys, scheduling, all re-planned at start),
+  util/Format shared with domain, LineChart split (composable / drawing / gestures), WeightHubModel extracted,
+  History streaks computed once, imports sorted.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

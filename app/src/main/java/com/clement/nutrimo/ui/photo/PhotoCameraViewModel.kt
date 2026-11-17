@@ -8,9 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.model.PhotoPose
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
 import com.clement.nutrimo.ui.navigation.PhotoCameraRoute
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

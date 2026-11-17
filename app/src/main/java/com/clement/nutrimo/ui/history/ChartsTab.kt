@@ -18,14 +18,14 @@ import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.grams
-import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.common.chart.ChartPoint
 import com.clement.nutrimo.ui.common.chart.ChartSeries
 import com.clement.nutrimo.ui.common.chart.ChartWindow
 import com.clement.nutrimo.ui.common.chart.LineChart
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.grams
+import com.clement.nutrimo.util.kcal
 import kotlin.math.ceil
 
 /** One bar chart per goal: what to plot, the goal line and the Y axis rounding step. */

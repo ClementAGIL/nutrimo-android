@@ -14,11 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.ui.common.ChoiceChips
 import java.time.LocalDate
@@ -104,14 +100,8 @@ private fun LegendItem(label: String, symbol: @Composable () -> Unit) {
     }
 }
 
+/** Same shape as on the chart. */
 @Composable
 private fun MarkerSymbol(m: ChartMarker) {
-    Canvas(Modifier.size(12.dp)) {
-        if (m.ring) {
-            drawCircle(m.color, size.minDimension / 2 - 1.5.dp.toPx(), style = Stroke(2.5.dp.toPx()))
-        } else {
-            val side = size.minDimension * 0.7f
-            rotate(45f) { drawRect(m.color, center - Offset(side / 2, side / 2), Size(side, side)) }
-        }
-    }
+    Canvas(Modifier.size(12.dp)) { drawMarkerShape(center, m.ring, m.color) }
 }

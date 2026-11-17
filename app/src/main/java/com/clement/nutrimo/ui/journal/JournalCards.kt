@@ -1,7 +1,6 @@
 // Cards of the journal: daily summary (kcal ring + macros), one card per meal, water.
 package com.clement.nutrimo.ui.journal
 
-import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,8 +15,8 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,13 +34,14 @@ import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.GoalSettingsButton
+import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.MacroBars
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.TextDialog
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
 
 private const val WATER_STEP_ML = 250
 

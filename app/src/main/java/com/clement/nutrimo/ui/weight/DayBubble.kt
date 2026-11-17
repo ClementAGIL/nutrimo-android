@@ -3,8 +3,8 @@ package com.clement.nutrimo.ui.weight
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kg
+import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kg
 import kotlin.math.roundToInt
 
 private val BUBBLE_MAX_WIDTH = 240.dp

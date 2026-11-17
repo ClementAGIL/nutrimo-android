@@ -14,9 +14,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appContainer
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.full
-import com.clement.nutrimo.ui.common.kg
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.full
+import com.clement.nutrimo.util.kg
 
 @Composable
 fun GoalsScreen(onBack: () -> Unit) {

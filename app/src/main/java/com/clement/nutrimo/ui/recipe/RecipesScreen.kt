@@ -22,12 +22,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.RecipeEntity
-import com.clement.nutrimo.data.repository.formatParts
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.common.stateWhileSubscribed
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
 import kotlinx.coroutines.flow.map
 
 data class RecipeSummary(val recipe: RecipeEntity, val kcalPerPart: Double?, val useCount: Int)
@@ -54,7 +54,7 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
                 ListItem(
                     headlineContent = { Text(recipe.name) },
                     supportingContent = {
-                        Text("${formatParts(recipe.parts)} parts · ${perPart?.let { kcal(it) } ?: "–"} / part · ${usesText(uses)}")
+                        Text("${fmt(recipe.parts)} parts · ${perPart?.let { kcal(it) } ?: "–"} / part · ${usesText(uses)}")
                     },
                     trailingContent = if (recipe.isFavorite) ({ Icon(Icons.Default.Star, "Favori", tint = MaterialTheme.colorScheme.primary) }) else null,
                     modifier = Modifier.clickable { onOpen(recipe.id) },

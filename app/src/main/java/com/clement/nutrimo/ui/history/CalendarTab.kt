@@ -1,8 +1,6 @@
 // Calendar tab: month grid with one dot per goal and day, the selected day's detail and the goal streaks.
 package com.clement.nutrimo.ui.history
 
-import com.clement.nutrimo.ui.common.HintText
-import com.clement.nutrimo.ui.journal.moodText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,13 +27,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.domain.calc.DailyGoal
+import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
-import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kcal
-import com.clement.nutrimo.ui.common.kg
-import com.clement.nutrimo.ui.common.signedKg
+import com.clement.nutrimo.ui.journal.moodText
+import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
+import com.clement.nutrimo.util.kg
+import com.clement.nutrimo.util.signedKg
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter

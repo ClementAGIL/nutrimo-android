@@ -49,8 +49,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.R
-import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
 
 val ART_SIZE = 220.dp
 const val CALORIES_MS = 2600

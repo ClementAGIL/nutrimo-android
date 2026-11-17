@@ -23,7 +23,7 @@ import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.SwitchRow
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appContainer
-import com.clement.nutrimo.ui.common.fmt
+import com.clement.nutrimo.util.fmt
 import kotlinx.coroutines.launch
 
 private const val MIN_STEP_GOAL = 1000

@@ -1,8 +1,8 @@
 // Tabs shown before typing: recent foods, favorites, custom foods and recipes.
 package com.clement.nutrimo.ui.food
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,8 +12,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.ui.common.EmptyState
-import com.clement.nutrimo.ui.common.fmt
+import com.clement.nutrimo.util.fmt
 
 private enum class QuickTab(val label: String) { RECENT("Récents"), MEALS("Repas"), FAVORITES("Favoris"), CUSTOM("Mes aliments"), RECIPES("Recettes") }
 

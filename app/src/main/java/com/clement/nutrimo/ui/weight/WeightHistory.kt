@@ -23,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import com.clement.nutrimo.data.db.WeightEntity
 import com.clement.nutrimo.ui.common.ConfirmDialog
-import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.common.EmptyState
-import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.kg
-import com.clement.nutrimo.ui.common.signedKg
+import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.kg
+import com.clement.nutrimo.util.signedKg
 
 @Composable
 fun WeightHistory(weights: List<WeightEntity>, vm: WeightViewModel) {

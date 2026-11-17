@@ -2,6 +2,7 @@
 package com.clement.nutrimo.data.repository
 
 import android.content.Context
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -10,6 +11,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.clement.nutrimo.data.db.ProfileEntity
+import com.clement.nutrimo.data.reminders.ReminderKind
 import com.clement.nutrimo.domain.calc.DEFAULT_SPORT_GOAL_KCAL
 import com.clement.nutrimo.domain.calc.DEFAULT_STEP_GOAL
 import com.clement.nutrimo.domain.calc.DEFAULT_WATER_GOAL_ML
@@ -34,12 +36,7 @@ data class AppSettings(
     val serverUrl: String = "",
     val apiKey: String = "",
     val onboardingDone: Boolean = false,
-    val weighReminder: ReminderSettings = ReminderSettings(false, 8, 0, DayOfWeek.MONDAY),
-    val mealReminder: ReminderSettings = ReminderSettings(false, 20, 0),
-    /** On the 1st of each month; on by default (progress photos are only useful when taken regularly). */
-    val photoReminder: ReminderSettings = ReminderSettings(true, 10, 0),
-    /** One kind message a day; on by default, early evening so an open streak can still be kept. */
-    val encouragement: ReminderSettings = ReminderSettings(true, 19, 0),
+    val reminders: Map<ReminderKind, ReminderSettings> = ReminderKind.entries.associateWith { it.defaults },
     val autoBackup: Boolean = false,
     /** Epoch millis of the last successful server backup, 0 if none. */
     val lastServerBackup: Long = 0,
@@ -49,30 +46,29 @@ data class AppSettings(
     val sportGoalKcal: Int = DEFAULT_SPORT_GOAL_KCAL,
     /** Off by default: adds Health Connect steps (beyond the baseline) and non-walking workouts to the budget. */
     val healthInBudget: Boolean = false,
-)
+) {
+    fun reminder(kind: ReminderKind): ReminderSettings = reminders[kind] ?: kind.defaults
+}
 
 /** The daily goals; the water goal lives in the profile. */
 fun AppSettings.goalTargets(profile: ProfileEntity?) =
     GoalTargets(stepGoal, sportGoalKcal, profile?.waterGoalMl ?: DEFAULT_WATER_GOAL_ML)
 
 class SettingsRepository(private val context: Context) {
+    /** "weigh_enabled", "weigh_hour", "weigh_minute", "weigh_day" and the same for every [ReminderKind]. */
+    private class ReminderKeys(kind: ReminderKind) {
+        val enabled = booleanPreferencesKey("${kind.key}_enabled")
+        val hour = intPreferencesKey("${kind.key}_hour")
+        val minute = intPreferencesKey("${kind.key}_minute")
+        val day = intPreferencesKey("${kind.key}_day")
+    }
+
+    private val reminderKeys = ReminderKind.entries.associateWith { ReminderKeys(it) }
+
     private object Keys {
         val serverUrl = stringPreferencesKey("server_url")
         val apiKey = stringPreferencesKey("api_key")
         val onboardingDone = booleanPreferencesKey("onboarding_done")
-        val weighEnabled = booleanPreferencesKey("weigh_enabled")
-        val weighHour = intPreferencesKey("weigh_hour")
-        val weighMinute = intPreferencesKey("weigh_minute")
-        val weighDay = intPreferencesKey("weigh_day")
-        val mealEnabled = booleanPreferencesKey("meal_enabled")
-        val mealHour = intPreferencesKey("meal_hour")
-        val mealMinute = intPreferencesKey("meal_minute")
-        val photoEnabled = booleanPreferencesKey("photo_enabled")
-        val photoHour = intPreferencesKey("photo_hour")
-        val photoMinute = intPreferencesKey("photo_minute")
-        val encourageEnabled = booleanPreferencesKey("encourage_enabled")
-        val encourageHour = intPreferencesKey("encourage_hour")
-        val encourageMinute = intPreferencesKey("encourage_minute")
         val autoBackup = booleanPreferencesKey("auto_backup")
         val lastServerBackup = longPreferencesKey("last_server_backup")
         val proteinPct = intPreferencesKey("protein_pct")
@@ -110,32 +106,15 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setLastServerBackup(at: Long) = edit { it[Keys.lastServerBackup] = at }
 
-    suspend fun setWeighReminder(r: ReminderSettings) = edit {
-        it[Keys.weighEnabled] = r.enabled
-        it[Keys.weighHour] = r.hour
-        it[Keys.weighMinute] = r.minute
-        it[Keys.weighDay] = r.day.value
+    suspend fun setReminder(kind: ReminderKind, r: ReminderSettings) = edit {
+        val k = reminderKeys.getValue(kind)
+        it[k.enabled] = r.enabled
+        it[k.hour] = r.hour
+        it[k.minute] = r.minute
+        it[k.day] = r.day.value
     }
 
-    suspend fun setMealReminder(r: ReminderSettings) = edit {
-        it[Keys.mealEnabled] = r.enabled
-        it[Keys.mealHour] = r.hour
-        it[Keys.mealMinute] = r.minute
-    }
-
-    suspend fun setPhotoReminder(r: ReminderSettings) = edit {
-        it[Keys.photoEnabled] = r.enabled
-        it[Keys.photoHour] = r.hour
-        it[Keys.photoMinute] = r.minute
-    }
-
-    suspend fun setEncouragement(r: ReminderSettings) = edit {
-        it[Keys.encourageEnabled] = r.enabled
-        it[Keys.encourageHour] = r.hour
-        it[Keys.encourageMinute] = r.minute
-    }
-
-    private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
+    private suspend fun edit(block: (MutablePreferences) -> Unit) {
         context.dataStore.edit(block)
     }
 
@@ -145,27 +124,14 @@ class SettingsRepository(private val context: Context) {
             serverUrl = this[Keys.serverUrl] ?: d.serverUrl,
             apiKey = this[Keys.apiKey] ?: d.apiKey,
             onboardingDone = this[Keys.onboardingDone] ?: false,
-            weighReminder = ReminderSettings(
-                enabled = this[Keys.weighEnabled] ?: d.weighReminder.enabled,
-                hour = this[Keys.weighHour] ?: d.weighReminder.hour,
-                minute = this[Keys.weighMinute] ?: d.weighReminder.minute,
-                day = DayOfWeek.of(this[Keys.weighDay] ?: d.weighReminder.day.value),
-            ),
-            mealReminder = ReminderSettings(
-                enabled = this[Keys.mealEnabled] ?: d.mealReminder.enabled,
-                hour = this[Keys.mealHour] ?: d.mealReminder.hour,
-                minute = this[Keys.mealMinute] ?: d.mealReminder.minute,
-            ),
-            photoReminder = ReminderSettings(
-                enabled = this[Keys.photoEnabled] ?: d.photoReminder.enabled,
-                hour = this[Keys.photoHour] ?: d.photoReminder.hour,
-                minute = this[Keys.photoMinute] ?: d.photoReminder.minute,
-            ),
-            encouragement = ReminderSettings(
-                enabled = this[Keys.encourageEnabled] ?: d.encouragement.enabled,
-                hour = this[Keys.encourageHour] ?: d.encouragement.hour,
-                minute = this[Keys.encourageMinute] ?: d.encouragement.minute,
-            ),
+            reminders = reminderKeys.mapValues { (kind, k) ->
+                ReminderSettings(
+                    enabled = this[k.enabled] ?: kind.defaults.enabled,
+                    hour = this[k.hour] ?: kind.defaults.hour,
+                    minute = this[k.minute] ?: kind.defaults.minute,
+                    day = this[k.day]?.let(DayOfWeek::of) ?: kind.defaults.day,
+                )
+            },
             autoBackup = this[Keys.autoBackup] ?: false,
             lastServerBackup = this[Keys.lastServerBackup] ?: 0,
             stepGoal = this[Keys.stepGoal] ?: d.stepGoal,

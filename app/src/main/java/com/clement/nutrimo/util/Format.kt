@@ -1,5 +1,6 @@
-// French number and date formatting, and lenient decimal parsing ("72,5" or "72.5").
-package com.clement.nutrimo.ui.common
+// French number and date formatting, and lenient decimal parsing ("72,5" or "72.5"). Pure Kotlin (no Android):
+// shared by the UI and by domain code that writes text (e.g. Encouragement).
+package com.clement.nutrimo.util
 
 import java.time.Instant
 import java.time.LocalDate
@@ -17,6 +18,9 @@ fun fmt(value: Double, decimals: Int = 1): String {
     val text = "%.${decimals}f".format(FR, value)
     return if (decimals > 0) text.trimEnd('0').trimEnd(',') else text
 }
+
+/** Whole count with French thousands separators: "12 500". */
+fun count(value: Long): String = "%,d".format(FR, value)
 
 fun kcal(value: Double) = "${fmt(value, 0)} kcal"
 fun kg(value: Double) = "${fmt(value, 1)} kg"

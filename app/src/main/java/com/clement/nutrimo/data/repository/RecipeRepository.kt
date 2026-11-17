@@ -12,6 +12,7 @@ import com.clement.nutrimo.domain.calc.RecipeMath
 import com.clement.nutrimo.domain.calc.RecipeTotals
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.normalized
+import com.clement.nutrimo.util.fmt
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -64,7 +65,7 @@ class RecipeRepository(private val db: NutrimoDatabase) {
         return Loggable(
             recipeId = id,
             name = recipe.name,
-            subtitle = "Recette · ${formatParts(recipe.parts)} parts",
+            subtitle = "Recette · ${fmt(recipe.parts)} parts",
             per100 = totals.per100,
             perPart = totals.perPart,
         )
@@ -106,4 +107,3 @@ class RecipeRepository(private val db: NutrimoDatabase) {
     suspend fun markUsed(id: String) = dao.markUsed(id, now())
 }
 
-fun formatParts(parts: Double): String = if (parts % 1.0 == 0.0) parts.toInt().toString() else "%.1f".format(parts)

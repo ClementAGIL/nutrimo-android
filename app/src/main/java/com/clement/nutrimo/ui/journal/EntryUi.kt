@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.QuantityUnit
-import com.clement.nutrimo.ui.common.fmt
+import com.clement.nutrimo.util.fmt
 
 fun quantityText(entry: DiaryEntity): String = when (entry.unit) {
     QuantityUnit.GRAM -> "${fmt(entry.quantity)} g"

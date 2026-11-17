@@ -1,7 +1,6 @@
 // Macro targets: presets or custom percentages, with the resulting grams and protein per kg.
 package com.clement.nutrimo.ui.more
 
-import com.clement.nutrimo.ui.common.IntroText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.domain.calc.MACRO_PRESETS
 import com.clement.nutrimo.domain.calc.MacroSplit
 import com.clement.nutrimo.ui.common.ChoiceChips
+import com.clement.nutrimo.ui.common.IntroText
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -27,7 +27,7 @@ import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.appContainer
-import com.clement.nutrimo.ui.common.fmt
+import com.clement.nutrimo.util.fmt
 import kotlinx.coroutines.launch
 
 @Composable

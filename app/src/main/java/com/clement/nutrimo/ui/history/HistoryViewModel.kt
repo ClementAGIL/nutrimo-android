@@ -1,10 +1,10 @@
 // History state: one DayRecord per day (diary, sport, steps, water, weight), goal targets, browsed month and chart period.
 package com.clement.nutrimo.ui.history
 
-import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.data.repository.HealthHistory
 import com.clement.nutrimo.data.repository.LocalHistory
@@ -42,9 +42,9 @@ data class HistoryState(
     val month: YearMonth = YearMonth.now(),
     val selected: LocalDate = LocalDate.now(),
     val chartDays: Int = CHART_PERIODS.first(),
+    /** Computed once per data change (each goal walks the whole loaded range), not on every recomposition. */
+    val streaks: Map<DailyGoal, Streak> = emptyMap(),
 ) {
-    val streaks: Map<DailyGoal, Streak> get() = DailyGoal.entries.associateWith { streak(it, records, targets, today) }
-
     val chartFrom: LocalDate get() = today.minusDays(chartDays - 1L)
 
     /** Records of the chart period, oldest first. */
@@ -75,12 +75,15 @@ class HistoryViewModel(private val c: AppContainer) : ViewModel() {
 
     val state = combine(local, health, c.body.calorieTarget, c.settings.settings, c.body.profile) { l, h, target, settings, profile ->
         val kg = l.weights.lastOrNull()?.kg ?: DEFAULT_WEIGHT_KG
+        val records = buildRecords(l, h, target?.target, settings.healthInBudget, kg)
+        val targets = settings.goalTargets(profile)
         HistoryState(
             today = today,
-            records = buildRecords(l, h, target?.target, settings.healthInBudget, kg),
+            records = records,
             totals = l.totals,
             target = target,
-            targets = settings.goalTargets(profile),
+            targets = targets,
+            streaks = DailyGoal.entries.associateWith { streak(it, records, targets, today) },
         )
     }.combine(browse) { s, b -> s.copy(month = b.month, selected = b.selected, chartDays = b.chartDays) }
         .stateWhileSubscribed(viewModelScope, HistoryState())

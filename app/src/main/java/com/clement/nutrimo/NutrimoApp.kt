@@ -13,12 +13,9 @@ class NutrimoApp : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
-        Reminders.createChannel(this)
-        // The photo reminder is on by default: plan it once (KEEP leaves an already planned one alone).
-        container.appScope.launch {
-            val settings = container.settings.current()
-            Reminders.schedulePhoto(this@NutrimoApp, settings.photoReminder, replace = false)
-            Reminders.scheduleEncouragement(this@NutrimoApp, settings.encouragement, replace = false)
-        }
+        Reminders.createChannels(this)
+        // Some reminders are on by default, and a restore brings settings back without their jobs: plan every
+        // enabled one (KEEP leaves an already planned job alone).
+        container.appScope.launch { Reminders.scheduleAll(this@NutrimoApp, container.settings.current()) }
     }
 }

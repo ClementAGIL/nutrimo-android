@@ -13,7 +13,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.toInput
+import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first

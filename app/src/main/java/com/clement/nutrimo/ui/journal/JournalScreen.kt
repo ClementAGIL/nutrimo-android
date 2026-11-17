@@ -10,8 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,10 +31,10 @@ import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.day
 import com.clement.nutrimo.ui.navigation.GoalEditRoute
 import com.clement.nutrimo.ui.navigation.ProfileRoute
 import com.clement.nutrimo.ui.navigation.StepsRoute
+import com.clement.nutrimo.util.day
 import java.time.LocalDate
 
 /** Navigation callbacks of the journal. */

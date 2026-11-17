@@ -17,8 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.RecipeEntity
 import com.clement.nutrimo.data.network.FoodDto
-import com.clement.nutrimo.data.repository.formatParts
-import com.clement.nutrimo.ui.common.fmt
+import com.clement.nutrimo.util.fmt
 
 @Composable
 fun FoodRow(food: FoodEntity, onClick: () -> Unit) {
@@ -32,7 +31,7 @@ fun RemoteFoodRow(food: FoodDto, onClick: () -> Unit) {
 
 @Composable
 fun RecipeRow(recipe: RecipeEntity, onClick: () -> Unit) {
-    ResultRow(recipe.name, null, "${formatParts(recipe.parts)} parts", "Recette", recipe.isFavorite, onClick)
+    ResultRow(recipe.name, null, "${fmt(recipe.parts)} parts", "Recette", recipe.isFavorite, onClick)
 }
 
 @Composable

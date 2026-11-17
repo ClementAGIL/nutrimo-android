@@ -3,8 +3,9 @@
 // Wording is gender-neutral (no "fier / fière") and never guilt-inducing.
 package com.clement.nutrimo.domain.calc
 
+import com.clement.nutrimo.util.count
+import com.clement.nutrimo.util.kg
 import java.time.LocalDate
-import java.util.Locale
 import kotlin.math.floor
 
 data class Nudge(val title: String, val text: String)
@@ -159,7 +160,6 @@ object Encouragement {
         Nudge("Gratitude 🙏", "Ce soir, pensez à une chose pour laquelle vous ressentez de la gratitude. Notez-la dans « Ma journée »."),
     )
 
-    private fun number(n: Number): String = String.format(Locale.FRANCE, "%,d", n.toLong().coerceAtLeast(0))
-
-    private fun kg(v: Double): String = String.format(Locale.FRANCE, "%.1f kg", v)
+    /** Counts in messages are never negative ("encore 0 pas" rather than "-200"). */
+    private fun number(n: Number): String = count(n.toLong().coerceAtLeast(0))
 }

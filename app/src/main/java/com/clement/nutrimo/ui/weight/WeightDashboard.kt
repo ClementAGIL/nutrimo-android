@@ -1,7 +1,6 @@
 // Bilan cards of the weight hub: goal and time progress bars, and the key figures of the current goal.
 package com.clement.nutrimo.ui.weight
 
-import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,17 +17,18 @@ import com.clement.nutrimo.domain.calc.Bmi
 import com.clement.nutrimo.domain.calc.GoalProgress
 import com.clement.nutrimo.domain.calc.MIN_TREND_POINTS
 import com.clement.nutrimo.domain.calc.TREND_WINDOW_DAYS
+import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.ProgressBar
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.WideButton
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.full
-import com.clement.nutrimo.ui.common.kcal
-import com.clement.nutrimo.ui.common.kg
-import com.clement.nutrimo.ui.common.percent
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.full
+import com.clement.nutrimo.util.kcal
+import com.clement.nutrimo.util.kg
+import com.clement.nutrimo.util.percent
 import java.time.LocalDate
 
 @Composable

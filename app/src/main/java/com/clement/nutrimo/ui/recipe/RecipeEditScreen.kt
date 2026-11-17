@@ -35,10 +35,10 @@ import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kcal
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 
 @Composable
 fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: String?, onPickedConsumed: () -> Unit) {

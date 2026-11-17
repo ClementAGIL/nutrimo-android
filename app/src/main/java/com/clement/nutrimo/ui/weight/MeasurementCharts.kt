@@ -23,8 +23,8 @@ import com.clement.nutrimo.ui.common.chart.ChartSeries
 import com.clement.nutrimo.ui.common.chart.LineChart
 import com.clement.nutrimo.ui.common.chart.PeriodChips
 import com.clement.nutrimo.ui.common.chart.windowOf
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.signed
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.signed
 
 @Composable
 fun MeasurementCharts(list: List<MeasurementEntity>) {

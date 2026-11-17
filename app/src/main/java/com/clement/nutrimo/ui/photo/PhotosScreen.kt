@@ -33,7 +33,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.short
+import com.clement.nutrimo.util.short
 
 @Composable
 fun PhotosScreen(onBack: () -> Unit, onCamera: () -> Unit, onCompare: (PhotoEntity, PhotoEntity) -> Unit) {

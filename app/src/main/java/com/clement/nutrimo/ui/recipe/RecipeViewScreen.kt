@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.repository.RecipeDetail
-import com.clement.nutrimo.data.repository.formatParts
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.NutrientTable
 import com.clement.nutrimo.ui.common.ScreenScaffold
@@ -30,9 +29,9 @@ import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.navigation.RecipeViewRoute
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -65,7 +64,7 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
     }) { padding ->
         ScrollColumn(padding) {
             WideButton("Ajouter au journal", { onLog(vm.id) })
-            SectionCard("${formatParts(d.recipe.parts)} parts · ${fmt(d.totals.weightPerPart, 0)} g par part") {
+            SectionCard("${fmt(d.recipe.parts)} parts · ${fmt(d.totals.weightPerPart, 0)} g par part") {
                 d.lines.forEach { StatRow(it.name, ingredientQuantity(it)) }
             }
             NutrientTable(d.totals.perPart, "Par part")

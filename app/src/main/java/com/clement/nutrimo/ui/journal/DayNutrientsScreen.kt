@@ -14,8 +14,8 @@ import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.appContainer
-import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.kcal
+import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.kcal
 import java.time.LocalDate
 
 @Composable

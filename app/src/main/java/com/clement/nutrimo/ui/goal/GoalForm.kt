@@ -22,9 +22,9 @@ import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.full
-import com.clement.nutrimo.ui.common.kcal
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.full
+import com.clement.nutrimo.util.kcal
 import java.time.LocalDate
 
 @Composable

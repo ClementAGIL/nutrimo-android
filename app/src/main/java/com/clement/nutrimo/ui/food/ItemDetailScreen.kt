@@ -29,7 +29,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
-import com.clement.nutrimo.ui.common.fmt
+import com.clement.nutrimo.util.fmt
 
 data class ItemDetailActions(
     val onBack: () -> Unit,

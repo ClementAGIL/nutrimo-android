@@ -1,6 +1,7 @@
 // Something that can be logged in the diary or used as an ingredient: a food or a recipe.
 package com.clement.nutrimo.domain.model
 
+import com.clement.nutrimo.util.fmt
 import java.text.Normalizer
 
 data class Portion(val label: String, val grams: Double)
@@ -41,7 +42,6 @@ private fun portionLabel(p: Portion): String {
     return if (p.label.replace(" ", "").contains("${grams}g")) p.label else "${p.label} ($grams g)"
 }
 
-private fun fmt(v: Double) = if (v % 1.0 == 0.0) v.toInt().toString() else "%.1f".format(v)
 
 /** Lowercase without accents, so "Pâté" matches "pate". */
 fun String.normalized(): String =

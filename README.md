@@ -112,8 +112,9 @@ export a backup first).
 
 ## Code
 
-Architecture, conventions and the shared UI kit (`ui/common`: layout, rows, inputs, dialogs, charts) are described in
-`CLAUDE.md`.
+Architecture, conventions and the shared UI kit (`ui/common`: layout, rows, inputs, dialogs, charts; `util/Format`:
+French numbers and dates) are described in `CLAUDE.md`. Unit tests for the pure logic (encouragement, trend, BMI,
+reminder times, weight chart periods, formatting): `./gradlew :app:testDebugUnitTest`.
 
 ## Data sources and licences
 

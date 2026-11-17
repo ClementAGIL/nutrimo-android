@@ -17,12 +17,12 @@ import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.NumberField
-import com.clement.nutrimo.ui.common.full
-import com.clement.nutrimo.ui.common.kg
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
-import java.time.LocalDate
+import com.clement.nutrimo.util.full
+import com.clement.nutrimo.util.kg
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private val WEIGHT_RANGE = 30.0..400.0
 

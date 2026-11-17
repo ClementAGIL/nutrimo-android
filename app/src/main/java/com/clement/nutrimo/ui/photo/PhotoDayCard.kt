@@ -30,8 +30,8 @@ import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.SectionCard
-import com.clement.nutrimo.ui.common.day
-import com.clement.nutrimo.ui.common.kg
+import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.kg
 
 @Composable
 fun PhotoDayCard(day: PhotoDay, state: PhotosUiState, vm: PhotosViewModel) {

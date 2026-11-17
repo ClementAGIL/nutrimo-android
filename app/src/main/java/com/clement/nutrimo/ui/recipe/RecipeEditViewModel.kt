@@ -13,9 +13,9 @@ import com.clement.nutrimo.data.repository.IngredientLine
 import com.clement.nutrimo.data.repository.RecipeDetail
 import com.clement.nutrimo.domain.calc.RecipeMath
 import com.clement.nutrimo.domain.calc.RecipeTotals
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
 import com.clement.nutrimo.ui.navigation.RecipeEditRoute
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

@@ -17,6 +17,9 @@ import com.clement.nutrimo.domain.model.MicroGroup
 import com.clement.nutrimo.domain.model.NutrientCatalog
 import com.clement.nutrimo.domain.model.Nutrients
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.grams
+import com.clement.nutrimo.util.kcal
 
 /** Protein / carbs / fat bars against the reference grams of [targets]. */
 @Composable

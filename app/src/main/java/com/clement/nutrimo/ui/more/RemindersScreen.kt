@@ -1,4 +1,5 @@
-// Reminder settings: weekly weigh-in (day + time), daily meal logging (time), daily encouragement (time) and monthly photos (time). Asks for the notification permission.
+// Reminder settings: one card per ReminderKind (switch, day for the weekly one, time). Asks for the notification
+// permission, and says so when it is missing (some reminders are on by default).
 package com.clement.nutrimo.ui.more
 
 import android.Manifest
@@ -14,12 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.clement.nutrimo.data.reminders.Reminders
+import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.reminders.ReminderKind
 import com.clement.nutrimo.data.repository.ReminderSettings
 import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.FormDialog
@@ -29,53 +31,56 @@ import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.SwitchRow
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.WideButton
-import com.clement.nutrimo.ui.common.appContainer
+import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlinx.coroutines.launch
+
+/** Title and explanation of each reminder, in screen order. */
+private val CARDS = listOf(
+    ReminderKind.WEIGH to ("Pesée hebdomadaire" to "Seulement si aucune pesée ce jour-là."),
+    ReminderKind.MEAL to ("Saisie des repas" to "Chaque jour, si le journal est vide."),
+    ReminderKind.ENCOURAGEMENT to (
+        "Encouragement du jour" to "Un message bienveillant chaque jour : vos victoires, la série à ne pas perdre, du réconfort les jours difficiles."
+        ),
+    ReminderKind.PHOTO to ("Photos de progression" to "Le 1er de chaque mois, si aucune photo ce mois-ci."),
+)
+
+class RemindersViewModel(private val c: AppContainer) : ViewModel() {
+    val settings = c.settings.settings.stateWhileSubscribed(viewModelScope, null)
+
+    fun canNotify(): Boolean = c.reminders.canNotify()
+
+    /** In the ViewModel scope: leaving the screen right after a change no longer cancels saving it. */
+    fun update(kind: ReminderKind, r: ReminderSettings) = viewModelScope.launch { c.reminders.update(kind, r) }
+}
 
 @Composable
 fun RemindersScreen(onBack: () -> Unit) {
-    val context = LocalContext.current
-    val settingsRepo = appContainer().settings
-    val settings by settingsRepo.settings.collectAsStateWithLifecycle(initialValue = null)
-    val scope = rememberCoroutineScope()
-    var allowed by remember { mutableStateOf(Reminders.canNotify(context)) }
+    val vm = appViewModel { c, _ -> RemindersViewModel(c) }
+    val settings by vm.settings.collectAsStateWithLifecycle()
+    var allowed by remember { mutableStateOf(vm.canNotify()) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { allowed = it }
     // The notification permission only exists from Android 13; before that notifications are allowed by default.
     val askPermission = {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !allowed) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
     val s = settings ?: return
     ScreenScaffold("Rappels", onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            // Some reminders are on by default (photos, encouragement): without the permission they would stay silent.
             if (!allowed) {
                 SectionCard("Notifications désactivées") {
                     WarningText("Les rappels et l'encouragement du jour ne peuvent pas s'afficher.")
                     WideButton("Autoriser les notifications", askPermission)
                 }
             }
-            ReminderCard("Pesée hebdomadaire", "Seulement si aucune pesée ce jour-là.", s.weighReminder, withDay = true) { r ->
-                if (r.enabled) askPermission()
-                scope.launch { settingsRepo.setWeighReminder(r); Reminders.scheduleWeigh(context, r) }
-            }
-            ReminderCard("Saisie des repas", "Chaque jour, si le journal est vide.", s.mealReminder, withDay = false) { r ->
-                if (r.enabled) askPermission()
-                scope.launch { settingsRepo.setMealReminder(r); Reminders.scheduleMeal(context, r) }
-            }
-            ReminderCard(
-                "Encouragement du jour",
-                "Un message bienveillant chaque jour : vos victoires, la série à ne pas perdre, du réconfort les jours difficiles.",
-                s.encouragement, withDay = false,
-            ) { r ->
-                if (r.enabled) askPermission()
-                scope.launch { settingsRepo.setEncouragement(r); Reminders.scheduleEncouragement(context, r) }
-            }
-            ReminderCard("Photos de progression", "Le 1er de chaque mois, si aucune photo ce mois-ci.", s.photoReminder, withDay = false) { r ->
-                if (r.enabled) askPermission()
-                scope.launch { settingsRepo.setPhotoReminder(r); Reminders.schedulePhoto(context, r) }
+            CARDS.forEach { (kind, text) ->
+                ReminderCard(text.first, text.second, s.reminder(kind), withDay = kind.weekly) { r ->
+                    if (r.enabled) askPermission()
+                    vm.update(kind, r)
+                }
             }
         }
     }

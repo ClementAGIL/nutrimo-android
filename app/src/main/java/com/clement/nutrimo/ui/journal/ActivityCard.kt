@@ -30,10 +30,10 @@ import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kcal
-import com.clement.nutrimo.ui.common.toDecimal
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
+import com.clement.nutrimo.util.toDecimal
 
 @Composable
 fun ActivityCard(

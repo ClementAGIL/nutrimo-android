@@ -15,8 +15,8 @@ import com.clement.nutrimo.ui.common.ChoiceChips
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.NumberField
-import com.clement.nutrimo.ui.common.toDecimal
-import com.clement.nutrimo.ui.common.toInput
+import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.toInput
 import java.time.LocalDate
 
 private const val MIN_HEIGHT_CM = 100.0

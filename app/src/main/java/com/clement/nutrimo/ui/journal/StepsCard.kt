@@ -1,7 +1,6 @@
 // Journal card for the day's steps from Health Connect: install / connect prompts, then progress to the goal.
 package com.clement.nutrimo.ui.journal
 
-import com.clement.nutrimo.ui.common.HintText
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -18,18 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.health.connect.client.PermissionController
 import com.clement.nutrimo.data.health.HEALTH_CONNECT_PACKAGE
-import com.clement.nutrimo.data.health.HealthStatus
 import com.clement.nutrimo.data.health.HEALTH_PERMISSIONS
 import com.clement.nutrimo.data.health.HealthInfo
+import com.clement.nutrimo.data.health.HealthStatus
 import com.clement.nutrimo.domain.calc.STEPS_BASELINE
 import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.GoalSettingsButton
+import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.WideButton
-import com.clement.nutrimo.ui.common.fmt
-import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.kcal
 
 private const val PLAY_STORE = "market://details?id=$HEALTH_CONNECT_PACKAGE&url=healthconnect%3A%2F%2Fonboarding"
 
