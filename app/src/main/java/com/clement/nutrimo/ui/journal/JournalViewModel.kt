@@ -1,4 +1,4 @@
-// State of the journal: entries of the selected day grouped by meal, totals, target and water.
+// State of the journal: entries of the selected day grouped by meal, totals, target, water and "Ma journée".
 package com.clement.nutrimo.ui.journal
 
 import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.ActivityEntity
+import com.clement.nutrimo.data.db.DayNoteEntity
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.data.health.HealthInfo
@@ -37,6 +38,8 @@ data class JournalUiState(
     val health: HealthInfo? = null,
     val targets: GoalTargets = GoalTargets(),
     val healthInBudget: Boolean = false,
+    /** Mood and short journal of the day, null when nothing written yet. */
+    val dayNote: DayNoteEntity? = null,
 ) {
     /** kcal added to the target: logged activities, plus Health Connect data when the user opted in. */
     val burned: Double get() = activities.sumOf { it.kcal } + (if (healthInBudget) health?.budgetKcal ?: 0.0 else 0.0)
@@ -62,7 +65,9 @@ data class JournalUiState(
 enum class KcalZone { UNDER_BUDGET, UNDER_MAINTENANCE, OVER_MAINTENANCE }
 
 /** Everything stored for one day. */
-private data class DayData(val date: LocalDate, val entries: List<DiaryEntity>, val water: WaterEntity?, val activities: List<ActivityEntity>)
+private data class DayData(
+    val date: LocalDate, val entries: List<DiaryEntity>, val water: WaterEntity?, val activities: List<ActivityEntity>, val note: DayNoteEntity?,
+)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class JournalViewModel(private val c: AppContainer) : ViewModel() {
@@ -70,7 +75,9 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
     val messages = MutableSharedFlow<String>(extraBufferCapacity = 1)
 
     private val day = date.flatMapLatest { d ->
-        combine(c.diary.day(d), c.diary.water(d), c.activities.day(d)) { entries, water, activities -> DayData(d, entries, water, activities) }
+        combine(c.diary.day(d), c.diary.water(d), c.activities.day(d), c.dayNotes.day(d)) { entries, water, activities, note ->
+            DayData(d, entries, water, activities, note)
+        }
     }
 
     private val health = MutableStateFlow<HealthInfo?>(null)
@@ -87,6 +94,7 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
             health = healthInfo,
             targets = settings.goalTargets(profile),
             healthInBudget = settings.healthInBudget,
+            dayNote = d.note,
         )
     }.stateWhileSubscribed(viewModelScope, JournalUiState())
 
@@ -120,6 +128,9 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
     }
 
     fun deleteActivity(activity: ActivityEntity) = viewModelScope.launch { c.activities.delete(activity.id) }
+
+    /** Saves "Ma journée" of the shown day (an emptied one is deleted). */
+    fun saveDayNote(note: DayNoteEntity) = viewModelScope.launch { c.dayNotes.save(note.copy(date = date.value)) }
 
     fun addWater(deltaMl: Int) = viewModelScope.launch { c.diary.addWater(date.value, state.value.waterMl, deltaMl) }
 }

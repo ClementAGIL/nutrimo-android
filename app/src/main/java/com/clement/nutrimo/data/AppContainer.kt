@@ -10,6 +10,7 @@ import com.clement.nutrimo.data.repository.ActivityRepository
 import com.clement.nutrimo.data.repository.BackupArchive
 import com.clement.nutrimo.data.repository.BackupRepository
 import com.clement.nutrimo.data.repository.BodyRepository
+import com.clement.nutrimo.data.repository.DayNoteRepository
 import com.clement.nutrimo.data.repository.DiaryRepository
 import com.clement.nutrimo.data.repository.FoodRepository
 import com.clement.nutrimo.data.repository.PhotoRepository
@@ -35,6 +36,7 @@ class AppContainer(context: Context) {
     val diary = DiaryRepository(db, foods, recipes)
     val savedMeals = SavedMealRepository(db)
     val activities = ActivityRepository(db)
+    val dayNotes = DayNoteRepository(db)
     val health = HealthRepository(context)
     val backup = BackupRepository(db, http.json)
     val archive = BackupArchive(backup, photos, body)

@@ -15,6 +15,10 @@ class NutrimoApp : Application() {
         container = AppContainer(this)
         Reminders.createChannel(this)
         // The photo reminder is on by default: plan it once (KEEP leaves an already planned one alone).
-        container.appScope.launch { Reminders.schedulePhoto(this@NutrimoApp, container.settings.current().photoReminder, replace = false) }
+        container.appScope.launch {
+            val settings = container.settings.current()
+            Reminders.schedulePhoto(this@NutrimoApp, settings.photoReminder, replace = false)
+            Reminders.scheduleEncouragement(this@NutrimoApp, settings.encouragement, replace = false)
+        }
     }
 }

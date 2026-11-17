@@ -12,11 +12,12 @@ import androidx.room.TypeConverters
     entities = [
         ProfileEntity::class, WeightEntity::class, MeasurementEntity::class, GoalEntity::class, WaterEntity::class,
         FoodEntity::class, PortionEntity::class, RecipeEntity::class, IngredientEntity::class, DiaryEntity::class,
-        SavedMealEntity::class, SavedMealItemEntity::class, ActivityEntity::class, PhotoEntity::class,
+        SavedMealEntity::class, SavedMealItemEntity::class, ActivityEntity::class, PhotoEntity::class, DayNoteEntity::class,
     ],
-    version = 4,
+    version = 5,
     // New tables only: Room generates the migration from the exported schemas (app/schemas). Never drop user data.
-    autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4)],
+    autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5)],
 )
 @TypeConverters(Converters::class)
 abstract class NutrimoDatabase : RoomDatabase() {
@@ -31,6 +32,7 @@ abstract class NutrimoDatabase : RoomDatabase() {
     abstract fun savedMealDao(): SavedMealDao
     abstract fun activityDao(): ActivityDao
     abstract fun photoDao(): PhotoDao
+    abstract fun dayNoteDao(): DayNoteDao
 
     companion object {
         fun create(context: Context): NutrimoDatabase =

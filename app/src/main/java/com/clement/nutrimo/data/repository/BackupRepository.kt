@@ -3,6 +3,7 @@ package com.clement.nutrimo.data.repository
 
 import androidx.room.withTransaction
 import com.clement.nutrimo.data.db.ActivityEntity
+import com.clement.nutrimo.data.db.DayNoteEntity
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.GoalEntity
@@ -39,6 +40,7 @@ data class Backup(
     val savedMeals: List<SavedMealEntity> = emptyList(),
     val savedMealItems: List<SavedMealItemEntity> = emptyList(),
     val activities: List<ActivityEntity> = emptyList(),
+    val dayNotes: List<DayNoteEntity> = emptyList(),
 )
 
 data class BackupSummary(val weights: Int, val diary: Int, val recipes: Int, val foods: Int)
@@ -64,6 +66,7 @@ class BackupRepository(private val db: NutrimoDatabase, json: Json) {
             savedMeals = db.savedMealDao().all(),
             savedMealItems = db.savedMealDao().allItems(),
             activities = db.activityDao().all(),
+            dayNotes = db.dayNoteDao().all(),
         )
         return json.encodeToString(backup)
     }
@@ -86,6 +89,7 @@ class BackupRepository(private val db: NutrimoDatabase, json: Json) {
             db.savedMealDao().upsertAll(b.savedMeals)
             db.savedMealDao().upsertItems(b.savedMealItems)
             db.activityDao().upsertAll(b.activities)
+            db.dayNoteDao().upsertAll(b.dayNotes)
         }
         return BackupSummary(b.weights.size, b.diary.size, b.recipes.size, b.foods.size)
     }

@@ -93,6 +93,7 @@ private fun JournalList(state: JournalUiState, vm: JournalViewModel, actions: Jo
             }
         }
         item { WaterCard(state.waterMl, state.targets.waterMl, vm::addWater) { actions.onGoalSettings(ProfileRoute) } }
+        item { DayNoteCard(state.date, state.dayNote, vm::saveDayNote) }
     }
 }
 

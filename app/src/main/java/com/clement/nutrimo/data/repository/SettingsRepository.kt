@@ -1,4 +1,4 @@
-// App settings in DataStore: backend server, onboarding flag, reminders (weigh-in, meals, photos), backup and macro split.
+// App settings in DataStore: backend server, onboarding flag, reminders (weigh-in, meals, photos, daily encouragement), backup and macro split.
 package com.clement.nutrimo.data.repository
 
 import android.content.Context
@@ -38,6 +38,8 @@ data class AppSettings(
     val mealReminder: ReminderSettings = ReminderSettings(false, 20, 0),
     /** On the 1st of each month; on by default (progress photos are only useful when taken regularly). */
     val photoReminder: ReminderSettings = ReminderSettings(true, 10, 0),
+    /** One kind message a day; on by default, early evening so an open streak can still be kept. */
+    val encouragement: ReminderSettings = ReminderSettings(true, 19, 0),
     val autoBackup: Boolean = false,
     /** Epoch millis of the last successful server backup, 0 if none. */
     val lastServerBackup: Long = 0,
@@ -68,6 +70,9 @@ class SettingsRepository(private val context: Context) {
         val photoEnabled = booleanPreferencesKey("photo_enabled")
         val photoHour = intPreferencesKey("photo_hour")
         val photoMinute = intPreferencesKey("photo_minute")
+        val encourageEnabled = booleanPreferencesKey("encourage_enabled")
+        val encourageHour = intPreferencesKey("encourage_hour")
+        val encourageMinute = intPreferencesKey("encourage_minute")
         val autoBackup = booleanPreferencesKey("auto_backup")
         val lastServerBackup = longPreferencesKey("last_server_backup")
         val proteinPct = intPreferencesKey("protein_pct")
@@ -124,6 +129,12 @@ class SettingsRepository(private val context: Context) {
         it[Keys.photoMinute] = r.minute
     }
 
+    suspend fun setEncouragement(r: ReminderSettings) = edit {
+        it[Keys.encourageEnabled] = r.enabled
+        it[Keys.encourageHour] = r.hour
+        it[Keys.encourageMinute] = r.minute
+    }
+
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit(block)
     }
@@ -149,6 +160,11 @@ class SettingsRepository(private val context: Context) {
                 enabled = this[Keys.photoEnabled] ?: d.photoReminder.enabled,
                 hour = this[Keys.photoHour] ?: d.photoReminder.hour,
                 minute = this[Keys.photoMinute] ?: d.photoReminder.minute,
+            ),
+            encouragement = ReminderSettings(
+                enabled = this[Keys.encourageEnabled] ?: d.encouragement.enabled,
+                hour = this[Keys.encourageHour] ?: d.encouragement.hour,
+                minute = this[Keys.encourageMinute] ?: d.encouragement.minute,
             ),
             autoBackup = this[Keys.autoBackup] ?: false,
             lastServerBackup = this[Keys.lastServerBackup] ?: 0,

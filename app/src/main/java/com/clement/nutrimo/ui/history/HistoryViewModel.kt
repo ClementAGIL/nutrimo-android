@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.DayTotal
-import com.clement.nutrimo.data.health.toImported
+import com.clement.nutrimo.data.repository.HealthHistory
+import com.clement.nutrimo.data.repository.LocalHistory
+import com.clement.nutrimo.data.repository.buildRecords
 import com.clement.nutrimo.data.repository.goalTargets
+import com.clement.nutrimo.data.repository.history
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.DailyGoal
 import com.clement.nutrimo.domain.calc.DayRecord
@@ -97,9 +100,6 @@ class HistoryViewModel(private val c: AppContainer) : ViewModel() {
         browse.value = browse.value.copy(chartDays = days)
     }
 
-    private suspend fun readHealth(from: LocalDate): HealthHistory {
-        val kg = c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG
-        val sessions = c.health.sessionsBetween(from, today).groupBy({ it.first }, { it.second.toImported(kg) })
-        return HealthHistory(c.health.dailySteps(from, today), sessions, c.health.dailyActiveKcal(from, today))
-    }
+    private suspend fun readHealth(from: LocalDate): HealthHistory =
+        c.health.history(from, today, c.body.latestWeight()?.kg ?: DEFAULT_WEIGHT_KG)
 }

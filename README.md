@@ -22,6 +22,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   is green under the target, yellow above it but still under maintenance (still losing, just slower), red above
   maintenance. 4 meals (breakfast, lunch, dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
   Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
+- "Ma journée" (bottom of the journal): the mood of the day in one tap (5 faces) and a short journal: what you
+  are grateful for, a victory of the day, a free note. Included in the backups.
 - Macro targets (Plus → Objectifs de macros): balanced, high-protein or low-carb presets, or your own percentages;
   shows the grams and protein per kg; the journal bars use them.
 - Steps and workouts from Health Connect (read only): today's steps vs your goal, workouts recorded by Mi Fitness,
@@ -62,6 +64,9 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Each journal card with a goal (calories, steps, sport, water) has a settings button opening the screen where
   that goal is set.
 - Reminders: weekly weigh-in and daily meal logging (only when nothing was logged that day), monthly photos.
+- Daily encouragement (on by default, 19:00, own notification channel): one kind message chosen from your data:
+  a lower BMI category, a new kilo lost, a new low; a streak still open today with what is left; goals beaten today
+  or yesterday; comfort after a harder day or a few quiet days; else a gentle word or a journal prompt.
 - Backup (Plus → Sauvegarde): send everything to the Nutrimo server on your PC (now, or automatically every day
   on Wi-Fi) and restore the latest server backup (data only, never the photos); or export a ZIP file with the data and
   the photos (named with date, pose and weight) and import its data (or an older JSON export).

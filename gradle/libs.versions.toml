@@ -1,6 +1,7 @@
 [versions]
 agp = "8.12.0"
 kotlin = "2.1.21"
+junit = "4.13.2"
 ksp = "2.1.21-2.0.2"
 coreKtx = "1.16.0"
 activityCompose = "1.10.1"
@@ -18,6 +19,7 @@ healthConnect = "1.1.0"
 guava = "33.3.1-android"
 
 [libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

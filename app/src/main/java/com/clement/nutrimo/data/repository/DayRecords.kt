@@ -1,14 +1,20 @@
-// Merges the diary, activities, water, weigh-ins and Health Connect data into one DayRecord per day.
-package com.clement.nutrimo.ui.history
+// Merges the diary, activities, water, weigh-ins and Health Connect data into one DayRecord per day (History screen
+// and the daily encouragement notification).
+package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import com.clement.nutrimo.data.db.DayBurn
 import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.data.db.WeightEntity
+import com.clement.nutrimo.data.health.HealthRepository
 import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.data.health.healthBudgetKcal
+import com.clement.nutrimo.data.health.toImported
 import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.domain.calc.DayRecord
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
 /** What the phone stores locally for the loaded range. */
@@ -55,4 +61,18 @@ fun buildRecords(local: LocalHistory, health: HealthHistory, target: Double?, he
             previousWeightKg = previous[date],
         )
     }
+}
+
+/** Health Connect data of [from]..[to] (empty when unavailable, e.g. no permission or read in the background). */
+suspend fun HealthRepository.history(from: LocalDate, to: LocalDate, kg: Double): HealthHistory {
+    val sessions = sessionsBetween(from, to).groupBy({ it.first }, { it.second.toImported(kg) })
+    return HealthHistory(dailySteps(from, to), sessions, dailyActiveKcal(from, to))
+}
+
+/** One-shot read of the day records of [from]..[to], for code that can't observe flows (the reminder workers). */
+suspend fun AppContainer.loadDayRecords(from: LocalDate, to: LocalDate): Map<LocalDate, DayRecord> {
+    val weights = body.weightHistory.first()
+    val kg = weights.lastOrNull()?.kg ?: DEFAULT_WEIGHT_KG
+    val local = LocalHistory(diary.dailyTotals(from, to).first(), activities.burned(from, to).first(), diary.waterBetween(from, to).first(), weights)
+    return buildRecords(local, health.history(from, to, kg), body.calorieTarget.first()?.target, settings.current().healthInBudget, kg)
 }

@@ -39,7 +39,8 @@ data/
   AppContainer.kt                 creates db, Http, repositories; seeds CIQUAL on first launch
   db/                             Room: BodyEntities (profile, weights, measurements, goals, water),
                                   FoodEntities (foods, portions, recipes, ingredients, diary, saved meals + items), PhotoEntities
-                                  (photos: one per day and pose, + PhotoDao), DAOs, Converters. Schema changes: bump the version and add an AutoMigration (schemas in app/schemas)
+                                  (photos: one per day and pose, + PhotoDao), DayNoteEntities ("Ma journée": mood 1-5,
+                                  gratitude, win, note; one per day), DAOs, Converters. Schema changes: bump the version and add an AutoMigration (schemas in app/schemas)
   network/                        Http (OkHttp wrapper), FoodDto (+ mapping to entities), FoodApis
                                   (NutrimoApi = PC backend, OffApi = Open Food Facts + mapOffProduct)
   Errors.kt                       nullOnError (failures of network / Health Connect → null, cancellation kept)
@@ -53,8 +54,11 @@ data/
                                   DemoPhotos (drawn silhouettes, 5 sessions x 3 poses, slimmer with the weight)
   reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
                                   only when nothing was logged today), photo worker (daily job, notifies on the 1st when no
-                                  photo this month; on by default, planned at app start with KEEP)
-  repository/                     Settings (DataStore), Activity (MET × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
+                                  photo this month; on by default, planned at app start with KEEP), EncouragementWorker (daily, own
+                                  "Encouragements" channel, on by default, KEEP at app start: loadDayRecords + Encouragement.pick).
+                                  Reminders.canNotify; RemindersScreen shows a banner + button when the permission is missing
+  repository/                     DayRecords (LocalHistory + HealthHistory -> buildRecords; HealthRepository.history,
+                                  AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (MET × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
                                   nutrition, cycle check), Diary (entries + water), Backup (JSON export/import),
                                   Photo (files/photos/<id>.jpg at 2,500 px + thumbs/, upright and never mirrored; storage),
@@ -65,7 +69,8 @@ domain/
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
                                   Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets),
-                                  DayGoals (DailyGoal, GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
+                                  Encouragement (pick: weight news > open streak > proud today > proud yesterday > hard moment >
+                                  gentle; gender-neutral wording, tested in app/src/test), DayGoals (DailyGoal, GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
                                   streaks; AppSettings.goalTargets(profile) builds the targets)
 ui/
   NutrimoRoot.kt                  root: onboarding (outside the graph) or NavHost + bottom bar (4 tabs)
@@ -82,7 +87,7 @@ ui/
                                   (server backup/restore + auto toggle, SAF file export/import), RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen, StepsScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
                                   activities; budget = target + burned), ActivityCard (manual + imported sessions), StepsCard (install / connect / progress),
-                                  JournalCards (summary ring + macro bars, MealCard, WaterCard; ring/text color by KcalZone:
+                                  DayNoteCard ("Ma journée": mood faces, gratitude / win / note dialog), JournalCards (summary ring + macro bars, MealCard, WaterCard; ring/text color by KcalZone:
                                   green ≤ budget, yellow ≤ maintenance = TDEE + burned, red above), EntryUi
                                   (quantityText, SwipeToDelete), DayNutrientsScreen. Every card with a goal has a
                                   GoalSettingsButton → JournalActions.onGoalSettings(route): calories → GoalEdit,
@@ -91,7 +96,7 @@ ui/
                                   achieved, ring = missed, none = no data; day detail; streaks) and ChartsTab (7/30-day bars
                                   vs goal for calories, sport, steps, water; averages; estimated loss = Σ(TDEE + sport −
                                   eaten)/7700). HistoryViewModel loads ≥ 180 days (streaks) + Health Connect once per range,
-                                  HistoryRecords merges everything into one DayRecord per day. Past days use today's targets.
+                                  data/repository/DayRecords merges everything into one DayRecord per day. Past days use today's targets.
   food/                           AddFoodScreen/ViewModel (local instant, backend after 600 ms, OFF only on submit;
                                   barcode lookup), QuickTabs (recents/favorites/custom/recipes), FoodRows,
                                   ItemDetailScreen/ViewModel (diary add/edit, or recipe-ingredient pick),
@@ -179,5 +184,7 @@ ui/
   reminder, ZIP export, demo silhouettes). DB v4 via AutoMigration(3 -> 4). Android backups are off
   (allowBackup=false + data_extraction_rules): nothing leaves the phone except the user's export / server backup.
   To test on the phone: camera framing, front-camera orientation, lock prompt, timeline taps.
+- ✅ Daily encouragement notification + "Ma journée" (mood + gratitude / win / note). DB v5 via AutoMigration(4 -> 5).
+  Unit tests: app/src/test (JUnit 4), run with gradlew :app:testDebugUnitTest.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

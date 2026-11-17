@@ -1,4 +1,4 @@
-// Reminder settings: weekly weigh-in (day + time), daily meal logging (time) and monthly photos (time). Asks for the notification permission.
+// Reminder settings: weekly weigh-in (day + time), daily meal logging (time), daily encouragement (time) and monthly photos (time). Asks for the notification permission.
 package com.clement.nutrimo.ui.more
 
 import android.Manifest
@@ -27,6 +27,8 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.SwitchRow
+import com.clement.nutrimo.ui.common.WarningText
+import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appContainer
 import java.time.DayOfWeek
 import java.time.format.TextStyle
@@ -39,7 +41,8 @@ fun RemindersScreen(onBack: () -> Unit) {
     val settingsRepo = appContainer().settings
     val settings by settingsRepo.settings.collectAsStateWithLifecycle(initialValue = null)
     val scope = rememberCoroutineScope()
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    var allowed by remember { mutableStateOf(Reminders.canNotify(context)) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { allowed = it }
     // The notification permission only exists from Android 13; before that notifications are allowed by default.
     val askPermission = {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -47,6 +50,13 @@ fun RemindersScreen(onBack: () -> Unit) {
     val s = settings ?: return
     ScreenScaffold("Rappels", onBack = onBack) { padding ->
         ScrollColumn(padding) {
+            // Some reminders are on by default (photos, encouragement): without the permission they would stay silent.
+            if (!allowed) {
+                SectionCard("Notifications désactivées") {
+                    WarningText("Les rappels et l'encouragement du jour ne peuvent pas s'afficher.")
+                    WideButton("Autoriser les notifications", askPermission)
+                }
+            }
             ReminderCard("Pesée hebdomadaire", "Seulement si aucune pesée ce jour-là.", s.weighReminder, withDay = true) { r ->
                 if (r.enabled) askPermission()
                 scope.launch { settingsRepo.setWeighReminder(r); Reminders.scheduleWeigh(context, r) }
@@ -54,6 +64,14 @@ fun RemindersScreen(onBack: () -> Unit) {
             ReminderCard("Saisie des repas", "Chaque jour, si le journal est vide.", s.mealReminder, withDay = false) { r ->
                 if (r.enabled) askPermission()
                 scope.launch { settingsRepo.setMealReminder(r); Reminders.scheduleMeal(context, r) }
+            }
+            ReminderCard(
+                "Encouragement du jour",
+                "Un message bienveillant chaque jour : vos victoires, la série à ne pas perdre, du réconfort les jours difficiles.",
+                s.encouragement, withDay = false,
+            ) { r ->
+                if (r.enabled) askPermission()
+                scope.launch { settingsRepo.setEncouragement(r); Reminders.scheduleEncouragement(context, r) }
             }
             ReminderCard("Photos de progression", "Le 1er de chaque mois, si aucune photo ce mois-ci.", s.photoReminder, withDay = false) { r ->
                 if (r.enabled) askPermission()
