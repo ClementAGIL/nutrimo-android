@@ -1,18 +1,21 @@
 // Body mass index and its WHO category.
 package com.clement.nutrimo.domain.calc
 
+import com.clement.nutrimo.R
+import androidx.annotation.StringRes
+
 /** BMI from [min] (inclusive) to [max] (exclusive); null = open-ended. */
-data class BmiZone(val min: Double?, val max: Double?, val label: String)
+data class BmiZone(val min: Double?, val max: Double?, @StringRes val label: Int)
 
 object Bmi {
     /** WHO categories, lightest first. */
     val ZONES = listOf(
-        BmiZone(null, 18.5, "Insuffisance pondérale"),
-        BmiZone(18.5, 25.0, "Corpulence normale"),
-        BmiZone(25.0, 30.0, "Surpoids"),
-        BmiZone(30.0, 35.0, "Obésité modérée"),
-        BmiZone(35.0, 40.0, "Obésité sévère"),
-        BmiZone(40.0, null, "Obésité morbide"),
+        BmiZone(null, 18.5, R.string.bmi_underweight),
+        BmiZone(18.5, 25.0, R.string.bmi_normal),
+        BmiZone(25.0, 30.0, R.string.bmi_overweight),
+        BmiZone(30.0, 35.0, R.string.bmi_obesity_1),
+        BmiZone(35.0, 40.0, R.string.bmi_obesity_2),
+        BmiZone(40.0, null, R.string.bmi_obesity_3),
     )
 
     fun of(weightKg: Double, heightCm: Double): Double {
@@ -28,7 +31,8 @@ object Bmi {
 
     fun zoneOf(bmi: Double): BmiZone = ZONES.first { it.max == null || bmi < it.max }
 
-    fun category(bmi: Double): String = zoneOf(bmi).label
+    @StringRes
+    fun category(bmi: Double): Int = zoneOf(bmi).label
 
     /**
      * The next category down while losing weight, and the weight under which it starts at [heightCm]; null from

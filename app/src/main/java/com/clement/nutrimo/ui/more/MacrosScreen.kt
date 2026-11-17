@@ -56,7 +56,7 @@ fun MacrosScreen(onBack: () -> Unit) {
     ScreenScaffold(stringResource(R.string.macros_objectifs_macros), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText(stringResource(R.string.macros_part_vos_calories_pour_chaque))
-            ChoiceChips(MACRO_PRESETS, MACRO_PRESETS.find { it.second == split }, { it.first }) { split = it.second }
+            ChoiceChips(MACRO_PRESETS, MACRO_PRESETS.find { it.second == split }, { stringResource(it.first) }) { split = it.second }
             PercentFields(split) { split = it }
             if (split.total != 100) WarningText(stringResource(R.string.macros_total_1_doit_faire_100, split.total))
             target?.let { t ->

@@ -47,7 +47,7 @@ fun GoalDot(goal: DailyGoal, achieved: Boolean?, size: Dp = 8.dp) {
 
 /** A stat line preceded by the goal's dot. */
 @Composable
-fun GoalRow(goal: DailyGoal, achieved: Boolean?, value: String, label: String = goal.label) {
+fun GoalRow(goal: DailyGoal, achieved: Boolean?, value: String, label: String = stringResource(goal.label)) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         GoalDot(goal, achieved, 12.dp)
         StatRow(label, value)
@@ -61,7 +61,7 @@ fun GoalLegend() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 GoalDot(goal, true, 10.dp)
                 Spacer(Modifier.size(4.dp))
-                Text(goal.label, style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(goal.label), style = MaterialTheme.typography.bodySmall)
             }
         }
     }

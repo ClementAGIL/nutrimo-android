@@ -1,6 +1,7 @@
 // Journal card: progress to the daily sport goal, the day's activities (manual + Health Connect) and an add dialog.
 package com.clement.nutrimo.ui.journal
 
+import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,7 +58,7 @@ fun ActivityCard(
         activities.forEach { a ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val minutes = a.minutes?.let { stringResource(R.string.activity_1_min, it) }.orEmpty()
-                Text("${Activities.byKey(a.type).label}$minutes", Modifier.weight(1f))
+                Text(stringResource(Activities.byKey(a.type).label) + minutes, Modifier.weight(1f))
                 Text(kcal(a.kcal))
                 IconButton(onClick = { onDelete(a) }) { Icon(Icons.Default.Close, stringResource(R.string.common_supprimer)) }
             }
@@ -73,7 +74,7 @@ private fun ImportedSessions(sessions: List<ImportedActivity>) {
     Text(stringResource(R.string.activity_depuis_health_connect), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
     sessions.forEach { s ->
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.activity_1_2_min, s.label, s.minutes), Modifier.weight(1f))
+            Text(stringResource(R.string.activity_1_2_min, s.label.asString(), s.minutes), Modifier.weight(1f))
             Text("${kcal(s.kcal)}${if (s.measured) "" else " (est.)"}")
         }
     }
@@ -91,7 +92,7 @@ private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: ()
         confirmLabel = stringResource(R.string.common_ajouter), canConfirm = valid,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Dropdown(stringResource(R.string.activity_type), type, Activities.TYPES, { it.label }, { type = it }, Modifier.fillMaxWidth())
+            Dropdown(stringResource(R.string.activity_type), type, Activities.TYPES, { stringResource(it.label) }, { type = it }, Modifier.fillMaxWidth())
             if (type.met != null) NumberField(minutes, { minutes = it }, stringResource(R.string.activity_duree), Modifier.fillMaxWidth(), "min")
             else NumberField(manual, { manual = it }, stringResource(R.string.activity_calories_depensees), Modifier.fillMaxWidth(), "kcal")
         }

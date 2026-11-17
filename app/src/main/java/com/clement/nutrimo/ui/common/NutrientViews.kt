@@ -69,7 +69,7 @@ private fun MicroSection(micros: Map<String, Double>) {
     MicroGroup.entries.forEach { group ->
         val items = NutrientCatalog.MICROS.filter { it.group == group && micros[it.key] != null }
         if (items.isEmpty()) return@forEach
-        Text(group.label, style = MaterialTheme.typography.titleSmall)
-        items.forEach { StatRow(it.label, "${fmt(micros.getValue(it.key), 2)} ${it.unit}") }
+        Text(stringResource(group.label), style = MaterialTheme.typography.titleSmall)
+        items.forEach { StatRow(stringResource(it.label), "${fmt(micros.getValue(it.key), 2)} ${it.unit}") }
     }
 }

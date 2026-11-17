@@ -89,7 +89,7 @@ private fun MicrosCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
             NumberField(
                 value = d.micros[m.key].orEmpty(),
                 onValueChange = { v -> vm.update { it.copy(micros = it.micros + (m.key to v)) } },
-                label = m.label,
+                label = stringResource(m.label),
                 suffix = m.unit,
                 modifier = Modifier.fillMaxWidth(),
             )

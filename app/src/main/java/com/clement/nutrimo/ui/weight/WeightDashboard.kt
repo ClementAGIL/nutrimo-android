@@ -86,7 +86,7 @@ private fun FiguresCard(state: WeightUiState, p: GoalProgress) {
         StatRow(stringResource(R.string.common_objectif), kg(p.targetKg))
         StatRow(stringResource(R.string.weight_dashboard_perdu), kg(p.lostKg))
         StatRow(stringResource(R.string.weight_dashboard_reste_perdre), kg(p.remainingKg))
-        state.bmi?.let { StatRow("IMC", "${fmt(it)} · ${Bmi.category(it)}") }
+        state.bmi?.let { StatRow(stringResource(R.string.weight_dashboard_bmi), stringResource(R.string.weight_dashboard_bmi_value, fmt(it), stringResource(Bmi.category(it)))) }
         state.profile?.let { profile -> NextBmiZone(p, profile.heightCm) }
         p.avgLossPerWeek?.let { StatRow(stringResource(R.string.weight_dashboard_perte_moyenne), stringResource(R.string.common_1_kg_semaine, fmt(it, 2))) }
         p.requiredPace?.let { StatRow(stringResource(R.string.weight_dashboard_rythme_necessaire), stringResource(R.string.common_1_kg_semaine, fmt(it, 2))) }
@@ -103,7 +103,7 @@ private fun FiguresCard(state: WeightUiState, p: GoalProgress) {
 @Composable
 private fun NextBmiZone(p: GoalProgress, heightCm: Double) {
     val (zone, threshold) = Bmi.nextLower(p.currentKg, heightCm) ?: return
-    StatRow(stringResource(R.string.weight_dashboard_prochaine_categorie), zone.label)
+    StatRow(stringResource(R.string.weight_dashboard_prochaine_categorie), stringResource(zone.label))
     StatRow(stringResource(R.string.weight_dashboard_seuil), stringResource(R.string.weight_dashboard_sous_1_encore_2, kg(threshold), kg(p.currentKg - threshold)))
     StatRow(stringResource(R.string.weight_dashboard_atteinte_estimee_tendance), estimate(p, p.trend?.dateReaching(threshold)))
 }

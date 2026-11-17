@@ -1,6 +1,9 @@
 // Health Connect workouts turned into journal activities: label, calories (measured or estimated), budget rule.
 package com.clement.nutrimo.data.health
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import androidx.health.connect.client.records.ExerciseSessionRecord as E
 import com.clement.nutrimo.domain.calc.Activities
 
@@ -31,7 +34,8 @@ private val STEP_BASED = setOf(E.EXERCISE_TYPE_WALKING, E.EXERCISE_TYPE_HIKING, 
 private const val DEFAULT_MET = 5.0
 
 data class ImportedActivity(
-    val label: String,
+    /** The workout's own title (from the user's app), else the sport's name. */
+    val label: UiText,
     val minutes: Int,
     val kcal: Double,
     /** True when the calories come from a device (watch, band), false when estimated from the sport. */
@@ -43,7 +47,7 @@ fun HealthSession.toImported(weightKg: Double): ImportedActivity {
     val type = TYPE_TO_ACTIVITY[exerciseType]?.let(Activities::byKey)
     val estimate = Activities.burned(type?.met ?: DEFAULT_MET, weightKg, minutes)
     return ImportedActivity(
-        label = title?.takeIf { it.isNotBlank() } ?: type?.label ?: "Séance",
+        label = title?.takeIf { it.isNotBlank() }?.let { UiText.Raw(it) } ?: uiText(type?.label ?: R.string.activity_session),
         minutes = minutes,
         kcal = measuredKcal ?: estimate,
         measured = measuredKcal != null,

@@ -132,15 +132,16 @@ private fun markersOf(measurements: List<MeasurementEntity>, photos: List<PhotoE
     photos.map { it.date }.distinct().forEach { add(ChartMarker(it, PHOTO_COLOR, ring = true)) }
 }
 
-/** The WHO BMI zones as weight ranges for the user's height (none without a profile). */
+/** The WHO BMI zones as weight ranges for the user's height (none without a profile). Composable for the labels. */
+@Composable
 private fun bmiBands(heightCm: Double?): List<ChartBand> {
     if (heightCm == null || heightCm <= 0) return emptyList()
-    return Bmi.ZONES.zip(BMI_COLORS) { zone, color ->
+    return Bmi.ZONES.mapIndexed { i, zone ->
         ChartBand(
             from = zone.min?.let { Bmi.weightAt(it, heightCm) } ?: Double.NEGATIVE_INFINITY,
             to = zone.max?.let { Bmi.weightAt(it, heightCm) } ?: Double.POSITIVE_INFINITY,
-            color = color,
-            label = zone.label,
+            color = BMI_COLORS[i],
+            label = stringResource(zone.label),
         )
     }
 }

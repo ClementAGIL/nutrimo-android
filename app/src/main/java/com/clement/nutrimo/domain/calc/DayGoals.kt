@@ -2,18 +2,20 @@
 // is neither a success nor a failure, so forgetting to log a meal never counts as "under the target".
 package com.clement.nutrimo.domain.calc
 
+import com.clement.nutrimo.R
+import androidx.annotation.StringRes
 import java.time.LocalDate
 import kotlin.math.max
 
 /** [skipsEmptyDays]: weigh-ins are not daily, so days without one don't break the weight streak. */
-enum class DailyGoal(val label: String, val skipsEmptyDays: Boolean = false) {
-    CALORIES("Calories"),
-    WEIGHT("Poids", skipsEmptyDays = true),
-    SPORT("Sport"),
-    STEPS("Pas"),
-    WATER("Eau"),
+enum class DailyGoal(@StringRes val label: Int, val skipsEmptyDays: Boolean = false) {
+    CALORIES(R.string.daily_goal_calories),
+    WEIGHT(R.string.daily_goal_weight, skipsEmptyDays = true),
+    SPORT(R.string.daily_goal_sport),
+    STEPS(R.string.daily_goal_steps),
+    WATER(R.string.daily_goal_water),
     /** The day was rated (mood) or written about in "Ma journée". */
-    JOURNAL("Journée notée"),
+    JOURNAL(R.string.daily_goal_journal),
 }
 
 const val DEFAULT_STEP_GOAL = 10_000
