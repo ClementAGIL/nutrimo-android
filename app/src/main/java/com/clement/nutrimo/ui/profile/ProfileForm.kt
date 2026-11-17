@@ -61,7 +61,7 @@ fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
         NumberField(
             value = draft.height,
             onValueChange = { onChange(draft.copy(height = it)) },
-            label = "Taille",
+            label = stringResource(R.string.profile_form_taille),
             suffix = "cm",
             isError = draft.height.isNotEmpty() && draft.heightCm == null,
             modifier = Modifier.fillMaxWidth(),

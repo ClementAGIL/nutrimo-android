@@ -142,7 +142,7 @@ private fun CameraControls(state: PhotoCameraState, vm: PhotoCameraViewModel) {
     Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = vm::switchCamera) { Icon(Icons.Default.Cameraswitch, stringResource(R.string.photo_camera_changer_camera)) }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable(onClick = vm::nextTimer).padding(8.dp)) {
-            Icon(if (state.timer == 0) Icons.Default.TimerOff else Icons.Default.Timer, "Retardateur")
+            Icon(if (state.timer == 0) Icons.Default.TimerOff else Icons.Default.Timer, stringResource(R.string.photo_camera_retardateur))
             Text(if (state.timer == 0) stringResource(R.string.photo_camera_sans_retardateur) else " ${state.timer} s")
         }
         IconButton(onClick = vm::toggleGhost, enabled = state.ghost != null) {

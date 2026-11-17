@@ -54,7 +54,7 @@ fun PhotoDayCard(day: PhotoDay, state: PhotosUiState, vm: PhotosViewModel) {
         }
     }
     deleting?.let {
-        ConfirmDialog(stringResource(R.string.photo_day_supprimer_photo_2), stringResource(R.string.photo_day_photo_1_2, it.pose.label, it.date.day()), "Supprimer", { vm.delete(it) }, { deleting = null })
+        ConfirmDialog(stringResource(R.string.photo_day_supprimer_photo_2), stringResource(R.string.photo_day_photo_1_2, it.pose.label, it.date.day()), stringResource(R.string.common_supprimer), { vm.delete(it) }, { deleting = null })
     }
 }
 

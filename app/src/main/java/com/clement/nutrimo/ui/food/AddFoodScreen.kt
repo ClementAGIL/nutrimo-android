@@ -60,7 +60,7 @@ fun AddFoodScreen(actions: AddFoodActions, scannedBarcode: String?, onBarcodeCon
                 onValueChange = vm::onQuery,
                 placeholder = { Text(stringResource(R.string.add_food_rechercher_aliment)) },
                 leadingIcon = { Icon(Icons.Default.Search, null) },
-                trailingIcon = { IconButton(onClick = actions.onScan) { Icon(Icons.Default.QrCodeScanner, "Scanner") } },
+                trailingIcon = { IconButton(onClick = actions.onScan) { Icon(Icons.Default.QrCodeScanner, stringResource(R.string.add_food_scanner)) } },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = { vm.onSubmit() }),

@@ -116,7 +116,7 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
         CardHeader(meal.label, kcal(entries.sumOf { it.nutrients.kcal })) {
             if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille)) }
             else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, stringResource(R.string.journal_enregistrer_ce_repas)) }
-            IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, "Ajouter") }
+            IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, stringResource(R.string.common_ajouter)) }
         }
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
         entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
@@ -127,7 +127,7 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
 @Composable
 fun WaterCard(ml: Int, goalMl: Int, onAdd: (Int) -> Unit, onGoalSettings: () -> Unit) {
     SectionCard {
-        CardHeader("Eau") { GoalSettingsButton(onGoalSettings) }
+        CardHeader(stringResource(R.string.journal_eau)) { GoalSettingsButton(onGoalSettings) }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 ProgressRow("$ml / $goalMl ml", stringResource(R.string.journal_1_verre, ml / WATER_STEP_ML), ml.toDouble() / goalMl, NutrimoColors.water)

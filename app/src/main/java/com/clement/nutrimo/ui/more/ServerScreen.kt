@@ -55,7 +55,7 @@ fun ServerScreen(onBack: () -> Unit) {
             OutlinedTextField(key, { key = it.trim() }, label = { Text(stringResource(R.string.server_cle_api_facultatif)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
             WideButton(if (tester.busy) stringResource(R.string.server_test_en_cours) else stringResource(R.string.server_tester_connexion), { vm.test(url, key) },
                 enabled = url.isNotBlank() && !tester.busy, outlined = true)
-            WideButton("Enregistrer", { vm.save(url, key, onBack) })
+            WideButton(stringResource(R.string.common_enregistrer), { vm.save(url, key, onBack) })
             tester.status?.let { Text(it) }
         }
     }

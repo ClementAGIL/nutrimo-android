@@ -1,6 +1,8 @@
 // History screen (journal's chart icon): calendar of daily goals by default, charts in the second tab.
 package com.clement.nutrimo.ui.history
 
+import com.clement.nutrimo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -21,7 +23,7 @@ fun HistoryScreen(onBack: () -> Unit) {
     val vm = appViewModel { c, _ -> HistoryViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     var tab by rememberSaveable { mutableIntStateOf(0) }
-    ScreenScaffold("Historique", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.common_historique), onBack = onBack) { padding ->
         Column(Modifier.padding(padding)) {
             AppTabs(TABS, tab) { tab = it }
             if (tab == 0) CalendarTab(state, vm::showMonth, vm::select) else ChartsTab(state, vm::setChartDays)

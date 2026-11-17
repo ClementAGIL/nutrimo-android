@@ -74,7 +74,7 @@ fun StepsScreen(onBack: () -> Unit) {
             WideButton(stringResource(R.string.steps_ouvrir_reglages_health_connect), {
                 runCatching { context.startActivity(Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)) }
             }, outlined = true)
-            WideButton("Enregistrer", { vm.save(onBack) }, enabled = form.stepGoal != null && form.sportGoal != null)
+            WideButton(stringResource(R.string.common_enregistrer), { vm.save(onBack) }, enabled = form.stepGoal != null && form.sportGoal != null)
         }
     }
 }

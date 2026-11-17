@@ -34,7 +34,7 @@ fun GoalForm(draft: GoalDraft, onChange: (GoalDraft) -> Unit, profile: ProfileEn
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             NumberField(draft.startKg, { onChange(draft.copy(startKg = it)) }, stringResource(R.string.common_poids_actuel), Modifier.weight(1f), "kg")
-            NumberField(draft.targetKg, { onChange(draft.copy(targetKg = it)) }, "Objectif", Modifier.weight(1f), "kg")
+            NumberField(draft.targetKg, { onChange(draft.copy(targetKg = it)) }, stringResource(R.string.common_objectif), Modifier.weight(1f), "kg")
         }
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
             GoalMode.entries.forEachIndexed { i, mode ->
@@ -54,11 +54,11 @@ fun GoalForm(draft: GoalDraft, onChange: (GoalDraft) -> Unit, profile: ProfileEn
 
 @Composable
 private fun PaceChooser(draft: GoalDraft, onChange: (GoalDraft) -> Unit) {
-    ChoiceChips(PACE_PRESETS + CUSTOM_PACE, draft.preset, { if (it == CUSTOM_PACE) "Autre" else "${fmt(it)} kg" }) {
+    ChoiceChips(PACE_PRESETS + CUSTOM_PACE, draft.preset, { if (it == CUSTOM_PACE) stringResource(R.string.goal_form_autre) else "${fmt(it)} kg" }) {
         onChange(draft.copy(preset = it))
     }
     if (draft.preset == CUSTOM_PACE) {
-        NumberField(draft.customPace, { onChange(draft.copy(customPace = it)) }, "Rythme", Modifier.fillMaxWidth(), stringResource(R.string.goal_form_kg_semaine))
+        NumberField(draft.customPace, { onChange(draft.copy(customPace = it)) }, stringResource(R.string.goal_form_rythme), Modifier.fillMaxWidth(), stringResource(R.string.goal_form_kg_semaine))
     }
 }
 
@@ -68,7 +68,7 @@ private fun GoalPreview(draft: GoalDraft, profile: ProfileEntity?) {
     val start = draft.start ?: return
     val pace = draft.pace?.takeIf { draft.error == null } ?: return
     SectionCard(stringResource(R.string.goal_form_ce_que_ca_represente)) {
-        StatRow("Rythme", stringResource(R.string.common_1_kg_semaine, fmt(pace, 2)))
+        StatRow(stringResource(R.string.goal_form_rythme), stringResource(R.string.common_1_kg_semaine, fmt(pace, 2)))
         draft.resolvedEnd?.let { StatRow(stringResource(R.string.goal_form_date_fin_prevue), it.full()) }
         if (profile == null) return@SectionCard
         val t = Energy.target(profile.sex, start, profile.heightCm, Energy.age(profile.birthDate), profile.activity, pace)

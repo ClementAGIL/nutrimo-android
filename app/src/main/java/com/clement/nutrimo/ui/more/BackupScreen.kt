@@ -79,7 +79,7 @@ class BackupViewModel(private val c: AppContainer) : ViewModel() {
 fun BackupScreen(onBack: () -> Unit) {
     val vm = appViewModel { c, _ -> BackupViewModel(c) }
     val runner = vm.runner
-    ScreenScaffold("Sauvegarde", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.backup_sauvegarde), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText(
                 stringResource(R.string.backup_vos_donnees_profil_objectifs_pesees),
@@ -101,10 +101,10 @@ private fun FileCard(vm: BackupViewModel) {
     val importer = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri?.let { vm.import(resolver, it) }
     }
-    SectionCard("Fichier") {
+    SectionCard(stringResource(R.string.backup_fichier)) {
         HintText(stringResource(R.string.backup_fichier_zip_avec_vos_donnees))
         PhotoStorageText(vm)
-        WideButton("Exporter", { exporter.launch("nutrimo-${LocalDate.now()}.zip") })
+        WideButton(stringResource(R.string.backup_exporter), { exporter.launch("nutrimo-${LocalDate.now()}.zip") })
         WideButton(stringResource(R.string.backup_importer_sauvegarde), { importer.launch(arrayOf(MIME_ZIP, MIME_JSON, "*/*")) }, outlined = true)
     }
 }
@@ -131,7 +131,7 @@ private fun ServerCard(vm: BackupViewModel) {
     }
     if (confirmRestore) {
         ConfirmDialog(
-            stringResource(R.string.backup_restaurer), stringResource(R.string.backup_donnees_serveur_seront_fusionnees_avec), "Restaurer",
+            stringResource(R.string.backup_restaurer), stringResource(R.string.backup_donnees_serveur_seront_fusionnees_avec), stringResource(R.string.backup_restaurer_2),
             vm::restoreFromServer,
             { confirmRestore = false },
         )

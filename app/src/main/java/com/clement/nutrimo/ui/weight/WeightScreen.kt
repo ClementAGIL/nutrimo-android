@@ -57,7 +57,7 @@ fun WeightScreen(actions: WeightHubActions) {
     var adding by remember { mutableStateOf(false) }
     var measurement by remember { mutableStateOf<MeasurementEntity?>(null) }
     ScreenScaffold(
-        title = "Poids",
+        title = stringResource(R.string.common_poids),
         floatingActionButton = { AddMenu({ adding = true }, { measurement = MeasurementEntity(date = LocalDate.now()) }, actions.onCamera) },
     ) { padding ->
         ScrollColumn(padding) {
@@ -76,9 +76,9 @@ fun WeightScreen(actions: WeightHubActions) {
 @Composable
 private fun HubButtons(actions: WeightHubActions) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        HubButton("Historique", Icons.Default.History, actions.onHistory, Modifier.weight(1f))
-        HubButton("Mensurations", Icons.Default.Straighten, actions.onMeasurements, Modifier.weight(1f))
-        HubButton("Photos", Icons.Default.PhotoLibrary, actions.onPhotos, Modifier.weight(1f))
+        HubButton(stringResource(R.string.common_historique), Icons.Default.History, actions.onHistory, Modifier.weight(1f))
+        HubButton(stringResource(R.string.common_mensurations), Icons.Default.Straighten, actions.onMeasurements, Modifier.weight(1f))
+        HubButton(stringResource(R.string.common_photos), Icons.Default.PhotoLibrary, actions.onPhotos, Modifier.weight(1f))
     }
 }
 
@@ -96,11 +96,11 @@ private fun HubButton(label: String, icon: ImageVector, onClick: () -> Unit, mod
 private fun AddMenu(onWeight: () -> Unit, onMeasurement: () -> Unit, onPhoto: () -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
-        FloatingActionButton(onClick = { open = true }) { Icon(Icons.Default.Add, "Ajouter") }
+        FloatingActionButton(onClick = { open = true }) { Icon(Icons.Default.Add, stringResource(R.string.common_ajouter)) }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             MenuItem(stringResource(R.string.common_pesee), Icons.Default.MonitorWeight) { open = false; onWeight() }
-            MenuItem("Mensurations", Icons.Default.Straighten) { open = false; onMeasurement() }
-            MenuItem("Photo", Icons.Default.PhotoCamera) { open = false; onPhoto() }
+            MenuItem(stringResource(R.string.common_mensurations), Icons.Default.Straighten) { open = false; onMeasurement() }
+            MenuItem(stringResource(R.string.weight_photo), Icons.Default.PhotoCamera) { open = false; onPhoto() }
         }
     }
 }

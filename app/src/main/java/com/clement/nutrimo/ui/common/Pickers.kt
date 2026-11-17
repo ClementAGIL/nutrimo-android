@@ -1,6 +1,8 @@
 // Date field and enum dropdown built on Material 3 pickers.
 package com.clement.nutrimo.ui.common
 
+import com.clement.nutrimo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -44,7 +46,7 @@ fun DateField(
         onValueChange = {},
         readOnly = true,
         label = { Text(label) },
-        trailingIcon = { IconButton(onClick = { open = true }) { Icon(Icons.Default.CalendarMonth, "Choisir") } },
+        trailingIcon = { IconButton(onClick = { open = true }) { Icon(Icons.Default.CalendarMonth, stringResource(R.string.pickers_choisir)) } },
         modifier = modifier,
     )
     if (!open) return
@@ -65,7 +67,7 @@ fun DateField(
                 open = false
             }) { Text("OK") }
         },
-        dismissButton = { TextButton(onClick = { open = false }) { Text("Annuler") } },
+        dismissButton = { TextButton(onClick = { open = false }) { Text(stringResource(R.string.common_annuler)) } },
     ) { DatePicker(state) }
 }
 

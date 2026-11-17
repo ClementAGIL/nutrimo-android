@@ -40,9 +40,9 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
     val context = LocalContext.current
     val permission = rememberLauncherForActivityResult(PermissionController.createRequestPermissionResultContract()) { onRefresh() }
     SectionCard {
-        CardHeader("Pas") {
+        CardHeader(stringResource(R.string.steps_pas)) {
             // Other apps sync to Health Connect in the background, so the data can change while the journal is open.
-            if (info?.canReadSteps == true) IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, "Actualiser") }
+            if (info?.canReadSteps == true) IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, stringResource(R.string.steps_actualiser)) }
             GoalSettingsButton(onGoalSettings)
         }
         when {

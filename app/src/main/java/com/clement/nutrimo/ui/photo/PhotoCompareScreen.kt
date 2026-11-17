@@ -52,9 +52,9 @@ fun PhotoCompareScreen(onBack: () -> Unit) {
     var overlay by rememberSaveable { mutableStateOf(false) }
     SecureWindow()
     ScreenScaffold(
-        "Comparer",
+        stringResource(R.string.common_comparer),
         onBack = onBack,
-        actions = { IconButton(onClick = { zoomA.reset(); zoomB.reset() }) { Icon(Icons.Default.RestartAlt, "Recadrer") } },
+        actions = { IconButton(onClick = { zoomA.reset(); zoomB.reset() }) { Icon(Icons.Default.RestartAlt, stringResource(R.string.photo_compare_recadrer)) } },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             PhotoLockGate {
@@ -71,7 +71,7 @@ fun PhotoCompareScreen(onBack: () -> Unit) {
 @Composable
 private fun ModeSwitch(overlay: Boolean, onChange: (Boolean) -> Unit) {
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        listOf(false to stringResource(R.string.photo_compare_cote_cote), true to "Superposer").forEachIndexed { i, (value, label) ->
+        listOf(false to stringResource(R.string.photo_compare_cote_cote), true to stringResource(R.string.photo_compare_superposer)).forEachIndexed { i, (value, label) ->
             SegmentedButton(selected = overlay == value, onClick = { onChange(value) }, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(label) }
         }
     }

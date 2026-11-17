@@ -130,7 +130,7 @@ private fun DayDetail(state: HistoryState) {
     SectionCard(if (state.selected == state.today) stringResource(R.string.common_aujourd_hui) else state.selected.day()) {
         val eaten = r?.eatenKcal?.let { e -> r.budgetKcal?.let { "${fmt(e, 0)} / ${kcal(it)}" } ?: kcal(e) }
         GoalRow(DailyGoal.CALORIES, done(DailyGoal.CALORIES), eaten ?: stringResource(R.string.calendar_rien_note), stringResource(R.string.calendar_calories_mangees))
-        GoalRow(DailyGoal.SPORT, done(DailyGoal.SPORT), "${fmt(r?.sportKcal ?: 0.0, 0)} / ${kcal(t.sportKcal.toDouble())}", "Sport")
+        GoalRow(DailyGoal.SPORT, done(DailyGoal.SPORT), "${fmt(r?.sportKcal ?: 0.0, 0)} / ${kcal(t.sportKcal.toDouble())}", stringResource(R.string.common_sport))
         GoalRow(DailyGoal.STEPS, done(DailyGoal.STEPS), "${fmt((r?.steps ?: 0).toDouble(), 0)} / ${fmt(t.steps.toDouble(), 0)}")
         GoalRow(DailyGoal.WATER, done(DailyGoal.WATER), "${r?.waterMl ?: 0} / ${t.waterMl} ml")
         val weight = r?.weightKg?.let { w -> kg(w) + r.previousWeightKg?.let { " (${signedKg(w - it)})" }.orEmpty() }

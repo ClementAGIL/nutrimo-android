@@ -47,7 +47,7 @@ fun WeightHistory(weights: List<WeightEntity>, vm: WeightViewModel) {
     }
     editing?.let { WeightDialog(vm, it.date, it.kg, onDismiss = { editing = null }) }
     deleting?.let {
-        ConfirmDialog(stringResource(R.string.weight_history_supprimer_pesee), "${kg(it.kg)} le ${it.date.day()}", "Supprimer", { vm.delete(it.id) }, { deleting = null })
+        ConfirmDialog(stringResource(R.string.weight_history_supprimer_pesee), "${kg(it.kg)} le ${it.date.day()}", stringResource(R.string.common_supprimer), { vm.delete(it.id) }, { deleting = null })
     }
 }
 
@@ -60,7 +60,7 @@ private fun WeightRow(entry: WeightEntity, previous: WeightEntity?, onEdit: () -
         trailingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 delta?.let { DeltaText(it) }
-                IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, "Supprimer") }
+                IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer)) }
             }
         },
         modifier = Modifier.clickable(onClick = onEdit),

@@ -49,8 +49,8 @@ fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
         NumberField(state.weight, vm::setWeight, stringResource(R.string.photo_review_poids_jour_facultatif), Modifier.fillMaxWidth(), "kg")
         MeasurementsButton(vm)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = vm::retake, Modifier.weight(1f), enabled = !state.saving) { Text("Reprendre") }
-            Button(onClick = vm::save, Modifier.weight(1f), enabled = !state.saving) { Text("Enregistrer") }
+            OutlinedButton(onClick = vm::retake, Modifier.weight(1f), enabled = !state.saving) { Text(stringResource(R.string.photo_review_reprendre)) }
+            Button(onClick = vm::save, Modifier.weight(1f), enabled = !state.saving) { Text(stringResource(R.string.common_enregistrer)) }
         }
     }
 }

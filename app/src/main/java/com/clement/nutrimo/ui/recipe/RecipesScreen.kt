@@ -44,7 +44,7 @@ class RecipesViewModel(c: AppContainer) : ViewModel() {
 fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
     val vm = appViewModel { c, _ -> RecipesViewModel(c) }
     val recipes by vm.recipes.collectAsStateWithLifecycle()
-    ScreenScaffold("Recettes", floatingActionButton = {
+    ScreenScaffold(stringResource(R.string.recipes_recettes), floatingActionButton = {
         FloatingActionButton(onClick = onCreate) { Icon(Icons.Default.Add, stringResource(R.string.common_nouvelle_recette)) }
     }) { padding ->
         if (recipes.isEmpty()) return@ScreenScaffold EmptyState(
@@ -58,7 +58,7 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
                     supportingContent = {
                         Text("${fmt(recipe.parts)} parts · ${perPart?.let { kcal(it) } ?: "–"} / part · ${usesText(uses)}")
                     },
-                    trailingContent = if (recipe.isFavorite) ({ Icon(Icons.Default.Star, "Favori", tint = MaterialTheme.colorScheme.primary) }) else null,
+                    trailingContent = if (recipe.isFavorite) ({ Icon(Icons.Default.Star, stringResource(R.string.common_favori), tint = MaterialTheme.colorScheme.primary) }) else null,
                     modifier = Modifier.clickable { onOpen(recipe.id) },
                 )
                 HorizontalDivider()

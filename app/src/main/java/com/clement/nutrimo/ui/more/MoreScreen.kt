@@ -1,6 +1,8 @@
 // "Plus" tab: entry points to the profile, goals, measurements, reminders, server, backup and about screens.
 package com.clement.nutrimo.ui.more
 
+import com.clement.nutrimo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -53,7 +55,7 @@ val MORE_ENTRIES = listOf(
 
 @Composable
 fun MoreScreen(onOpen: (Any) -> Unit) {
-    ScreenScaffold("Plus") { padding ->
+    ScreenScaffold(stringResource(R.string.more_plus)) { padding ->
         LazyColumn(Modifier.padding(padding)) {
             items(MORE_ENTRIES) { entry ->
                 ListItem(

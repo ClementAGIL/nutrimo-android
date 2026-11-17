@@ -43,7 +43,7 @@ fun PhotosScreen(onBack: () -> Unit, onCamera: () -> Unit, onCompare: (PhotoEnti
     val state by vm.state.collectAsStateWithLifecycle()
     SecureWindow()
     ScreenScaffold(
-        "Photos",
+        stringResource(R.string.common_photos),
         onBack = onBack,
         floatingActionButton = { FloatingActionButton(onClick = onCamera) { Icon(Icons.Default.PhotoCamera, stringResource(R.string.photos_prendre_photo)) } },
     ) { padding ->
@@ -73,7 +73,7 @@ private fun PhotosBody(state: PhotosUiState, vm: PhotosViewModel, onCompare: (Ph
 @Composable
 private fun PoseFilter(pose: PhotoPose?, onSelect: (PhotoPose?) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        FilterChip(selected = pose == null, onClick = { onSelect(null) }, label = { Text("Toutes") })
+        FilterChip(selected = pose == null, onClick = { onSelect(null) }, label = { Text(stringResource(R.string.photos_toutes)) })
         PhotoPose.entries.forEach { p -> FilterChip(selected = pose == p, onClick = { onSelect(p) }, label = { Text(p.label) }) }
     }
 }
@@ -81,7 +81,7 @@ private fun PoseFilter(pose: PhotoPose?, onSelect: (PhotoPose?) -> Unit) {
 /** The two chosen photos and the button opening the comparison. */
 @Composable
 private fun CompareBar(state: PhotosUiState, vm: PhotosViewModel, onCompare: (PhotoEntity, PhotoEntity) -> Unit) {
-    SectionCard("Comparer") {
+    SectionCard(stringResource(R.string.common_comparer)) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             CompareSlot("A", state.a, Modifier.weight(1f))
             CompareSlot("B", state.b, Modifier.weight(1f))

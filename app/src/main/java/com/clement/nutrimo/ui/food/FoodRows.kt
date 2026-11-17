@@ -33,7 +33,7 @@ fun RemoteFoodRow(food: FoodDto, onClick: () -> Unit) {
 
 @Composable
 fun RecipeRow(recipe: RecipeEntity, onClick: () -> Unit) {
-    ResultRow(recipe.name, null, stringResource(R.string.food_rows_1_parts, fmt(recipe.parts)), "Recette", recipe.isFavorite, onClick)
+    ResultRow(recipe.name, null, stringResource(R.string.food_rows_1_parts, fmt(recipe.parts)), stringResource(R.string.food_rows_recette), recipe.isFavorite, onClick)
 }
 
 @Composable
@@ -41,7 +41,7 @@ private fun ResultRow(title: String, brand: String?, detail: String, badge: Stri
     ListItem(
         headlineContent = { Text(title, maxLines = 2) },
         supportingContent = { Text(listOfNotNull(brand, detail).joinToString(" · ")) },
-        leadingContent = if (favorite) ({ Icon(Icons.Default.Star, "Favori", tint = MaterialTheme.colorScheme.primary) }) else null,
+        leadingContent = if (favorite) ({ Icon(Icons.Default.Star, stringResource(R.string.common_favori), tint = MaterialTheme.colorScheme.primary) }) else null,
         trailingContent = { AssistChip(onClick = onClick, label = { Text(badge, style = MaterialTheme.typography.labelSmall) }) },
         modifier = Modifier.clickable(onClick = onClick),
     )

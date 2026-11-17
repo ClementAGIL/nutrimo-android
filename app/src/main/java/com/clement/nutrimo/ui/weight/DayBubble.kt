@@ -48,15 +48,15 @@ fun DayBubble(day: HubDay, x: Float, actions: WeightHubActions, onClose: () -> U
         Column(Modifier.padding(start = 12.dp, bottom = 4.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(day.date.day(), Modifier.weight(1f), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                IconButton(onClick = onClose) { Icon(Icons.Default.Close, "Fermer") }
+                IconButton(onClick = onClose) { Icon(Icons.Default.Close, stringResource(R.string.common_fermer)) }
             }
             day.kg?.let { Text(if (day.weighed) stringResource(R.string.day_bubble_pesee_1, kg(it)) else stringResource(R.string.day_bubble_1_courbe, kg(it)), style = MaterialTheme.typography.bodySmall) }
             day.measurement?.let { Text(measurementSummary(it), style = MaterialTheme.typography.bodySmall) }
             if (day.photos.isNotEmpty()) Text(stringResource(R.string.day_bubble_photos_1, day.photos.joinToString { it.pose.label }), style = MaterialTheme.typography.bodySmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
-                if (day.weighed) TextButton(onClick = actions.onHistory) { Text("Historique") }
-                if (day.measurement != null) TextButton(onClick = actions.onMeasurements) { Text("Mensurations") }
-                if (day.photos.isNotEmpty()) TextButton(onClick = actions.onPhotos) { Text("Photos") }
+                if (day.weighed) TextButton(onClick = actions.onHistory) { Text(stringResource(R.string.common_historique)) }
+                if (day.measurement != null) TextButton(onClick = actions.onMeasurements) { Text(stringResource(R.string.common_mensurations)) }
+                if (day.photos.isNotEmpty()) TextButton(onClick = actions.onPhotos) { Text(stringResource(R.string.common_photos)) }
             }
         }
     }

@@ -59,7 +59,7 @@ fun ActivityCard(
                 val minutes = a.minutes?.let { stringResource(R.string.activity_1_min, it) }.orEmpty()
                 Text("${Activities.byKey(a.type).label}$minutes", Modifier.weight(1f))
                 Text(kcal(a.kcal))
-                IconButton(onClick = { onDelete(a) }) { Icon(Icons.Default.Close, "Supprimer") }
+                IconButton(onClick = { onDelete(a) }) { Icon(Icons.Default.Close, stringResource(R.string.common_supprimer)) }
             }
         }
         if (imported.isNotEmpty()) ImportedSessions(imported)
@@ -88,10 +88,10 @@ private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: ()
     FormDialog(
         stringResource(R.string.activity_activite), onDismiss,
         { onAdd(type.key, minutes.toDecimal()?.toInt()?.takeIf { type.met != null }, manual.toDecimal()) },
-        confirmLabel = "Ajouter", canConfirm = valid,
+        confirmLabel = stringResource(R.string.common_ajouter), canConfirm = valid,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Dropdown("Type", type, Activities.TYPES, { it.label }, { type = it }, Modifier.fillMaxWidth())
+            Dropdown(stringResource(R.string.activity_type), type, Activities.TYPES, { it.label }, { type = it }, Modifier.fillMaxWidth())
             if (type.met != null) NumberField(minutes, { minutes = it }, stringResource(R.string.activity_duree), Modifier.fillMaxWidth(), "min")
             else NumberField(manual, { manual = it }, stringResource(R.string.activity_calories_depensees), Modifier.fillMaxWidth(), "kcal")
         }

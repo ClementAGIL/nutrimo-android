@@ -86,7 +86,7 @@ fun DayNoteCard(date: LocalDate, note: DayNoteEntity?, onSave: (DayNoteEntity) -
         } else {
             Text(text, style = MaterialTheme.typography.bodyMedium)
         }
-        OutlinedButton({ editing = true }, Modifier.fillMaxWidth()) { Text(if (text.isEmpty()) stringResource(R.string.day_note_ecrire) else "Modifier") }
+        OutlinedButton({ editing = true }, Modifier.fillMaxWidth()) { Text(if (text.isEmpty()) stringResource(R.string.day_note_ecrire) else stringResource(R.string.common_modifier)) }
     }
     if (editing) {
         DayNoteEditor(text = current.text, onSave = { onSave(current.copy(gratitude = "", win = "", note = it)) }) { editing = false }
@@ -130,9 +130,9 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.day_note_ma_journee)) },
-                    navigationIcon = { IconButton(leave) { Icon(Icons.Default.Close, "Fermer") } },
+                    navigationIcon = { IconButton(leave) { Icon(Icons.Default.Close, stringResource(R.string.common_fermer)) } },
                     actions = {
-                        IconButton({ onSave(draft); onClose() }) { Icon(Icons.Outlined.Save, "Enregistrer") }
+                        IconButton({ onSave(draft); onClose() }) { Icon(Icons.Outlined.Save, stringResource(R.string.common_enregistrer)) }
                     },
                 )
             },
@@ -149,7 +149,7 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
             ConfirmDialog(
                 title = stringResource(R.string.day_note_abandonner_texte),
                 text = stringResource(R.string.day_note_vos_modifications_ne_seront_pas),
-                confirmLabel = "Abandonner",
+                confirmLabel = stringResource(R.string.day_note_abandonner),
                 onConfirm = onClose,
                 onDismiss = { confirmLeave = false },
             )

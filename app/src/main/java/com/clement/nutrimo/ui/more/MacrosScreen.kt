@@ -63,15 +63,15 @@ fun MacrosScreen(onBack: () -> Unit) {
                 val g = split.grams(t.target)
                 SectionCard(stringResource(R.string.macros_pour_1_kcal_jour, fmt(t.target, 0))) {
                     StatRow(stringResource(R.string.common_proteines), "${fmt(g.protein, 0)} g" + (latestKg?.let { " (${fmt(g.protein / it, 1)} g/kg)" } ?: ""))
-                    StatRow("Glucides", "${fmt(g.carbs, 0)} g")
-                    StatRow("Lipides", "${fmt(g.fat, 0)} g")
+                    StatRow(stringResource(R.string.common_glucides), "${fmt(g.carbs, 0)} g")
+                    StatRow(stringResource(R.string.common_lipides), "${fmt(g.fat, 0)} g")
                 }
             }
             Button(
                 onClick = { vm.save(split, onBack) },
                 enabled = split.isValid,
                 modifier = Modifier.fillMaxWidth(),
-            ) { Text("Enregistrer") }
+            ) { Text(stringResource(R.string.common_enregistrer)) }
         }
     }
 }
@@ -81,7 +81,7 @@ private fun PercentFields(split: MacroSplit, onChange: (MacroSplit) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         val pct = { text: String -> text.toIntOrNull() ?: 0 }
         NumberField(split.proteinPct.toString(), { onChange(split.copy(proteinPct = pct(it))) }, stringResource(R.string.common_proteines), Modifier.weight(1f), "%")
-        NumberField(split.carbsPct.toString(), { onChange(split.copy(carbsPct = pct(it))) }, "Glucides", Modifier.weight(1f), "%")
-        NumberField(split.fatPct.toString(), { onChange(split.copy(fatPct = pct(it))) }, "Lipides", Modifier.weight(1f), "%")
+        NumberField(split.carbsPct.toString(), { onChange(split.copy(carbsPct = pct(it))) }, stringResource(R.string.common_glucides), Modifier.weight(1f), "%")
+        NumberField(split.fatPct.toString(), { onChange(split.copy(fatPct = pct(it))) }, stringResource(R.string.common_lipides), Modifier.weight(1f), "%")
     }
 }

@@ -76,14 +76,14 @@ fun IntroScreen(onDone: () -> Unit) {
     AutoAdvance(pager, ready)
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).safeDrawingPadding().padding(16.dp)) {
         Box(Modifier.fillMaxWidth().height(48.dp), contentAlignment = Alignment.CenterEnd) {
-            if (!last) TextButton(onClick = onDone) { Text("Passer") }
+            if (!last) TextButton(onClick = onDone) { Text(stringResource(R.string.intro_passer)) }
         }
         HorizontalPager(pager, Modifier.weight(1f)) { page ->
             PageContent(PAGES[page], active = ready && pager.settledPage == page)
         }
         PageDots(pager)
         Spacer(Modifier.height(16.dp))
-        WideButton(if (last) stringResource(R.string.intro_c_est_parti) else "Suivant", {
+        WideButton(if (last) stringResource(R.string.intro_c_est_parti) else stringResource(R.string.intro_suivant), {
             if (last) onDone() else scope.launch { pager.animateScrollToPage(pager.currentPage + 1) }
         })
     }

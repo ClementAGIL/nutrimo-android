@@ -38,7 +38,7 @@ fun WeighHistoryScreen(onBack: () -> Unit, onNewGoal: () -> Unit, onGoals: () ->
     val state by vm.state.collectAsStateWithLifecycle()
     var adding by remember { mutableStateOf(false) }
     ScreenScaffold(
-        "Historique",
+        stringResource(R.string.common_historique),
         onBack = onBack,
         floatingActionButton = { FloatingActionButton(onClick = { adding = true }) { Icon(Icons.Default.Add, stringResource(R.string.weight_screens_ajouter_pesee)) } },
     ) { padding ->
@@ -60,7 +60,7 @@ fun MeasurementsScreen(onBack: () -> Unit) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var editing by remember { mutableStateOf<MeasurementEntity?>(null) }
     ScreenScaffold(
-        "Mensurations",
+        stringResource(R.string.common_mensurations),
         onBack = onBack,
         // Only on the list: on the charts tab it would hide part of a chart.
         floatingActionButton = {

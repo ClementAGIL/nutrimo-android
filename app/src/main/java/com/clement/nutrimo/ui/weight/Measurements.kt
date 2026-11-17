@@ -62,7 +62,7 @@ fun MeasurementList(list: List<MeasurementEntity>, onEdit: (MeasurementEntity) -
             ListItem(
                 headlineContent = { Text(m.date.day()) },
                 supportingContent = { Text(MEASUREMENT_FIELDS.mapNotNull { f -> f.get(m)?.let { "${f.label} ${fmt(it)} cm" } }.joinToString(" · ")) },
-                trailingContent = { IconButton(onClick = { onDelete(m) }) { Icon(Icons.Default.Delete, "Supprimer") } },
+                trailingContent = { IconButton(onClick = { onDelete(m) }) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer)) } },
                 modifier = Modifier.clickable { onEdit(m) },
             )
             HorizontalDivider()
@@ -74,11 +74,11 @@ fun MeasurementList(list: List<MeasurementEntity>, onEdit: (MeasurementEntity) -
 fun MeasurementDialog(initial: MeasurementEntity, onSave: (MeasurementEntity) -> Unit, onDismiss: () -> Unit) {
     var date by remember { mutableStateOf(initial.date) }
     val texts = remember { MEASUREMENT_FIELDS.map { f -> mutableStateOf(f.get(initial)?.toInput().orEmpty()) } }
-    FormDialog("Mensurations", onDismiss, {
+    FormDialog(stringResource(R.string.common_mensurations), onDismiss, {
         onSave(MEASUREMENT_FIELDS.foldIndexed(initial.copy(date = date)) { i, m, f -> f.set(m, texts[i].value.toDecimal()) })
-    }, confirmLabel = "Enregistrer") {
+    }, confirmLabel = stringResource(R.string.common_enregistrer)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            DateField("Date", date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
+            DateField(stringResource(R.string.common_date), date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
             MEASUREMENT_FIELDS.forEachIndexed { i, f -> NumberField(texts[i].value, { texts[i].value = it }, f.label, Modifier.fillMaxWidth(), "cm") }
         }
     }

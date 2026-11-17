@@ -66,13 +66,13 @@ fun OnboardingScreen(onDone: () -> Unit) {
             if (state.step == 0) {
                 Text(stringResource(R.string.onboarding_quelques_informations_pour_estimer_vos), style = MaterialTheme.typography.bodyLarge)
                 ProfileForm(state.profile, vm::setProfile)
-                WideButton("Continuer", { vm.setStep(1) }, enabled = state.profile.isValid)
+                WideButton(stringResource(R.string.onboarding_continuer), { vm.setStep(1) }, enabled = state.profile.isValid)
             } else {
                 GoalForm(state.goal, vm::setGoal, state.profile.toEntity())
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = { vm.setStep(0) }, modifier = Modifier.weight(1f)) { Text("Retour") }
+                    OutlinedButton(onClick = { vm.setStep(0) }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_retour)) }
                     Button(onClick = { vm.finish(onDone) }, enabled = state.goal.error == null, modifier = Modifier.weight(1f)) {
-                        Text("Commencer")
+                        Text(stringResource(R.string.onboarding_commencer))
                     }
                 }
             }

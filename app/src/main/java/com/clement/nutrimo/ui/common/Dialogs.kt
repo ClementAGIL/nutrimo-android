@@ -42,7 +42,7 @@ fun FormDialog(
                 if (closeOnConfirm) onDismiss()
             }) { Text(confirmLabel) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_annuler)) } },
     )
 }
 

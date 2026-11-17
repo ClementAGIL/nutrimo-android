@@ -78,7 +78,7 @@ private fun SavedMealList(vm: AddFoodViewModel, actions: AddFoodActions) {
             ListItem(
                 headlineContent = { Text(meal.name) },
                 supportingContent = { Text(kcal?.let { stringResource(R.string.quick_tabs_1_kcal_toucher_pour_ajouter, fmt(it, 0)) } ?: "") },
-                trailingContent = { IconButton(onClick = { vm.deleteSavedMeal(meal.id) }) { Icon(Icons.Default.Delete, "Supprimer") } },
+                trailingContent = { IconButton(onClick = { vm.deleteSavedMeal(meal.id) }) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer)) } },
                 modifier = Modifier.clickable { vm.logSavedMeal(meal.id, actions.onLogged) },
             )
             HorizontalDivider()

@@ -61,8 +61,8 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
     LifecycleResumeEffect(Unit) { vm.load(); onPauseOrDispose {} }
     val d = detail ?: return
     ScreenScaffold(d.recipe.name, onBack = onBack, actions = {
-        IconButton(onClick = { onEdit(vm.id) }) { Icon(Icons.Default.Edit, "Modifier") }
-        IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
+        IconButton(onClick = { onEdit(vm.id) }) { Icon(Icons.Default.Edit, stringResource(R.string.common_modifier)) }
+        IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer)) }
     }) { padding ->
         ScrollColumn(padding) {
             WideButton(stringResource(R.string.common_ajouter_au_journal), { onLog(vm.id) })
@@ -75,7 +75,7 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
     }
     if (confirmDelete) {
         val warning = if (parents.isEmpty()) "" else stringResource(R.string.recipe_view_elle_est_utilisee_dans_1, parents.joinToString())
-        ConfirmDialog(stringResource(R.string.recipe_view_supprimer_recette), stringResource(R.string.recipe_view_1_sles_jours_deja_enregistres, warning), "Supprimer",
+        ConfirmDialog(stringResource(R.string.recipe_view_supprimer_recette), stringResource(R.string.recipe_view_1_sles_jours_deja_enregistres, warning), stringResource(R.string.common_supprimer),
             { vm.delete(onBack) }, { confirmDelete = false })
     }
 }

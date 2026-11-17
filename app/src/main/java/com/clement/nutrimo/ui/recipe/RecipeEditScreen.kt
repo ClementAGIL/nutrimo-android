@@ -52,7 +52,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
     ScreenScaffold(if (vm.isEdit) stringResource(R.string.recipe_edit_modifier_recette) else stringResource(R.string.common_nouvelle_recette), onBack = onBack, snackbar = snackbar) { padding ->
         ScrollColumn(padding) {
-            OutlinedTextField(draft.name, { v -> vm.update { it.copy(name = v) } }, label = { Text("Nom") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(draft.name, { v -> vm.update { it.copy(name = v) } }, label = { Text(stringResource(R.string.recipe_edit_nom)) }, modifier = Modifier.fillMaxWidth())
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 NumberField(draft.parts, { v -> vm.update { it.copy(parts = v) } }, stringResource(R.string.recipe_edit_nombre_parts), Modifier.weight(1f))
                 NumberField(draft.cookedWeight, { v -> vm.update { it.copy(cookedWeight = v) } }, stringResource(R.string.recipe_edit_poids_cuit), Modifier.weight(1f), "g",
@@ -61,7 +61,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
             IngredientsCard(draft.lines, onEdit = { editing = it }, onRemove = vm::remove, onAdd = onAddIngredient)
             TotalsCard(draft)
             draft.error?.let { WarningText(it) }
-            WideButton("Enregistrer", { vm.save(onBack) }, enabled = draft.error == null)
+            WideButton(stringResource(R.string.common_enregistrer), { vm.save(onBack) }, enabled = draft.error == null)
         }
     }
     editing?.let { i -> draft.lines.getOrNull(i)?.let { QuantityDialog(it, { q -> vm.setQuantity(i, q) }, { editing = null }) } }
@@ -79,7 +79,7 @@ private fun IngredientsCard(lines: List<IngredientLine>, onEdit: (Int) -> Unit, 
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
-                IconButton(onClick = { onRemove(i) }) { Icon(Icons.Default.Close, "Retirer") }
+                IconButton(onClick = { onRemove(i) }) { Icon(Icons.Default.Close, stringResource(R.string.common_retirer)) }
             }
         }
         WideButton(stringResource(R.string.common_ajouter_ingredient), onAdd, outlined = true)
@@ -89,8 +89,8 @@ private fun IngredientsCard(lines: List<IngredientLine>, onEdit: (Int) -> Unit, 
 @Composable
 private fun TotalsCard(draft: RecipeDraft) {
     val t = draft.totals ?: return
-    SectionCard("Valeurs") {
-        StatRow("Total", kcal(t.total.kcal))
+    SectionCard(stringResource(R.string.recipe_edit_valeurs)) {
+        StatRow(stringResource(R.string.recipe_edit_total), kcal(t.total.kcal))
         StatRow(stringResource(R.string.common_par_part), kcal(t.perPart.kcal))
         StatRow(stringResource(R.string.recipe_edit_poids_total), "${fmt(t.weightG, 0)} g${if (t.cookedWeightG == null) " (cru)" else ""}")
         t.per100?.let { StatRow(stringResource(R.string.common_pour_100_g), kcal(it.kcal)) }

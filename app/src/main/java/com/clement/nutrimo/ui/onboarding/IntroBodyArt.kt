@@ -1,6 +1,8 @@
 // Animated illustration of the tour's body page: a weight chart drawing itself down to its goal line.
 package com.clement.nutrimo.ui.onboarding
 
+import com.clement.nutrimo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -42,10 +44,10 @@ fun WeightArt(active: Boolean) {
     val line = easeOut(t.phase(LINE_START, LINE_END))
     Box(Modifier.size(ART_SIZE, 180.dp).shadow(2.dp, RoundedCornerShape(20.dp)).background(MaterialTheme.colorScheme.surface)) {
         Canvas(Modifier.fillMaxSize()) { drawWeightChart(t, line, pulse) }
-        Text("Poids", Modifier.padding(12.dp), style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(R.string.common_poids), Modifier.padding(12.dp), style = MaterialTheme.typography.labelMedium)
         LossBadge(t.phase(LINE_END, 0.92f), Modifier.align(Alignment.TopEnd))
         Text(
-            "Objectif",
+            stringResource(R.string.common_objectif),
             Modifier.align(Alignment.BottomStart).padding(start = 12.dp, bottom = 4.dp).graphicsLayer { alpha = t.phase(0f, LINE_START) },
             style = MaterialTheme.typography.labelSmall,
             color = NutrimoColors.objective,

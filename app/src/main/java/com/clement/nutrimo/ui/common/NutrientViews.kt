@@ -28,8 +28,8 @@ import com.clement.nutrimo.util.kcal
 fun MacroBars(n: Nutrients, targets: MacroGrams?) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         MacroBar(stringResource(R.string.common_proteines), n.protein, targets?.protein, NutrimoColors.protein)
-        MacroBar("Glucides", n.carbs, targets?.carbs, NutrimoColors.carbs)
-        MacroBar("Lipides", n.fat, targets?.fat, NutrimoColors.fat)
+        MacroBar(stringResource(R.string.common_glucides), n.carbs, targets?.carbs, NutrimoColors.carbs)
+        MacroBar(stringResource(R.string.common_lipides), n.fat, targets?.fat, NutrimoColors.fat)
     }
 }
 
@@ -47,11 +47,11 @@ fun NutrientTable(n: Nutrients, title: String? = null) {
         StatRow(stringResource(R.string.nutrient_energie), kcal(n.kcal))
         StatRow(stringResource(R.string.nutrient_matieres_grasses), grams(n.fat))
         Sub(stringResource(R.string.nutrient_dont_acides_gras_satures), grams(n.satFat))
-        StatRow("Glucides", grams(n.carbs))
+        StatRow(stringResource(R.string.common_glucides), grams(n.carbs))
         Sub(stringResource(R.string.nutrient_dont_sucres), grams(n.sugars))
-        StatRow("Fibres", grams(n.fiber))
+        StatRow(stringResource(R.string.nutrient_fibres), grams(n.fiber))
         StatRow(stringResource(R.string.common_proteines), grams(n.protein))
-        StatRow("Sel", grams(n.salt))
+        StatRow(stringResource(R.string.nutrient_sel), grams(n.salt))
         if (n.micros.isNotEmpty()) MicroSection(n.micros)
     }
 }

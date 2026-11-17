@@ -1,6 +1,8 @@
 // Diary entry helpers: quantity text ("120 g", "1,5 part(s)", "2 × 1 pot") and swipe-to-delete.
 package com.clement.nutrimo.ui.journal
 
+import com.clement.nutrimo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +43,7 @@ fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit) {
             if (state.dismissDirection == SwipeToDismissBoxValue.EndToStart) Box(
                 Modifier.fillMaxSize().background(MaterialTheme.colorScheme.errorContainer).padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterEnd,
-            ) { Icon(Icons.Default.Delete, "Supprimer", tint = MaterialTheme.colorScheme.onErrorContainer) }
+            ) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer), tint = MaterialTheme.colorScheme.onErrorContainer) }
         },
     ) {
         // Same color as the card the row sits in.

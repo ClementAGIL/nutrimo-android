@@ -70,7 +70,7 @@ fun RemindersScreen(onBack: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !allowed) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
     val s = settings ?: return
-    ScreenScaffold("Rappels", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.reminders_rappels), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             if (!allowed) {
                 SectionCard(stringResource(R.string.reminders_notifications_desactivees)) {
@@ -95,7 +95,7 @@ private fun ReminderCard(title: String, hint: String, r: ReminderSettings, withD
         SwitchRow(title, r.enabled, { onChange(r.copy(enabled = it)) }, hint)
         if (!r.enabled) return@SectionCard
         if (withDay) {
-            Dropdown("Jour", r.day, DayOfWeek.entries, { it.getDisplayName(TextStyle.FULL, Locale.FRANCE) }, { onChange(r.copy(day = it)) },
+            Dropdown(stringResource(R.string.reminders_jour), r.day, DayOfWeek.entries, { it.getDisplayName(TextStyle.FULL, Locale.FRANCE) }, { onChange(r.copy(day = it)) },
                 Modifier.fillMaxWidth())
         }
         TextButton(onClick = { picking = true }) { Text(stringResource(R.string.reminders_heure_02d_02d).format(r.hour, r.minute)) }

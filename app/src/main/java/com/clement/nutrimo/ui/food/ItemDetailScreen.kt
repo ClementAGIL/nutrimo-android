@@ -48,10 +48,10 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
     val state by vm.state.collectAsStateWithLifecycle()
     val item = state.item ?: return
     ScreenScaffold(item.name, onBack = actions.onBack, actions = {
-        if (state.isCustom) IconButton(onClick = { item.foodId?.let(actions.onEditCustom) }) { Icon(Icons.Default.Edit, "Modifier") }
+        if (state.isCustom) IconButton(onClick = { item.foodId?.let(actions.onEditCustom) }) { Icon(Icons.Default.Edit, stringResource(R.string.common_modifier)) }
         if (item.foodId != null || item.recipeId != null) {
             IconButton(onClick = vm::toggleFavorite) {
-                Icon(if (state.favorite) Icons.Default.Star else Icons.Default.StarBorder, "Favori")
+                Icon(if (state.favorite) Icons.Default.Star else Icons.Default.StarBorder, stringResource(R.string.common_favori))
             }
         }
     }) { padding ->
@@ -59,7 +59,7 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
             item.subtitle?.let { IntroText(it) }
             item.per100?.let { HintText(stringResource(R.string.item_detail_1_kcal_pour_100_g, fmt(it.kcal, 0))) }
             QuantityRow(state, vm)
-            if (!vm.route.forRecipe) Dropdown("Repas", state.meal, Meal.entries, { it.label }, vm::setMeal, Modifier.fillMaxWidth())
+            if (!vm.route.forRecipe) Dropdown(stringResource(R.string.item_detail_repas), state.meal, Meal.entries, { it.label }, vm::setMeal, Modifier.fillMaxWidth())
             state.preview?.let { NutrientTable(it, stringResource(R.string.item_detail_pour_cette_quantite)) }
             Buttons(state, vm, actions)
         }
@@ -83,8 +83,8 @@ private fun Buttons(state: ItemDetailState, vm: ItemDetailViewModel, actions: It
     when {
         vm.route.forRecipe -> WideButton(stringResource(R.string.item_detail_ajouter_recette), { vm.ingredientResult()?.let(actions.onPicked) }, enabled = enabled)
         state.entry != null -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { vm.delete(actions.onDone) }, modifier = Modifier.weight(1f)) { Text("Supprimer") }
-            Button(onClick = { vm.save(actions.onDone) }, enabled = enabled, modifier = Modifier.weight(1f)) { Text("Enregistrer") }
+            OutlinedButton(onClick = { vm.delete(actions.onDone) }, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_supprimer)) }
+            Button(onClick = { vm.save(actions.onDone) }, enabled = enabled, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_enregistrer)) }
         }
         else -> WideButton(stringResource(R.string.common_ajouter_au_journal), { vm.save(actions.onDone) }, enabled = enabled)
     }

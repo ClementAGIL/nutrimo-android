@@ -39,7 +39,7 @@ fun CustomFoodScreen(onBack: () -> Unit) {
     val draft by vm.draft.collectAsStateWithLifecycle()
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     ScreenScaffold(if (vm.isEdit) stringResource(R.string.custom_food_modifier_aliment) else stringResource(R.string.custom_food_nouvel_aliment), onBack = onBack, actions = {
-        if (vm.isEdit) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
+        if (vm.isEdit) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer)) }
     }) { padding ->
         ScrollColumn(padding) {
             IdentityCard(draft, vm)
@@ -47,11 +47,11 @@ fun CustomFoodScreen(onBack: () -> Unit) {
             MicrosCard(draft, vm)
             PortionsCard(draft, vm)
             if (draft.missing.isNotEmpty()) WarningText("Obligatoire : ${draft.missing.joinToString(", ")}")
-            WideButton("Enregistrer", { vm.save(onBack) }, enabled = draft.missing.isEmpty())
+            WideButton(stringResource(R.string.common_enregistrer), { vm.save(onBack) }, enabled = draft.missing.isEmpty())
         }
     }
     if (confirmDelete) {
-        ConfirmDialog(stringResource(R.string.custom_food_supprimer_aliment), stringResource(R.string.custom_food_jours_deja_enregistres_ne_changent), "Supprimer", { vm.delete(onBack) }, { confirmDelete = false })
+        ConfirmDialog(stringResource(R.string.custom_food_supprimer_aliment), stringResource(R.string.custom_food_jours_deja_enregistres_ne_changent), stringResource(R.string.common_supprimer), { vm.delete(onBack) }, { confirmDelete = false })
     }
 }
 
@@ -59,7 +59,7 @@ fun CustomFoodScreen(onBack: () -> Unit) {
 private fun IdentityCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
     SectionCard {
         OutlinedTextField(d.name, { v -> vm.update { it.copy(name = v) } }, label = { Text(stringResource(R.string.custom_food_nom)) }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(d.brand, { v -> vm.update { it.copy(brand = v) } }, label = { Text("Marque") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(d.brand, { v -> vm.update { it.copy(brand = v) } }, label = { Text(stringResource(R.string.custom_food_marque)) }, modifier = Modifier.fillMaxWidth())
         NumberField(d.barcode, { v -> vm.update { it.copy(barcode = v.filter(Char::isDigit)) } }, "Code-barres", Modifier.fillMaxWidth())
     }
 }
@@ -105,9 +105,9 @@ private fun PortionsCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
                 OutlinedTextField(p.label, { v -> vm.update { it.copy(portions = it.portions.replace(i, p.copy(label = v))) } },
                     label = { Text(stringResource(R.string.custom_food_nom_ex_1_tranche)) }, modifier = Modifier.weight(1.5f))
                 NumberField(p.grams, { v -> vm.update { it.copy(portions = it.portions.replace(i, p.copy(grams = v))) } },
-                    "Poids", Modifier.weight(1f), "g")
+                    stringResource(R.string.common_poids), Modifier.weight(1f), "g")
                 IconButton(onClick = { vm.update { it.copy(portions = it.portions.filterIndexed { j, _ -> j != i }) } }) {
-                    Icon(Icons.Default.Close, "Retirer")
+                    Icon(Icons.Default.Close, stringResource(R.string.common_retirer))
                 }
             }
         }

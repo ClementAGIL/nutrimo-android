@@ -47,7 +47,7 @@ fun WeightDialog(
     if (replacing != null) {
         ConfirmDialog(
             stringResource(R.string.weight_remplacer_pesee), stringResource(R.string.weight_il_y_deja_1_2, kg(replacing!!), date.full()),
-            "Remplacer", { value?.let(save) }, { replacing = null },
+            stringResource(R.string.weight_remplacer), { value?.let(save) }, { replacing = null },
         )
         return
     }
@@ -58,12 +58,12 @@ fun WeightDialog(
             val existing = vm.existingOn(date)
             if (existing != null && !(editing && date == initialDate)) replacing = existing.kg else save(kgValue)
         }
-    }, confirmLabel = "Enregistrer", canConfirm = value != null, closeOnConfirm = false) {
+    }, confirmLabel = stringResource(R.string.common_enregistrer), canConfirm = value != null, closeOnConfirm = false) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             // An existing weigh-in keeps its date; moving it would leave the old day behind.
             if (editing) Text(date.full())
-            else DateField("Date", date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
-            NumberField(text, { text = it }, "Poids", Modifier.fillMaxWidth(), "kg", isError = text.isNotEmpty() && value == null)
+            else DateField(stringResource(R.string.common_date), date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
+            NumberField(text, { text = it }, stringResource(R.string.common_poids), Modifier.fillMaxWidth(), "kg", isError = text.isNotEmpty() && value == null)
         }
     }
 }

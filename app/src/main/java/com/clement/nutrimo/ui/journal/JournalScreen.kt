@@ -59,8 +59,8 @@ fun JournalScreen(actions: JournalActions) {
         vm.refreshHealth()
         onPauseOrDispose {}
     }
-    ScreenScaffold("Journal", snackbar = snackbar, actions = {
-        IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, "Historique") }
+    ScreenScaffold(stringResource(R.string.journal_journal), snackbar = snackbar, actions = {
+        IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, stringResource(R.string.common_historique)) }
     }) { padding -> JournalList(state, vm, actions, padding) }
 }
 
@@ -107,7 +107,7 @@ private fun DayBar(date: LocalDate, onShift: (Long) -> Unit, onToday: () -> Unit
         Text(
             when (date) {
                 today -> stringResource(R.string.common_aujourd_hui)
-                today.minusDays(1) -> "Hier"
+                today.minusDays(1) -> stringResource(R.string.journal_hier)
                 else -> date.day()
             },
             style = MaterialTheme.typography.titleMedium,

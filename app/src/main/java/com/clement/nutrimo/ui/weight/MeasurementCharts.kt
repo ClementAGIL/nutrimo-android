@@ -49,7 +49,7 @@ fun MeasurementCharts(list: List<MeasurementEntity>) {
 private fun MeasurementChart(field: MeasurementField, points: List<ChartPoint>, period: ChartPeriod) {
     val series = listOf(ChartSeries(points, field.color, dots = true))
     SectionCard(field.label) {
-        StatRow("Actuel", "${fmt(points.last().value)} cm")
+        StatRow(stringResource(R.string.measurement_charts_actuel), "${fmt(points.last().value)} cm")
         if (points.size > 1) StatRow(stringResource(R.string.measurement_charts_evolution_sur_periode), signed(points.last().value - points.first().value, "cm"))
         LineChart(series, windowOf(series, period), Modifier.fillMaxWidth().height(180.dp))
     }

@@ -1,6 +1,8 @@
 // Screen and card structure shared by every screen: scaffold, scrollable body, cards, card header, sub-tabs, empty state.
 package com.clement.nutrimo.ui.common
 
+import com.clement.nutrimo.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +60,7 @@ fun ScreenScaffold(
                 title = { Text(title) },
                 navigationIcon = {
                     if (onBack != null) {
-                        IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Retour") }
+                        IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.common_retour)) }
                     }
                 },
                 actions = { actions() },

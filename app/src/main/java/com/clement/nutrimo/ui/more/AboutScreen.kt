@@ -22,7 +22,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 Text(stringResource(R.string.about_table_composition_nutritionnelle_ciqual_2020))
                 Text(stringResource(R.string.about_open_food_facts_openfoodfacts_org))
             }
-            SectionCard("Avertissement") {
+            SectionCard(stringResource(R.string.about_avertissement)) {
                 Text(
                     stringResource(R.string.about_besoins_caloriques_sont_estimations_formule),
                 )

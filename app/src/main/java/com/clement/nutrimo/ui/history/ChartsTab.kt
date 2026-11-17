@@ -86,9 +86,9 @@ private fun HistoryStats(state: HistoryState) {
     SectionCard(stringResource(R.string.charts_sur_1_jours, state.chartDays)) {
         StatRow(stringResource(R.string.charts_jours_notes), "${eaten.size} / ${state.chartDays}")
         average(eaten.mapNotNull { it.eatenKcal })?.let { StatRow(stringResource(R.string.charts_calories_moyennes), stringResource(R.string.common_1_jour, kcal(it))) }
-        state.target?.let { StatRow("Objectif", stringResource(R.string.common_1_jour, kcal(it.target))) }
+        state.target?.let { StatRow(stringResource(R.string.common_objectif), stringResource(R.string.common_1_jour, kcal(it.target))) }
         StatRow(stringResource(R.string.charts_jours_dans_objectif), "${eaten.count { it.achieved(DailyGoal.CALORIES, state.targets) == true }} / ${eaten.size}")
-        records.sumOf { it.sportKcal }.takeIf { it > 0 }?.let { StatRow("Sport", kcal(it)) }
+        records.sumOf { it.sportKcal }.takeIf { it > 0 }?.let { StatRow(stringResource(R.string.common_sport), kcal(it)) }
         average(records.mapNotNull { it.steps?.takeIf { s -> s > 0 }?.toDouble() })?.let { StatRow(stringResource(R.string.charts_pas_moyens), stringResource(R.string.common_1_jour, fmt(it, 0))) }
         average(records.mapNotNull { it.waterMl?.takeIf { w -> w > 0 }?.toDouble() })?.let { StatRow(stringResource(R.string.charts_eau_moyenne), stringResource(R.string.charts_1_ml_jour, fmt(it, 0))) }
         state.target?.let { t ->
