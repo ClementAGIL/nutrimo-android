@@ -66,8 +66,10 @@ class HistoryViewModel(private val c: AppContainer) : ViewModel() {
     private val from = browse.map { minOf(it.month.atDay(1), today.minusDays(HISTORY_DAYS)) }.distinctUntilChanged()
 
     private val local = from.flatMapLatest { f ->
-        combine(c.diary.dailyTotals(f, today), c.activities.burned(f, today), c.diary.waterBetween(f, today), c.body.weightHistory) { totals, burned, water, weights ->
-            LocalHistory(totals, burned, water, weights)
+        combine(
+            c.diary.dailyTotals(f, today), c.activities.burned(f, today), c.diary.waterBetween(f, today), c.body.weightHistory, c.dayNotes.between(f, today),
+        ) { totals, burned, water, weights, notes ->
+            LocalHistory(totals, burned, water, weights, notes)
         }
     }
 

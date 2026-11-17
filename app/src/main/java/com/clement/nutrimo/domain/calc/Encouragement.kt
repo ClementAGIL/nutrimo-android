@@ -67,7 +67,7 @@ object Encouragement {
     /** The longest streak still open today (not yet reached), with what is left to keep it. */
     private fun streakToKeep(f: EncouragementFacts): Nudge? {
         val today = f.records[f.today]
-        val open = listOf(DailyGoal.STEPS, DailyGoal.WATER, DailyGoal.SPORT)
+        val open = listOf(DailyGoal.STEPS, DailyGoal.WATER, DailyGoal.SPORT, DailyGoal.JOURNAL)
             .map { it to streak(it, f.records, f.targets, f.today).current }
             .filter { (goal, days) -> days >= MIN_STREAK && today?.achieved(goal, f.targets) != true }
             .maxByOrNull { it.second } ?: return null
@@ -75,14 +75,16 @@ object Encouragement {
         val left = when (goal) {
             DailyGoal.STEPS -> "encore ${number(f.targets.steps - (today?.steps ?: 0))} pas, une petite marche peut suffire"
             DailyGoal.WATER -> "encore ${number(f.targets.waterMl - (today?.waterMl ?: 0))} ml d'eau"
+            DailyGoal.JOURNAL -> "choisissez l'humeur du jour dans « Ma journée », un seul geste suffit"
             else -> "encore ${number(f.targets.sportKcal - (today?.sportKcal ?: 0.0).toInt())} kcal d'activité"
         }
         val what = when (goal) {
-            DailyGoal.STEPS -> "vos pas"
-            DailyGoal.WATER -> "votre hydratation"
-            else -> "votre sport"
+            DailyGoal.STEPS -> "Objectif de pas atteint"
+            DailyGoal.WATER -> "Objectif d'eau atteint"
+            DailyGoal.JOURNAL -> "Journée notée"
+            else -> "Objectif de sport atteint"
         }
-        return Nudge("$days jours d'affilée 🔥", "Objectif $what atteint $days jours de suite. Pour continuer la série aujourd'hui : $left.")
+        return Nudge("$days jours d'affilée 🔥", "$what $days jours de suite. Pour continuer la série aujourd'hui : $left.")
     }
 
     /** Goals already beaten today (steps, sport, water), the biggest margin first. */

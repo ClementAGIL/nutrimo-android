@@ -22,8 +22,9 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   is green under the target, yellow above it but still under maintenance (still losing, just slower), red above
   maintenance. 4 meals (breakfast, lunch, dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
   Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
-- "Ma journée" (bottom of the journal): the mood of the day in one tap (5 faces) and a short journal: what you
-  are grateful for, a victory of the day, a free note. Included in the backups.
+- "Ma journée" (bottom of the journal): the mood of the day in one tap (5 faces) and a short journal (one text,
+  prompts as placeholder: gratitude, victory of the day, a few words). Written full screen, save icon at the top;
+  a tap outside never closes it, and leaving with unsaved text asks first. Included in the backups.
 - Macro targets (Plus → Objectifs de macros): balanced, high-protein or low-carb presets, or your own percentages;
   shows the grams and protein per kg; the journal bars use them.
 - Steps and workouts from Health Connect (read only): today's steps vs your goal, workouts recorded by Mi Fitness,
@@ -35,7 +36,7 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   from MET values and your weight) or any activity with its kcal; burned calories are added to the day's budget.
 - History (chart icon in the journal):
   - Calendar (default): one month at a time, a colored dot per daily goal (calories under the budget, weight stable
-    or down, sport calories, steps, water). Filled = achieved, ring = missed, nothing = no data that day (an unlogged
+    or down, sport calories, steps, water, day rated in "Ma journée"). Filled = achieved, ring = missed, nothing = no data that day (an unlogged
     day never counts as a success). Tap a day for its details; current and best streak per goal.
   - Charts: calories, sport, steps and water vs their goal over 7 or 30 days, averages, average macros and the
     weight loss your logged calories should produce.

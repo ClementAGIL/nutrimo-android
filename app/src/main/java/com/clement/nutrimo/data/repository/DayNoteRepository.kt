@@ -12,6 +12,8 @@ class DayNoteRepository(db: NutrimoDatabase) {
 
     fun day(date: LocalDate): Flow<DayNoteEntity?> = dao.observe(date)
 
+    fun between(from: LocalDate, to: LocalDate): Flow<List<DayNoteEntity>> = dao.observeRange(from, to)
+
     suspend fun on(date: LocalDate): DayNoteEntity? = dao.get(date)
 
     /** Saves [note], trimmed; an empty one is deleted rather than kept as a blank row. */

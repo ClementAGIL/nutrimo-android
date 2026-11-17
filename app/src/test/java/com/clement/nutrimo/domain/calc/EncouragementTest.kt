@@ -46,6 +46,7 @@ class EncouragementTest {
         val records = listOf(day(2).copy(steps = 11_000), day(1).copy(steps = 12_000), day(0).copy(steps = 7_700))
         val n = Encouragement.pick(facts(records))
         assertEquals("2 jours d'affilée 🔥", n.title)
+        assertTrue(n.text, n.text.startsWith("Objectif de pas"))
         assertTrue(n.text, n.text.contains("2 300 pas") || n.text.contains("2 300 pas") || n.text.contains("2 300 pas"))
     }
 
@@ -87,6 +88,26 @@ class EncouragementTest {
     fun `with nothing to say there is still a kind message`() {
         val n = Encouragement.pick(facts(listOf(day(0).copy(eatenKcal = 300.0, budgetKcal = 2400.0))))
         assertTrue(n.title.isNotBlank() && n.text.isNotBlank())
+    }
+}
+
+class JournalGoalTest {
+    private val today = LocalDate.of(2026, 11, 17)
+    private val targets = GoalTargets()
+
+    @Test
+    fun `a day counts as rated with a mood, a text, or both`() {
+        assertEquals(true, DayRecord(today, mood = 3).achieved(DailyGoal.JOURNAL, targets))
+        assertEquals(true, DayRecord(today, journaled = true).achieved(DailyGoal.JOURNAL, targets))
+        assertEquals(null, DayRecord(today).achieved(DailyGoal.JOURNAL, targets))
+    }
+
+    @Test
+    fun `an open journal streak invites to rate today`() {
+        val records = listOf(2L, 1L).map { DayRecord(today.minusDays(it), mood = 4) }.associateBy { it.date }
+        assertEquals(2, streak(DailyGoal.JOURNAL, records, targets, today).current)
+        val n = Encouragement.pick(EncouragementFacts(today, records, targets, emptyList()))
+        assertTrue(n.text, n.text.startsWith("Journée notée 2 jours de suite"))
     }
 }
 

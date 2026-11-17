@@ -1,4 +1,4 @@
-// Daily goals (calories, weight, sport, steps, water): success per day and streaks. A day without data for a goal
+// Daily goals (calories, weight, sport, steps, water, day rated in "Ma journée"): success per day and streaks. A day without data for a goal
 // is neither a success nor a failure, so forgetting to log a meal never counts as "under the target".
 package com.clement.nutrimo.domain.calc
 
@@ -12,6 +12,8 @@ enum class DailyGoal(val label: String, val skipsEmptyDays: Boolean = false) {
     SPORT("Sport"),
     STEPS("Pas"),
     WATER("Eau"),
+    /** The day was rated (mood) or written about in "Ma journée". */
+    JOURNAL("Journée notée"),
 }
 
 const val DEFAULT_STEP_GOAL = 10_000
@@ -36,6 +38,10 @@ data class DayRecord(
     val weightKg: Double? = null,
     /** Last weigh-in before this day, to tell whether weight went down. */
     val previousWeightKg: Double? = null,
+    /** Mood of "Ma journée" (1..5), null when not rated. */
+    val mood: Int? = null,
+    /** Some text was written in "Ma journée". */
+    val journaled: Boolean = false,
 ) {
     /** True / false when the day has data for [goal], null otherwise. */
     fun achieved(goal: DailyGoal, t: GoalTargets): Boolean? = when (goal) {
@@ -44,6 +50,8 @@ data class DayRecord(
         DailyGoal.SPORT -> sportKcal.takeIf { it > 0 }?.let { it >= t.sportKcal }
         DailyGoal.STEPS -> steps?.takeIf { it > 0 }?.let { it >= t.steps }
         DailyGoal.WATER -> waterMl?.takeIf { it > 0 }?.let { it >= t.waterMl }
+        // Rated or written, with or without the other: there is no "missed", only not done yet.
+        DailyGoal.JOURNAL -> true.takeIf { mood != null || journaled }
     }
 }
 

@@ -54,7 +54,7 @@ private fun HistoryState.goalValue(goal: DailyGoal): Double? = when (goal) {
     DailyGoal.SPORT -> targets.sportKcal.toDouble()
     DailyGoal.STEPS -> targets.steps.toDouble()
     DailyGoal.WATER -> targets.waterMl.toDouble()
-    DailyGoal.WEIGHT -> null
+    DailyGoal.WEIGHT, DailyGoal.JOURNAL -> null
 }
 
 @Composable

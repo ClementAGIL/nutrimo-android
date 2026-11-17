@@ -39,6 +39,9 @@ interface DayNoteDao {
     @Query("SELECT * FROM day_notes WHERE date = :date")
     suspend fun get(date: LocalDate): DayNoteEntity?
 
+    @Query("SELECT * FROM day_notes WHERE date BETWEEN :from AND :to")
+    fun observeRange(from: LocalDate, to: LocalDate): Flow<List<DayNoteEntity>>
+
     @Query("SELECT * FROM day_notes")
     suspend fun all(): List<DayNoteEntity>
 

@@ -4,6 +4,7 @@ package com.clement.nutrimo.data.repository
 
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
+import com.clement.nutrimo.data.db.DayNoteEntity
 import com.clement.nutrimo.data.db.DayBurn
 import com.clement.nutrimo.data.db.DayTotal
 import com.clement.nutrimo.data.db.WaterEntity
@@ -23,6 +24,7 @@ data class LocalHistory(
     val burned: List<DayBurn> = emptyList(),
     val water: List<WaterEntity> = emptyList(),
     val weights: List<WeightEntity> = emptyList(),
+    val notes: List<DayNoteEntity> = emptyList(),
 )
 
 /** What Health Connect returned for the loaded range (empty without permission). */
@@ -44,7 +46,8 @@ fun buildRecords(local: LocalHistory, health: HealthHistory, target: Double?, he
     val sorted = local.weights.sortedBy { it.date }
     val weights = sorted.associate { it.date to it.kg }
     val previous = sorted.zipWithNext().associate { (before, day) -> day.date to before.kg }
-    val dates = eaten.keys + manual.keys + water.keys + weights.keys + health.steps.keys + health.sessions.keys
+    val notes = local.notes.associateBy { it.date }
+    val dates = eaten.keys + manual.keys + water.keys + weights.keys + health.steps.keys + health.sessions.keys + notes.keys
     return dates.associateWith { date ->
         val sessions = health.sessions[date].orEmpty()
         val steps = health.steps[date]
@@ -59,6 +62,8 @@ fun buildRecords(local: LocalHistory, health: HealthHistory, target: Double?, he
             waterMl = water[date],
             weightKg = weights[date],
             previousWeightKg = previous[date],
+            mood = notes[date]?.mood,
+            journaled = notes[date]?.let { it.note.isNotBlank() || it.gratitude.isNotBlank() || it.win.isNotBlank() } == true,
         )
     }
 }
@@ -73,6 +78,9 @@ suspend fun HealthRepository.history(from: LocalDate, to: LocalDate, kg: Double)
 suspend fun AppContainer.loadDayRecords(from: LocalDate, to: LocalDate): Map<LocalDate, DayRecord> {
     val weights = body.weightHistory.first()
     val kg = weights.lastOrNull()?.kg ?: DEFAULT_WEIGHT_KG
-    val local = LocalHistory(diary.dailyTotals(from, to).first(), activities.burned(from, to).first(), diary.waterBetween(from, to).first(), weights)
+    val local = LocalHistory(
+        diary.dailyTotals(from, to).first(), activities.burned(from, to).first(), diary.waterBetween(from, to).first(), weights,
+        dayNotes.between(from, to).first(),
+    )
     return buildRecords(local, health.history(from, to, kg), body.calorieTarget.first()?.target, settings.current().healthInBudget, kg)
 }

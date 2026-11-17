@@ -28,6 +28,7 @@ val DailyGoal.color: Color
         DailyGoal.SPORT -> NutrimoColors.sport
         DailyGoal.STEPS -> NutrimoColors.steps
         DailyGoal.WATER -> NutrimoColors.water
+        DailyGoal.JOURNAL -> NutrimoColors.trend
     }
 
 /** Nothing is drawn when [achieved] is null (no data that day), but the space is kept so dots stay aligned. */

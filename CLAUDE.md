@@ -70,7 +70,7 @@ domain/
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
                                   Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets),
                                   Encouragement (pick: weight news > open streak > proud today > proud yesterday > hard moment >
-                                  gentle; gender-neutral wording, tested in app/src/test), DayGoals (DailyGoal, GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
+                                  gentle; gender-neutral wording, tested in app/src/test), DayGoals (DailyGoal incl. JOURNAL = mood or text in "Ma journée", GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
                                   streaks; AppSettings.goalTargets(profile) builds the targets)
 ui/
   NutrimoRoot.kt                  root: onboarding (outside the graph) or NavHost + bottom bar (4 tabs)
@@ -87,7 +87,9 @@ ui/
                                   (server backup/restore + auto toggle, SAF file export/import), RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen, StepsScreen
   journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
                                   activities; budget = target + burned), ActivityCard (manual + imported sessions), StepsCard (install / connect / progress),
-                                  DayNoteCard ("Ma journée": mood faces, gratitude / win / note dialog), JournalCards (summary ring + macro bars, MealCard, WaterCard; ring/text color by KcalZone:
+                                  DayNoteCard ("Ma journée": mood faces; one text in a full-screen editor, save icon on top,
+                                  no dismiss on outside tap, confirm before losing changes; older gratitude/win fields are
+                                  merged into the note on save; moodText for the calendar), JournalCards (summary ring + macro bars, MealCard, WaterCard; ring/text color by KcalZone:
                                   green ≤ budget, yellow ≤ maintenance = TDEE + burned, red above), EntryUi
                                   (quantityText, SwipeToDelete), DayNutrientsScreen. Every card with a goal has a
                                   GoalSettingsButton → JournalActions.onGoalSettings(route): calories → GoalEdit,
@@ -184,7 +186,7 @@ ui/
   reminder, ZIP export, demo silhouettes). DB v4 via AutoMigration(3 -> 4). Android backups are off
   (allowBackup=false + data_extraction_rules): nothing leaves the phone except the user's export / server backup.
   To test on the phone: camera framing, front-camera orientation, lock prompt, timeline taps.
-- ✅ Daily encouragement notification + "Ma journée" (mood + gratitude / win / note). DB v5 via AutoMigration(4 -> 5).
+- ✅ Daily encouragement notification + "Ma journée" (mood + one text; "Journée notée" goal in the calendar and streaks). DB v5 via AutoMigration(4 -> 5).
   Unit tests: app/src/test (JUnit 4), run with gradlew :app:testDebugUnitTest.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

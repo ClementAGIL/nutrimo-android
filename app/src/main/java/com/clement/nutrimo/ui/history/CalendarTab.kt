@@ -2,6 +2,7 @@
 package com.clement.nutrimo.ui.history
 
 import com.clement.nutrimo.ui.common.HintText
+import com.clement.nutrimo.ui.journal.moodText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -132,6 +133,14 @@ private fun DayDetail(state: HistoryState) {
         GoalRow(DailyGoal.WATER, done(DailyGoal.WATER), "${r?.waterMl ?: 0} / ${t.waterMl} ml")
         val weight = r?.weightKg?.let { w -> kg(w) + r.previousWeightKg?.let { " (${signedKg(w - it)})" }.orEmpty() }
         GoalRow(DailyGoal.WEIGHT, done(DailyGoal.WEIGHT), weight ?: "Pas de pesée")
+        val mood = r?.mood?.let { moodText(it) }
+        val journal = when {
+            mood != null && r.journaled -> "$mood · avec journal"
+            mood != null -> mood
+            r?.journaled == true -> "Journal écrit"
+            else -> "Non notée"
+        }
+        GoalRow(DailyGoal.JOURNAL, done(DailyGoal.JOURNAL), journal)
     }
 }
 
@@ -144,7 +153,8 @@ private fun Streaks(state: HistoryState) {
         }
         HintText(
             "Jours consécutifs où l'objectif est atteint. Un jour sans donnée interrompt la série, sauf aujourd'hui " +
-                "(la journée n'est pas finie). Le poids compte les pesées stables ou en baisse.",
+                "(la journée n'est pas finie). Le poids compte les pesées stables ou en baisse. Journée notée : une humeur ou " +
+                "quelques mots dans « Ma journée », avec ou sans l'autre.",
         )
     }
 }
