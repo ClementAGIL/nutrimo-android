@@ -135,6 +135,8 @@ ui/
                                   day, onTap(date, xOf)), ChartPeriods (ChartPeriod + PeriodChips, windowOf(period) and windowOf(start, end) for a zoomed view, ChartLegend with
                                   marker symbols); used by weight, measurements, history
   theme/Theme.kt                  brand color schemes (cards = surface, page = background), shapes, bold titles + fixed chart colors
+                                  (NutrimoColors; daily goals, same in journal and calendar: calories orange, weight green,
+                                  sport purple, steps pink, water sky blue, "Journée notée" sunny yellow)
                                   (SectionCard: white, 20 dp corners, 1 dp elevation; AppTabs / top bar use the page color)
 ```
 

@@ -36,7 +36,7 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   from MET values and your weight) or any activity with its kcal; burned calories are added to the day's budget.
 - History (chart icon in the journal):
   - Calendar (default): one month at a time, a colored dot per daily goal (calories under the budget, weight stable
-    or down, sport calories, steps, water, day rated in "Ma journée"). Filled = achieved, ring = missed, nothing = no data that day (an unlogged
+    or down, sport calories, steps, water, day rated in "Ma journée" in sunny yellow). Filled = achieved, ring = missed, nothing = no data that day (an unlogged
     day never counts as a success). Tap a day for its details; current and best streak per goal.
   - Charts: calories, sport, steps and water vs their goal over 7 or 30 days, averages, average macros and the
     weight loss your logged calories should produce.
