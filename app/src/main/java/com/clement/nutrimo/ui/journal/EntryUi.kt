@@ -22,9 +22,10 @@ import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.QuantityUnit
 import com.clement.nutrimo.util.fmt
 
+@Composable
 fun quantityText(entry: DiaryEntity): String = when (entry.unit) {
     QuantityUnit.GRAM -> "${fmt(entry.quantity)} g"
-    QuantityUnit.PART -> "${fmt(entry.quantity)} part(s)"
+    QuantityUnit.PART -> stringResource(R.string.common_parts_count, fmt(entry.quantity))
     QuantityUnit.PORTION -> "${fmt(entry.quantity)} × ${entry.portionLabel} (${fmt(entry.portionGrams ?: 0.0)} g)"
 }
 

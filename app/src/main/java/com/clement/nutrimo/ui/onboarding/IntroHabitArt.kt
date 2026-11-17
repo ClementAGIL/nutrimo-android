@@ -1,6 +1,13 @@
 // Animated illustrations of the tour, part 2: habit tiles getting checked, and a week-long streak lighting a flame.
 package com.clement.nutrimo.ui.onboarding
 
+import java.util.Locale
+import java.time.format.TextStyle
+import java.time.DayOfWeek
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.clement.nutrimo.R
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,14 +43,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.ui.theme.NutrimoColors
 
-private class Habit(val label: String, val icon: ImageVector, val color: Color, val tilt: Float)
+private class Habit(@StringRes val label: Int, val icon: ImageVector, val color: Color, val tilt: Float)
 
 private val HABITS = listOf(
-    Habit("Pas", Icons.AutoMirrored.Filled.DirectionsWalk, NutrimoColors.steps, -8f),
-    Habit("Eau", Icons.Default.WaterDrop, NutrimoColors.water, 4f),
-    Habit("Sport", Icons.Default.FitnessCenter, NutrimoColors.sport, 10f),
+    Habit(R.string.daily_goal_steps, Icons.AutoMirrored.Filled.DirectionsWalk, NutrimoColors.steps, -8f),
+    Habit(R.string.daily_goal_water, Icons.Default.WaterDrop, NutrimoColors.water, 4f),
+    Habit(R.string.daily_goal_sport, Icons.Default.FitnessCenter, NutrimoColors.sport, 10f),
 )
-private val STREAK_DAYS = listOf("L", "M", "M", "J", "V", "S", "D")
+/** Monday first, one letter each, in the phone's language. */
+private val STREAK_DAYS = DayOfWeek.entries.map { it.getDisplayName(TextStyle.NARROW, Locale.getDefault()) }
 private val TILE = 64.dp
 const val HABITS_MS = 2400
 const val STREAK_MS = 2600
@@ -83,7 +91,7 @@ private fun HabitColumn(habit: Habit, appear: Float, fill: Float, check: Float) 
             Box(Modifier.fillMaxWidth(fill).height(6.dp).clip(CircleShape).background(habit.color))
         }
         Spacer(Modifier.height(4.dp))
-        Text(habit.label, style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(habit.label), style = MaterialTheme.typography.labelMedium)
     }
 }
 
@@ -128,7 +136,7 @@ fun StreakArt(active: Boolean) {
             STREAK_DAYS.forEachIndexed { i, day -> DayDot(day, fills[i]) }
         }
         Spacer(Modifier.height(8.dp))
-        Text("$days jour${if (days > 1) "s" else ""} de suite", fontWeight = FontWeight.SemiBold, color = NutrimoColors.weight)
+        Text(pluralStringResource(R.plurals.intro_streak_days, days, days), fontWeight = FontWeight.SemiBold, color = NutrimoColors.weight)
     }
 }
 

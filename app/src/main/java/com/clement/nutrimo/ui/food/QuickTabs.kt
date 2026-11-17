@@ -1,6 +1,7 @@
 // Tabs shown before typing: recent foods, favorites, custom foods and recipes.
 package com.clement.nutrimo.ui.food
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -32,7 +33,10 @@ import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.util.fmt
 
-private enum class QuickTab(val label: String) { RECENT("Récents"), MEALS("Repas"), FAVORITES("Favoris"), CUSTOM("Mes aliments"), RECIPES("Recettes") }
+private enum class QuickTab(@StringRes val label: Int) {
+    RECENT(R.string.quick_tab_recent), MEALS(R.string.quick_tab_meals), FAVORITES(R.string.quick_tab_favorites),
+    CUSTOM(R.string.quick_tab_custom), RECIPES(R.string.quick_tab_recipes),
+}
 
 @Composable
 fun QuickTabs(vm: AddFoodViewModel, actions: AddFoodActions) {
@@ -45,7 +49,7 @@ fun QuickTabs(vm: AddFoodViewModel, actions: AddFoodActions) {
     val tabs = QuickTab.entries.filter { !(vm.route.forRecipe && it == QuickTab.MEALS) }
     Column {
         ScrollableTabRow(selectedTabIndex = tab, edgePadding = 8.dp, containerColor = MaterialTheme.colorScheme.background) {
-            tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t.label) }) }
+            tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(stringResource(t.label)) }) }
         }
         when (tabs[tab.coerceIn(tabs.indices)]) {
             QuickTab.RECENT -> FoodList(recent, stringResource(R.string.quick_tabs_aliments_utilises_apparaitront_ici), actions)

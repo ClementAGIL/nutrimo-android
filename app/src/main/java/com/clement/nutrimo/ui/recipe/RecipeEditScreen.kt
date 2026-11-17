@@ -106,9 +106,10 @@ private fun QuantityDialog(line: IngredientLine, onSave: (Double) -> Unit, onDis
     val isPart = line.ingredient.subRecipeId != null
     val quantity = text.toDecimal()?.takeIf { it > 0 }
     FormDialog(line.name, onDismiss, { quantity?.let(onSave) }, canConfirm = quantity != null) {
-        NumberField(text, { text = it }, stringResource(R.string.common_quantite), suffix = if (isPart) "part(s)" else "g")
+        NumberField(text, { text = it }, stringResource(R.string.common_quantite), suffix = if (isPart) stringResource(R.string.common_parts_unit) else "g")
     }
 }
 
+@Composable
 fun ingredientQuantity(line: IngredientLine): String =
-    if (line.ingredient.subRecipeId != null) "${fmt(line.ingredient.quantity)} part(s)" else "${fmt(line.ingredient.quantity)} g"
+    if (line.ingredient.subRecipeId != null) stringResource(R.string.common_parts_count, fmt(line.ingredient.quantity)) else "${fmt(line.ingredient.quantity)} g"

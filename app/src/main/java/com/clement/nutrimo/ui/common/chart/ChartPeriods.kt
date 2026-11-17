@@ -1,6 +1,9 @@
 // Shared pieces for line charts over time: period filter (chips), visible window from the data, and the legend.
 package com.clement.nutrimo.ui.common.chart
 
+import androidx.compose.ui.res.stringResource
+import com.clement.nutrimo.R
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +28,8 @@ import kotlin.math.floor
 /** Extra units (kg or cm) above and below the data so lines don't touch the edges. */
 private const val Y_MARGIN = 1.0
 
-enum class ChartPeriod(val label: String, val months: Long?) {
-    M3("3 mois", 3), M6("6 mois", 6), Y1("1 an", 12), ALL("Tout", null);
+enum class ChartPeriod(@StringRes val label: Int, val months: Long?) {
+    M3(R.string.chart_period_3m, 3), M6(R.string.chart_period_6m, 6), Y1(R.string.chart_period_1y, 12), ALL(R.string.chart_period_all, null);
 
     /** First visible day, counted back from [from], or null for the whole history. */
     fun start(from: LocalDate = LocalDate.now()): LocalDate? = months?.let { from.minusMonths(it) }
@@ -35,7 +38,7 @@ enum class ChartPeriod(val label: String, val months: Long?) {
 /** [period] null = none highlighted (e.g. a zoomed custom view). */
 @Composable
 fun PeriodChips(period: ChartPeriod?, onSelect: (ChartPeriod) -> Unit) {
-    ChoiceChips(ChartPeriod.entries, period, { it.label }, onSelect)
+    ChoiceChips(ChartPeriod.entries, period, { stringResource(it.label) }, onSelect)
 }
 
 /** Window over [period] with a 1-unit margin rounded to whole units (kg, cm); [series] must not be empty. */

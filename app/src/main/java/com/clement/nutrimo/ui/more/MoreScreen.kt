@@ -1,6 +1,7 @@
 // "Plus" tab: entry points to the profile, goals, measurements, reminders, server, backup and about screens.
 package com.clement.nutrimo.ui.more
 
+import androidx.annotation.StringRes
 import com.clement.nutrimo.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
@@ -37,20 +38,20 @@ import com.clement.nutrimo.ui.navigation.RemindersRoute
 import com.clement.nutrimo.ui.navigation.ServerRoute
 import com.clement.nutrimo.ui.navigation.StepsRoute
 
-data class MoreEntry(val title: String, val subtitle: String, val icon: ImageVector, val route: Any)
+data class MoreEntry(@StringRes val title: Int, @StringRes val subtitle: Int, val icon: ImageVector, val route: Any)
 
 /** Grows as features land; each entry opens its own screen. */
 val MORE_ENTRIES = listOf(
-    MoreEntry("Profil", "Sexe, âge, taille, activité", Icons.Default.Person, ProfileRoute),
-    MoreEntry("Nouvel objectif", "Poids cible et rythme", Icons.Default.Flag, GoalEditRoute),
-    MoreEntry("Objectifs de macros", "Protéines, glucides, lipides", Icons.Default.PieChart, MacrosRoute),
-    MoreEntry("Pas et sport", "Objectifs de pas et de sport, Health Connect", Icons.Default.DirectionsWalk, StepsRoute),
-    MoreEntry("Mes objectifs", "Objectif en cours et archivés", Icons.Default.History, GoalsRoute),
-    MoreEntry("Rappels", "Pesée et saisie des repas", Icons.Default.Notifications, RemindersRoute),
-    MoreEntry("Serveur", "Adresse de nutrimo-api sur le Wi-Fi", Icons.Default.Dns, ServerRoute),
-    MoreEntry("Sauvegarde", "Exporter / importer vos données", Icons.Default.Backup, BackupRoute),
-    MoreEntry("À propos", "Sources des données et licences", Icons.Default.Info, AboutRoute),
-    MoreEntry("Développeur", "Présentation, données de démo, tout effacer", Icons.Default.Science, DevRoute),
+    MoreEntry(R.string.more_profile, R.string.more_profile_hint, Icons.Default.Person, ProfileRoute),
+    MoreEntry(R.string.more_new_goal, R.string.more_new_goal_hint, Icons.Default.Flag, GoalEditRoute),
+    MoreEntry(R.string.more_macros, R.string.more_macros_hint, Icons.Default.PieChart, MacrosRoute),
+    MoreEntry(R.string.more_steps, R.string.more_steps_hint, Icons.Default.DirectionsWalk, StepsRoute),
+    MoreEntry(R.string.more_goals, R.string.more_goals_hint, Icons.Default.History, GoalsRoute),
+    MoreEntry(R.string.more_reminders, R.string.more_reminders_hint, Icons.Default.Notifications, RemindersRoute),
+    MoreEntry(R.string.more_server, R.string.more_server_hint, Icons.Default.Dns, ServerRoute),
+    MoreEntry(R.string.more_backup, R.string.more_backup_hint, Icons.Default.Backup, BackupRoute),
+    MoreEntry(R.string.more_about, R.string.more_about_hint, Icons.Default.Info, AboutRoute),
+    MoreEntry(R.string.more_dev, R.string.more_dev_hint, Icons.Default.Science, DevRoute),
 )
 
 @Composable
@@ -59,8 +60,8 @@ fun MoreScreen(onOpen: (Any) -> Unit) {
         LazyColumn(Modifier.padding(padding)) {
             items(MORE_ENTRIES) { entry ->
                 ListItem(
-                    headlineContent = { Text(entry.title) },
-                    supportingContent = { Text(entry.subtitle) },
+                    headlineContent = { Text(stringResource(entry.title)) },
+                    supportingContent = { Text(stringResource(entry.subtitle)) },
                     leadingContent = { Icon(entry.icon, null) },
                     modifier = Modifier.clickable { onOpen(entry.route) },
                 )

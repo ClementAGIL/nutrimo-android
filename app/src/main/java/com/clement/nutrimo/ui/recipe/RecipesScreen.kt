@@ -1,6 +1,7 @@
 // Recipes tab: saved recipes (favorites first, then the most logged) with kcal per part and use count; "+" creates one.
 package com.clement.nutrimo.ui.recipe
 
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -56,7 +57,7 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
                 ListItem(
                     headlineContent = { Text(recipe.name) },
                     supportingContent = {
-                        Text("${fmt(recipe.parts)} parts · ${perPart?.let { kcal(it) } ?: "–"} / part · ${usesText(uses)}")
+                        Text(stringResource(R.string.recipes_line, fmt(recipe.parts), perPart?.let { kcal(it) } ?: "–", usesText(uses)))
                     },
                     trailingContent = if (recipe.isFavorite) ({ Icon(Icons.Default.Star, stringResource(R.string.common_favori), tint = MaterialTheme.colorScheme.primary) }) else null,
                     modifier = Modifier.clickable { onOpen(recipe.id) },
@@ -67,8 +68,6 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
     }
 }
 
-private fun usesText(n: Int) = when (n) {
-    0 -> "jamais utilisée"
-    1 -> "utilisée 1 fois"
-    else -> "utilisée $n fois"
-}
+@Composable
+private fun usesText(n: Int): String =
+    if (n == 0) stringResource(R.string.recipes_never_used) else pluralStringResource(R.plurals.recipes_used_times, n, n)

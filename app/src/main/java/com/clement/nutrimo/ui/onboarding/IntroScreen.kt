@@ -1,6 +1,7 @@
 // Feature tour: shown once before the profile setup on first launch, and on demand from Plus → Développeur.
 package com.clement.nutrimo.ui.onboarding
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,29 +41,28 @@ private const val WELCOME_DWELL_MS = 4000L
 private const val PAGE_DWELL_MS = 6000L
 
 /** One page: its text and its scene, which plays each time the page becomes the current one. */
-private class IntroPage(val title: String, val text: String, val art: @Composable (active: Boolean) -> Unit)
+private class IntroPage(@StringRes val title: Int, @StringRes val text: Int, val art: @Composable (active: Boolean) -> Unit)
 
 private val PAGES = listOf(
     IntroPage(
-        "Bienvenue sur Nutrimo",
-        "Perdez du poids à votre rythme, une bonne habitude à la fois. Toutes vos données restent sur votre téléphone.",
+        R.string.intro_welcome,
+        R.string.intro_welcome_text,
     ) { BloomArt(it) },
     IntroPage(
-        "Comptez vos calories",
-        "Cherchez un aliment, scannez un code-barres ou enregistrez vos recettes. L'anneau du journal montre où vous en êtes : " +
-            "vert dans l'objectif, jaune encore sous votre maintenance, rouge au-delà.",
+        R.string.intro_calories,
+        R.string.intro_calories_text,
     ) { CaloriesArt(it) },
     IntroPage(
-        "Suivez votre corps",
-        "Pesées, courbe de tendance et date d'arrivée estimée, IMC et mensurations : voyez aussi les progrès que la balance ne montre pas.",
+        R.string.intro_body,
+        R.string.intro_body_text,
     ) { WeightArt(it) },
     IntroPage(
-        "Construisez vos habitudes",
-        "Pas (via Health Connect), sport et eau ont chacun leur objectif dans le journal. Vos activités augmentent aussi votre budget calorique.",
+        R.string.intro_habits,
+        R.string.intro_habits_text,
     ) { HabitsArt(it) },
     IntroPage(
-        "Faites grandir vos séries",
-        "Chaque objectif atteint est coché dans le calendrier de l'historique. Enchaînez les jours pour battre votre meilleure série !",
+        R.string.intro_streaks,
+        R.string.intro_streaks_text,
     ) { StreakArt(it) },
 )
 
@@ -110,9 +110,9 @@ private fun PageContent(page: IntroPage, active: Boolean) {
     ) {
         Box(Modifier.size(ART_SIZE + 40.dp), contentAlignment = Alignment.Center) { page.art(active) }
         Spacer(Modifier.height(24.dp))
-        Text(page.title, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
+        Text(stringResource(page.title), style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
         Spacer(Modifier.height(12.dp))
-        Text(page.text, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+        Text(stringResource(page.text), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
     }
 }
 
