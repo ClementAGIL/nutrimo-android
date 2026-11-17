@@ -13,7 +13,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.RecipeEntity
 import com.clement.nutrimo.data.network.FoodDto
@@ -21,17 +23,17 @@ import com.clement.nutrimo.util.fmt
 
 @Composable
 fun FoodRow(food: FoodEntity, onClick: () -> Unit) {
-    ResultRow(food.name, food.brand, "${fmt(food.per100.kcal, 0)} kcal / 100 g", food.source.label, food.isFavorite, onClick)
+    ResultRow(food.name, food.brand, stringResource(R.string.food_rows_1_kcal_100_g, fmt(food.per100.kcal, 0)), food.source.label, food.isFavorite, onClick)
 }
 
 @Composable
 fun RemoteFoodRow(food: FoodDto, onClick: () -> Unit) {
-    ResultRow(food.name, food.brand, "${fmt(food.kcal, 0)} kcal / 100 g", if (food.source == "ciqual") "CIQUAL" else "OFF", false, onClick)
+    ResultRow(food.name, food.brand, stringResource(R.string.food_rows_1_kcal_100_g, fmt(food.kcal, 0)), if (food.source == "ciqual") "CIQUAL" else "OFF", false, onClick)
 }
 
 @Composable
 fun RecipeRow(recipe: RecipeEntity, onClick: () -> Unit) {
-    ResultRow(recipe.name, null, "${fmt(recipe.parts)} parts", "Recette", recipe.isFavorite, onClick)
+    ResultRow(recipe.name, null, stringResource(R.string.food_rows_1_parts, fmt(recipe.parts)), "Recette", recipe.isFavorite, onClick)
 }
 
 @Composable

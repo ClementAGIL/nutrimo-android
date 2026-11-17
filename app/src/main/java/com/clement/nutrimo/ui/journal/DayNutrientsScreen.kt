@@ -4,11 +4,13 @@ package com.clement.nutrimo.ui.journal
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
@@ -36,10 +38,10 @@ fun DayNutrientsScreen(onBack: () -> Unit) {
     val entries by vm.entries.collectAsStateWithLifecycle()
     ScreenScaffold(date.day(), onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            SectionCard("Par repas") {
+            SectionCard(stringResource(R.string.day_nutrients_par_repas)) {
                 Meal.entries.forEach { meal -> StatRow(meal.label, kcal(entries.filter { it.meal == meal }.sumOf { it.nutrients.kcal })) }
             }
-            NutrientTable(Nutrients.sum(entries.map { it.nutrients }), "Total de la journée")
+            NutrientTable(Nutrients.sum(entries.map { it.nutrients }), stringResource(R.string.day_nutrients_total_journee))
         }
     }
 }

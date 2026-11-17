@@ -12,7 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.FormDialog
@@ -44,13 +46,13 @@ fun WeightDialog(
 
     if (replacing != null) {
         ConfirmDialog(
-            "Remplacer la pesée ?", "Il y a déjà ${kg(replacing!!)} le ${date.full()}. Une seule pesée par jour est conservée.",
+            stringResource(R.string.weight_remplacer_pesee), stringResource(R.string.weight_il_y_deja_1_2, kg(replacing!!), date.full()),
             "Remplacer", { value?.let(save) }, { replacing = null },
         )
         return
     }
     // Not closed on confirm: an existing weigh-in that day first asks before replacing it.
-    FormDialog("Pesée", onDismiss, {
+    FormDialog(stringResource(R.string.common_pesee), onDismiss, {
         val kgValue = value ?: return@FormDialog
         scope.launch {
             val existing = vm.existingOn(date)

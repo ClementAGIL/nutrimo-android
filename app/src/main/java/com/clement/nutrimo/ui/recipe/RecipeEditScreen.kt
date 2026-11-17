@@ -23,8 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.repository.IngredientLine
 import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.NumberField
@@ -48,12 +50,12 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
     var editing by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(picked) { picked?.let { onPickedConsumed(); vm.addIngredient(it) } }
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
-    ScreenScaffold(if (vm.isEdit) "Modifier la recette" else "Nouvelle recette", onBack = onBack, snackbar = snackbar) { padding ->
+    ScreenScaffold(if (vm.isEdit) stringResource(R.string.recipe_edit_modifier_recette) else stringResource(R.string.common_nouvelle_recette), onBack = onBack, snackbar = snackbar) { padding ->
         ScrollColumn(padding) {
             OutlinedTextField(draft.name, { v -> vm.update { it.copy(name = v) } }, label = { Text("Nom") }, modifier = Modifier.fillMaxWidth())
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                NumberField(draft.parts, { v -> vm.update { it.copy(parts = v) } }, "Nombre de parts", Modifier.weight(1f))
-                NumberField(draft.cookedWeight, { v -> vm.update { it.copy(cookedWeight = v) } }, "Poids cuit", Modifier.weight(1f), "g",
+                NumberField(draft.parts, { v -> vm.update { it.copy(parts = v) } }, stringResource(R.string.recipe_edit_nombre_parts), Modifier.weight(1f))
+                NumberField(draft.cookedWeight, { v -> vm.update { it.copy(cookedWeight = v) } }, stringResource(R.string.recipe_edit_poids_cuit), Modifier.weight(1f), "g",
                     supportingText = "facultatif")
             }
             IngredientsCard(draft.lines, onEdit = { editing = it }, onRemove = vm::remove, onAdd = onAddIngredient)
@@ -67,7 +69,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
 
 @Composable
 private fun IngredientsCard(lines: List<IngredientLine>, onEdit: (Int) -> Unit, onRemove: (Int) -> Unit, onAdd: () -> Unit) {
-    SectionCard("Ingrédients") {
+    SectionCard(stringResource(R.string.recipe_edit_ingredients)) {
         lines.forEachIndexed { i, line ->
             Row(Modifier.fillMaxWidth().clickable { onEdit(i) }, verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
@@ -80,7 +82,7 @@ private fun IngredientsCard(lines: List<IngredientLine>, onEdit: (Int) -> Unit, 
                 IconButton(onClick = { onRemove(i) }) { Icon(Icons.Default.Close, "Retirer") }
             }
         }
-        WideButton("Ajouter un ingrédient", onAdd, outlined = true)
+        WideButton(stringResource(R.string.common_ajouter_ingredient), onAdd, outlined = true)
     }
 }
 
@@ -89,9 +91,9 @@ private fun TotalsCard(draft: RecipeDraft) {
     val t = draft.totals ?: return
     SectionCard("Valeurs") {
         StatRow("Total", kcal(t.total.kcal))
-        StatRow("Par part", kcal(t.perPart.kcal))
-        StatRow("Poids total", "${fmt(t.weightG, 0)} g${if (t.cookedWeightG == null) " (cru)" else ""}")
-        t.per100?.let { StatRow("Pour 100 g", kcal(it.kcal)) }
+        StatRow(stringResource(R.string.common_par_part), kcal(t.perPart.kcal))
+        StatRow(stringResource(R.string.recipe_edit_poids_total), "${fmt(t.weightG, 0)} g${if (t.cookedWeightG == null) " (cru)" else ""}")
+        t.per100?.let { StatRow(stringResource(R.string.common_pour_100_g), kcal(it.kcal)) }
     }
 }
 
@@ -101,7 +103,7 @@ private fun QuantityDialog(line: IngredientLine, onSave: (Double) -> Unit, onDis
     val isPart = line.ingredient.subRecipeId != null
     val quantity = text.toDecimal()?.takeIf { it > 0 }
     FormDialog(line.name, onDismiss, { quantity?.let(onSave) }, canConfirm = quantity != null) {
-        NumberField(text, { text = it }, "Quantité", suffix = if (isPart) "part(s)" else "g")
+        NumberField(text, { text = it }, stringResource(R.string.common_quantite), suffix = if (isPart) "part(s)" else "g")
     }
 }
 

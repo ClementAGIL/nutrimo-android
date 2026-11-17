@@ -20,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.WeightEntity
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.EmptyState
@@ -34,7 +36,7 @@ import com.clement.nutrimo.util.signedKg
 fun WeightHistory(weights: List<WeightEntity>, vm: WeightViewModel) {
     var editing by remember { mutableStateOf<WeightEntity?>(null) }
     var deleting by remember { mutableStateOf<WeightEntity?>(null) }
-    if (weights.isEmpty()) return EmptyState("Aucune pesée pour l'instant.\nAppuyez sur + pour en ajouter une.")
+    if (weights.isEmpty()) return EmptyState(stringResource(R.string.weight_history_aucune_pesee_pour_instant_nappuyez))
     val newestFirst = weights.reversed()
     LazyColumn(contentPadding = PaddingValues(bottom = FAB_CLEARANCE)) {
         items(newestFirst.size, key = { newestFirst[it].id }) { i ->
@@ -45,7 +47,7 @@ fun WeightHistory(weights: List<WeightEntity>, vm: WeightViewModel) {
     }
     editing?.let { WeightDialog(vm, it.date, it.kg, onDismiss = { editing = null }) }
     deleting?.let {
-        ConfirmDialog("Supprimer la pesée ?", "${kg(it.kg)} le ${it.date.day()}", "Supprimer", { vm.delete(it.id) }, { deleting = null })
+        ConfirmDialog(stringResource(R.string.weight_history_supprimer_pesee), "${kg(it.kg)} le ${it.date.day()}", "Supprimer", { vm.delete(it.id) }, { deleting = null })
     }
 }
 

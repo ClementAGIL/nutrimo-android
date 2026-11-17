@@ -12,9 +12,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.IntroText
 import com.clement.nutrimo.ui.common.ScreenScaffold
@@ -43,16 +45,15 @@ fun ServerScreen(onBack: () -> Unit) {
     var url by rememberSaveable { mutableStateOf("") }
     var key by rememberSaveable { mutableStateOf("") }
     LaunchedEffect(Unit) { vm.saved().let { (u, k) -> url = u; key = k } }
-    ScreenScaffold("Serveur Nutrimo", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.server_serveur_nutrimo), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText(
-                "Adresse du PC qui fait tourner nutrimo-api, sur le même Wi-Fi (ex : http://192.168.1.20:3000). " +
-                    "Sans serveur, la recherche utilise le téléphone puis Open Food Facts.",
+                stringResource(R.string.server_adresse_pc_qui_fait_tourner),
             )
-            OutlinedTextField(url, { url = it.trim() }, label = { Text("Adresse du serveur") }, singleLine = true,
+            OutlinedTextField(url, { url = it.trim() }, label = { Text(stringResource(R.string.server_adresse_serveur)) }, singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri), modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(key, { key = it.trim() }, label = { Text("Clé API (facultatif)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-            WideButton(if (tester.busy) "Test en cours…" else "Tester la connexion", { vm.test(url, key) },
+            OutlinedTextField(key, { key = it.trim() }, label = { Text(stringResource(R.string.server_cle_api_facultatif)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            WideButton(if (tester.busy) stringResource(R.string.server_test_en_cours) else stringResource(R.string.server_tester_connexion), { vm.test(url, key) },
                 enabled = url.isNotBlank() && !tester.busy, outlined = true)
             WideButton("Enregistrer", { vm.save(url, key, onBack) })
             tester.status?.let { Text(it) }

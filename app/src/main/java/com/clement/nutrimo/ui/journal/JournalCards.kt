@@ -28,8 +28,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.CardHeader
@@ -52,13 +54,13 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             KcalRing(state.total.kcal, target, zoneColor(state.kcalZone) ?: MaterialTheme.colorScheme.primary)
             Column(Modifier.weight(1f)) {
-                Text("Mangé : ${kcal(state.total.kcal)}")
+                Text(stringResource(R.string.journal_mange_1, kcal(state.total.kcal)))
                 if (target != null) KcalBalance(state, target)
             }
             GoalSettingsButton(onGoalSettings)
         }
         MacroBars(state.total, target?.let { state.macroSplit.grams(it) })
-        HintText("Toucher pour le détail des nutriments")
+        HintText(stringResource(R.string.journal_toucher_pour_detail_nutriments))
     }
 }
 
@@ -66,14 +68,14 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -
 @Composable
 private fun KcalBalance(state: JournalUiState, budget: Double) {
     Text("${if (state.burned > 0) "Budget" else "Objectif"} : ${kcal(budget)}")
-    if (state.burned > 0) Text("dont ${kcal(state.burned)} d'activité et de pas", style = MaterialTheme.typography.bodySmall)
-    state.maintenance?.let { Text("Maintenance : ${kcal(it)}", style = MaterialTheme.typography.bodySmall) }
+    if (state.burned > 0) Text(stringResource(R.string.journal_dont_1_activite_pas, kcal(state.burned)), style = MaterialTheme.typography.bodySmall)
+    state.maintenance?.let { Text(stringResource(R.string.journal_maintenance_1, kcal(it)), style = MaterialTheme.typography.bodySmall) }
     val eaten = state.total.kcal
     val (text, style) = when (state.kcalZone) {
         // The yellow ring already says "still under maintenance": the text stays short and discreet.
-        KcalZone.UNDER_MAINTENANCE -> "Au-dessus de l'objectif : ${kcal(eaten - budget)}" to MaterialTheme.typography.bodySmall
-        KcalZone.OVER_MAINTENANCE -> "Dépassement : ${kcal(eaten - budget)}" to LocalTextStyle.current
-        else -> "Reste : ${kcal(budget - eaten)}" to LocalTextStyle.current
+        KcalZone.UNDER_MAINTENANCE -> stringResource(R.string.journal_au_dessus_objectif_1, kcal(eaten - budget)) to MaterialTheme.typography.bodySmall
+        KcalZone.OVER_MAINTENANCE -> stringResource(R.string.journal_depassement_1, kcal(eaten - budget)) to LocalTextStyle.current
+        else -> stringResource(R.string.journal_reste_1, kcal(budget - eaten)) to LocalTextStyle.current
     }
     Text(text, style = style, fontWeight = FontWeight.SemiBold, color = zoneColor(state.kcalZone) ?: NutrimoColors.weight)
 }
@@ -112,14 +114,14 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
     var naming by remember { mutableStateOf(false) }
     SectionCard {
         CardHeader(meal.label, kcal(entries.sumOf { it.nutrients.kcal })) {
-            if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, "Copier depuis la veille") }
-            else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, "Enregistrer ce repas") }
+            if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille)) }
+            else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, stringResource(R.string.journal_enregistrer_ce_repas)) }
             IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, "Ajouter") }
         }
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
         entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
     }
-    if (naming) TextDialog("Enregistrer ce repas", "Nom (ex : Petit-déj habituel)", meal.label, actions.onSave) { naming = false }
+    if (naming) TextDialog(stringResource(R.string.journal_enregistrer_ce_repas), stringResource(R.string.journal_nom_ex_petit_dej_habituel), meal.label, actions.onSave) { naming = false }
 }
 
 @Composable
@@ -128,10 +130,10 @@ fun WaterCard(ml: Int, goalMl: Int, onAdd: (Int) -> Unit, onGoalSettings: () -> 
         CardHeader("Eau") { GoalSettingsButton(onGoalSettings) }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
-                ProgressRow("$ml / $goalMl ml", "${ml / WATER_STEP_ML} verre(s)", ml.toDouble() / goalMl, NutrimoColors.water)
+                ProgressRow("$ml / $goalMl ml", stringResource(R.string.journal_1_verre, ml / WATER_STEP_ML), ml.toDouble() / goalMl, NutrimoColors.water)
             }
-            IconButton(onClick = { onAdd(-WATER_STEP_ML) }, enabled = ml > 0) { Icon(Icons.Default.Remove, "Retirer un verre") }
-            IconButton(onClick = { onAdd(WATER_STEP_ML) }) { Icon(Icons.Default.Add, "Ajouter un verre") }
+            IconButton(onClick = { onAdd(-WATER_STEP_ML) }, enabled = ml > 0) { Icon(Icons.Default.Remove, stringResource(R.string.journal_retirer_verre)) }
+            IconButton(onClick = { onAdd(WATER_STEP_ML) }) { Icon(Icons.Default.Add, stringResource(R.string.journal_ajouter_verre)) }
         }
     }
 }

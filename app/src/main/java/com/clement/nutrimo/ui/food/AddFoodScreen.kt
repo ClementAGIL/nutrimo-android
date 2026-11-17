@@ -22,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.WarningText
@@ -50,13 +52,13 @@ fun AddFoodScreen(actions: AddFoodActions, scannedBarcode: String?, onBarcodeCon
         onBarcodeConsumed()
         vm.lookupBarcode(code, actions.onFood) { actions.onCreate(it) }
     }
-    val title = if (vm.route.forRecipe) "Ajouter un ingrédient" else Meal.valueOf(vm.route.meal).label
+    val title = if (vm.route.forRecipe) stringResource(R.string.common_ajouter_ingredient) else Meal.valueOf(vm.route.meal).label
     ScreenScaffold(title, onBack = actions.onBack) { padding ->
         Column(Modifier.padding(padding)) {
             OutlinedTextField(
                 value = state.query,
                 onValueChange = vm::onQuery,
-                placeholder = { Text("Rechercher un aliment") },
+                placeholder = { Text(stringResource(R.string.add_food_rechercher_aliment)) },
                 leadingIcon = { Icon(Icons.Default.Search, null) },
                 trailingIcon = { IconButton(onClick = actions.onScan) { Icon(Icons.Default.QrCodeScanner, "Scanner") } },
                 singleLine = true,
@@ -74,13 +76,13 @@ fun AddFoodScreen(actions: AddFoodActions, scannedBarcode: String?, onBarcodeCon
 @Composable
 private fun SearchResults(state: SearchUiState, vm: AddFoodViewModel, actions: AddFoodActions) {
     LazyColumn {
-        if (state.local.isNotEmpty() || state.recipes.isNotEmpty()) item { SectionHeader("Sur le téléphone") }
+        if (state.local.isNotEmpty() || state.recipes.isNotEmpty()) item { SectionHeader(stringResource(R.string.add_food_sur_telephone)) }
         items(state.recipes, key = { "r" + it.id }) { RecipeRow(it) { actions.onRecipe(it.id) } }
         items(state.local, key = { it.id }) { FoodRow(it) { actions.onFood(it.id) } }
         remoteSection(state, vm, actions)
         item {
             TextButton(onClick = { actions.onCreate(null) }, modifier = Modifier.padding(8.dp)) {
-                Text("Introuvable ? Créer un aliment")
+                Text(stringResource(R.string.add_food_introuvable_creer_aliment))
             }
         }
     }

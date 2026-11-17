@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -59,10 +61,10 @@ fun OnboardingScreen(onDone: () -> Unit) {
     if (state.intro) return IntroScreen(onDone = { vm.setIntro(false) })
     // Back returns to the previous step instead of closing the app and losing the input.
     BackHandler { if (state.step == 1) vm.setStep(0) else vm.setIntro(true) }
-    ScreenScaffold(title = if (state.step == 0) "Bienvenue sur Nutrimo" else "Votre objectif") { padding ->
+    ScreenScaffold(title = if (state.step == 0) stringResource(R.string.onboarding_bienvenue_sur_nutrimo) else stringResource(R.string.onboarding_votre_objectif)) { padding ->
         ScrollColumn(padding, spacing = 16.dp) {
             if (state.step == 0) {
-                Text("Quelques informations pour estimer vos besoins caloriques.", style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(R.string.onboarding_quelques_informations_pour_estimer_vos), style = MaterialTheme.typography.bodyLarge)
                 ProfileForm(state.profile, vm::setProfile)
                 WideButton("Continuer", { vm.setStep(1) }, enabled = state.profile.isValid)
             } else {

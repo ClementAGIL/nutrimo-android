@@ -22,7 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.DateField
 import com.clement.nutrimo.ui.common.EmptyState
@@ -54,7 +56,7 @@ val MEASUREMENT_FIELDS = listOf(
 
 @Composable
 fun MeasurementList(list: List<MeasurementEntity>, onEdit: (MeasurementEntity) -> Unit, onDelete: (MeasurementEntity) -> Unit) {
-    if (list.isEmpty()) return EmptyState("Aucune mensuration. Ajoutez-en avec le bouton +.")
+    if (list.isEmpty()) return EmptyState(stringResource(R.string.measurements_aucune_mensuration_ajoutez_en_avec))
     LazyColumn(contentPadding = PaddingValues(bottom = FAB_CLEARANCE)) {
         items(list, key = { it.id }) { m ->
             ListItem(

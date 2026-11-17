@@ -14,9 +14,11 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.repository.PhotoStorage
 import com.clement.nutrimo.data.sync.ServerBackup
@@ -80,8 +82,7 @@ fun BackupScreen(onBack: () -> Unit) {
     ScreenScaffold("Sauvegarde", onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText(
-                "Vos données (profil, objectifs, pesées, mensurations, journal, recettes, aliments perso) sont " +
-                    "stockées sur ce téléphone, jamais dans les sauvegardes Google. Sauvegardez-les sur votre PC ou dans un fichier.",
+                stringResource(R.string.backup_vos_donnees_profil_objectifs_pesees),
             )
             ServerCard(vm)
             FileCard(vm)
@@ -101,10 +102,10 @@ private fun FileCard(vm: BackupViewModel) {
         uri?.let { vm.import(resolver, it) }
     }
     SectionCard("Fichier") {
-        HintText("Un fichier ZIP avec vos données et vos photos de progression. L'import reprend les données (pas les photos).")
+        HintText(stringResource(R.string.backup_fichier_zip_avec_vos_donnees))
         PhotoStorageText(vm)
         WideButton("Exporter", { exporter.launch("nutrimo-${LocalDate.now()}.zip") })
-        WideButton("Importer une sauvegarde", { importer.launch(arrayOf(MIME_ZIP, MIME_JSON, "*/*")) }, outlined = true)
+        WideButton(stringResource(R.string.backup_importer_sauvegarde), { importer.launch(arrayOf(MIME_ZIP, MIME_JSON, "*/*")) }, outlined = true)
     }
 }
 
@@ -112,7 +113,7 @@ private fun FileCard(vm: BackupViewModel) {
 @Composable
 private fun PhotoStorageText(vm: BackupViewModel) {
     val storage by produceState<PhotoStorage?>(null) { value = vm.photoStorage() }
-    storage?.let { HintText("Photos : ${it.count} · ${fmt(it.bytes / BYTES_PER_MB)} Mo") }
+    storage?.let { HintText(stringResource(R.string.backup_photos_1_2_mo, it.count, fmt(it.bytes / BYTES_PER_MB))) }
 }
 
 /** Backup on the Nutrimo server (data only, never the photos): now, restore the latest, and the daily automatic backup. */
@@ -122,15 +123,15 @@ private fun ServerCard(vm: BackupViewModel) {
     val settings by vm.settings.collectAsStateWithLifecycle()
     var confirmRestore by rememberSaveable { mutableStateOf(false) }
     val s = settings ?: return
-    SectionCard("Serveur Nutrimo (PC)") {
-        HintText(if (s.lastServerBackup == 0L) "Aucune sauvegarde envoyée." else "Dernière sauvegarde : ${dateTime(s.lastServerBackup)}")
-        WideButton("Sauvegarder maintenant", vm::pushToServer)
-        WideButton("Restaurer la dernière sauvegarde", { confirmRestore = true }, outlined = true)
-        SwitchRow("Sauvegarde automatique (chaque jour, en Wi-Fi)", s.autoBackup, { vm.setAutoBackup(context, it) })
+    SectionCard(stringResource(R.string.backup_serveur_nutrimo_pc)) {
+        HintText(if (s.lastServerBackup == 0L) stringResource(R.string.backup_aucune_sauvegarde_envoyee) else stringResource(R.string.backup_derniere_sauvegarde_1, dateTime(s.lastServerBackup)))
+        WideButton(stringResource(R.string.backup_sauvegarder_maintenant), vm::pushToServer)
+        WideButton(stringResource(R.string.backup_restaurer_derniere_sauvegarde), { confirmRestore = true }, outlined = true)
+        SwitchRow(stringResource(R.string.backup_sauvegarde_automatique_chaque_jour_en), s.autoBackup, { vm.setAutoBackup(context, it) })
     }
     if (confirmRestore) {
         ConfirmDialog(
-            "Restaurer ?", "Les données du serveur seront fusionnées avec celles du téléphone (mêmes éléments remplacés).", "Restaurer",
+            stringResource(R.string.backup_restaurer), stringResource(R.string.backup_donnees_serveur_seront_fusionnees_avec), "Restaurer",
             vm::restoreFromServer,
             { confirmRestore = false },
         )

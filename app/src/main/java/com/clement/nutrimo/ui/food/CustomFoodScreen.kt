@@ -19,8 +19,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.model.NutrientCatalog
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.NumberField
@@ -36,7 +38,7 @@ fun CustomFoodScreen(onBack: () -> Unit) {
     val vm = appViewModel { c, handle -> CustomFoodViewModel(c, handle) }
     val draft by vm.draft.collectAsStateWithLifecycle()
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
-    ScreenScaffold(if (vm.isEdit) "Modifier l'aliment" else "Nouvel aliment", onBack = onBack, actions = {
+    ScreenScaffold(if (vm.isEdit) stringResource(R.string.custom_food_modifier_aliment) else stringResource(R.string.custom_food_nouvel_aliment), onBack = onBack, actions = {
         if (vm.isEdit) IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
     }) { padding ->
         ScrollColumn(padding) {
@@ -49,14 +51,14 @@ fun CustomFoodScreen(onBack: () -> Unit) {
         }
     }
     if (confirmDelete) {
-        ConfirmDialog("Supprimer l'aliment ?", "Les jours déjà enregistrés ne changent pas.", "Supprimer", { vm.delete(onBack) }, { confirmDelete = false })
+        ConfirmDialog(stringResource(R.string.custom_food_supprimer_aliment), stringResource(R.string.custom_food_jours_deja_enregistres_ne_changent), "Supprimer", { vm.delete(onBack) }, { confirmDelete = false })
     }
 }
 
 @Composable
 private fun IdentityCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
     SectionCard {
-        OutlinedTextField(d.name, { v -> vm.update { it.copy(name = v) } }, label = { Text("Nom *") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(d.name, { v -> vm.update { it.copy(name = v) } }, label = { Text(stringResource(R.string.custom_food_nom)) }, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(d.brand, { v -> vm.update { it.copy(brand = v) } }, label = { Text("Marque") }, modifier = Modifier.fillMaxWidth())
         NumberField(d.barcode, { v -> vm.update { it.copy(barcode = v.filter(Char::isDigit)) } }, "Code-barres", Modifier.fillMaxWidth())
     }
@@ -64,7 +66,7 @@ private fun IdentityCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
 
 @Composable
 private fun NutrientsCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
-    SectionCard("Valeurs pour 100 g") {
+    SectionCard(stringResource(R.string.custom_food_valeurs_pour_100_g)) {
         MACRO_FIELDS.forEach { f ->
             NumberField(
                 value = d.macros[f.key].orEmpty(),
@@ -81,7 +83,7 @@ private fun NutrientsCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
 private fun MicrosCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
     var open by rememberSaveable { mutableStateOf(d.micros.isNotEmpty()) }
     SectionCard {
-        TextButton(onClick = { open = !open }) { Text(if (open) "Masquer vitamines et minéraux" else "Vitamines et minéraux (facultatif)") }
+        TextButton(onClick = { open = !open }) { Text(if (open) stringResource(R.string.common_masquer_vitamines_mineraux) else stringResource(R.string.custom_food_vitamines_mineraux_facultatif)) }
         if (!open) return@SectionCard
         NutrientCatalog.MICROS.forEach { m ->
             NumberField(
@@ -97,11 +99,11 @@ private fun MicrosCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
 
 @Composable
 private fun PortionsCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
-    SectionCard("Portions (facultatif)") {
+    SectionCard(stringResource(R.string.custom_food_portions_facultatif)) {
         d.portions.forEachIndexed { i, p ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(p.label, { v -> vm.update { it.copy(portions = it.portions.replace(i, p.copy(label = v))) } },
-                    label = { Text("Nom (ex : 1 tranche)") }, modifier = Modifier.weight(1.5f))
+                    label = { Text(stringResource(R.string.custom_food_nom_ex_1_tranche)) }, modifier = Modifier.weight(1.5f))
                 NumberField(p.grams, { v -> vm.update { it.copy(portions = it.portions.replace(i, p.copy(grams = v))) } },
                     "Poids", Modifier.weight(1f), "g")
                 IconButton(onClick = { vm.update { it.copy(portions = it.portions.filterIndexed { j, _ -> j != i }) } }) {
@@ -109,7 +111,7 @@ private fun PortionsCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
                 }
             }
         }
-        TextButton(onClick = { vm.update { it.copy(portions = it.portions + PortionDraft()) } }) { Text("Ajouter une portion") }
+        TextButton(onClick = { vm.update { it.copy(portions = it.portions + PortionDraft()) } }) { Text(stringResource(R.string.custom_food_ajouter_portion)) }
     }
 }
 

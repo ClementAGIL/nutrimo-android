@@ -20,8 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.domain.calc.Bmi
@@ -78,7 +80,7 @@ fun WeightHubChart(state: WeightUiState, measurements: List<MeasurementEntity>, 
             Box(Modifier.weight(1f).horizontalScroll(rememberScrollState())) {
                 PeriodChips(period.takeIf { zoomed == null }) { period = it; zoomed = null; bubble = null }
             }
-            InfoButton("Graphique du poids", helpText(bands.isNotEmpty()))
+            InfoButton(stringResource(R.string.weight_hub_chart_graphique_poids), helpText(bands.isNotEmpty()))
         }
         zoomed?.let { (start, end) ->
             Text("${start.full()} – ${end.full()}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -115,11 +117,11 @@ private fun TrendText(state: WeightUiState) {
     val p = state.progress ?: return
     val goal = state.goal ?: return
     val text = when {
-        state.goalReached -> "Objectif atteint, bravo !"
-        p.trend == null -> "Encore quelques pesées ($MIN_TREND_POINTS minimum) pour estimer quand vous atteindrez votre objectif."
-        p.estimatedEnd == null -> "Votre poids ne baisse pas en ce moment : pas encore d'estimation d'arrivée."
-        else -> "D'après la tendance, vous atteindrez votre objectif (${kg(p.targetKg)}) le ${p.estimatedEnd.full()}" +
-            if (p.estimatedEnd.isAfter(goal.endDate)) " (prévu le ${goal.endDate.full()})." else ", dans les temps."
+        state.goalReached -> stringResource(R.string.weight_hub_chart_objectif_atteint_bravo)
+        p.trend == null -> stringResource(R.string.weight_hub_chart_encore_quelques_pesees_1_minimum, MIN_TREND_POINTS)
+        p.estimatedEnd == null -> stringResource(R.string.weight_hub_chart_votre_poids_ne_baisse_pas)
+        else -> stringResource(R.string.weight_hub_chart_apres_tendance_vous_atteindrez_votre, kg(p.targetKg), p.estimatedEnd.full()) +
+            if (p.estimatedEnd.isAfter(goal.endDate)) stringResource(R.string.weight_hub_chart_prevu_1, goal.endDate.full()) else stringResource(R.string.weight_hub_chart_dans_temps)
     }
     Text(text, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
 }

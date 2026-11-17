@@ -17,9 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.reminders.ReminderKind
 import com.clement.nutrimo.data.repository.ReminderSettings
@@ -71,9 +73,9 @@ fun RemindersScreen(onBack: () -> Unit) {
     ScreenScaffold("Rappels", onBack = onBack) { padding ->
         ScrollColumn(padding) {
             if (!allowed) {
-                SectionCard("Notifications désactivées") {
-                    WarningText("Les rappels et l'encouragement du jour ne peuvent pas s'afficher.")
-                    WideButton("Autoriser les notifications", askPermission)
+                SectionCard(stringResource(R.string.reminders_notifications_desactivees)) {
+                    WarningText(stringResource(R.string.reminders_rappels_encouragement_jour_ne_peuvent))
+                    WideButton(stringResource(R.string.reminders_autoriser_notifications), askPermission)
                 }
             }
             CARDS.forEach { (kind, text) ->
@@ -96,7 +98,7 @@ private fun ReminderCard(title: String, hint: String, r: ReminderSettings, withD
             Dropdown("Jour", r.day, DayOfWeek.entries, { it.getDisplayName(TextStyle.FULL, Locale.FRANCE) }, { onChange(r.copy(day = it)) },
                 Modifier.fillMaxWidth())
         }
-        TextButton(onClick = { picking = true }) { Text("Heure : %02d:%02d".format(r.hour, r.minute)) }
+        TextButton(onClick = { picking = true }) { Text(stringResource(R.string.reminders_heure_02d_02d).format(r.hour, r.minute)) }
     }
     if (picking) TimeDialog(r.hour, r.minute, { h, m -> onChange(r.copy(hour = h, minute = m)) }, { picking = false })
 }

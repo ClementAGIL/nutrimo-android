@@ -24,9 +24,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.ScreenScaffold
@@ -100,20 +102,20 @@ private fun JournalList(state: JournalUiState, vm: JournalViewModel, actions: Jo
 @Composable
 private fun DayBar(date: LocalDate, onShift: (Long) -> Unit, onToday: () -> Unit) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-        IconButton(onClick = { onShift(-1) }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Jour précédent") }
+        IconButton(onClick = { onShift(-1) }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, stringResource(R.string.journal_jour_precedent)) }
         val today = LocalDate.now()
         Text(
             when (date) {
-                today -> "Aujourd'hui"
+                today -> stringResource(R.string.common_aujourd_hui)
                 today.minusDays(1) -> "Hier"
                 else -> date.day()
             },
             style = MaterialTheme.typography.titleMedium,
         )
         Row {
-            if (date != today) TextButton(onClick = onToday) { Text("Aujourd'hui") }
+            if (date != today) TextButton(onClick = onToday) { Text(stringResource(R.string.common_aujourd_hui)) }
             IconButton(onClick = { onShift(1) }, enabled = date.isBefore(today)) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Jour suivant")
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, stringResource(R.string.journal_jour_suivant))
             }
         }
     }

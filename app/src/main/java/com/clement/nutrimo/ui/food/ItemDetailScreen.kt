@@ -17,8 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.HintText
@@ -55,10 +57,10 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
     }) { padding ->
         ScrollColumn(padding) {
             item.subtitle?.let { IntroText(it) }
-            item.per100?.let { HintText("${fmt(it.kcal, 0)} kcal pour 100 g") }
+            item.per100?.let { HintText(stringResource(R.string.item_detail_1_kcal_pour_100_g, fmt(it.kcal, 0))) }
             QuantityRow(state, vm)
             if (!vm.route.forRecipe) Dropdown("Repas", state.meal, Meal.entries, { it.label }, vm::setMeal, Modifier.fillMaxWidth())
-            state.preview?.let { NutrientTable(it, "Pour cette quantité") }
+            state.preview?.let { NutrientTable(it, stringResource(R.string.item_detail_pour_cette_quantite)) }
             Buttons(state, vm, actions)
         }
     }
@@ -67,10 +69,10 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
 @Composable
 private fun QuantityRow(state: ItemDetailState, vm: ItemDetailViewModel) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        NumberField(state.quantity, vm::setQuantity, "Quantité", Modifier.weight(1f), isError = state.amount == null)
+        NumberField(state.quantity, vm::setQuantity, stringResource(R.string.common_quantite), Modifier.weight(1f), isError = state.amount == null)
         val unit = state.unit
         if (state.entry == null && unit != null) {
-            Dropdown("Unité", unit, state.units, { it.label }, vm::setUnit, Modifier.weight(1.4f))
+            Dropdown(stringResource(R.string.item_detail_unite), unit, state.units, { it.label }, vm::setUnit, Modifier.weight(1.4f))
         }
     }
 }
@@ -79,11 +81,11 @@ private fun QuantityRow(state: ItemDetailState, vm: ItemDetailViewModel) {
 private fun Buttons(state: ItemDetailState, vm: ItemDetailViewModel, actions: ItemDetailActions) {
     val enabled = state.amount != null
     when {
-        vm.route.forRecipe -> WideButton("Ajouter à la recette", { vm.ingredientResult()?.let(actions.onPicked) }, enabled = enabled)
+        vm.route.forRecipe -> WideButton(stringResource(R.string.item_detail_ajouter_recette), { vm.ingredientResult()?.let(actions.onPicked) }, enabled = enabled)
         state.entry != null -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = { vm.delete(actions.onDone) }, modifier = Modifier.weight(1f)) { Text("Supprimer") }
             Button(onClick = { vm.save(actions.onDone) }, enabled = enabled, modifier = Modifier.weight(1f)) { Text("Enregistrer") }
         }
-        else -> WideButton("Ajouter au journal", { vm.save(actions.onDone) }, enabled = enabled)
+        else -> WideButton(stringResource(R.string.common_ajouter_au_journal), { vm.save(actions.onDone) }, enabled = enabled)
     }
 }

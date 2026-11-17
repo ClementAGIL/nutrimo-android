@@ -8,7 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.calc.DailyGoal
 import com.clement.nutrimo.domain.calc.DayRecord
 import com.clement.nutrimo.domain.calc.KCAL_PER_KG
@@ -41,9 +43,9 @@ private val METRICS = listOf(
 @Composable
 fun ChartsTab(state: HistoryState, onDays: (Int) -> Unit) {
     ScrollColumn(PaddingValues()) {
-        ChoiceChips(CHART_PERIODS, state.chartDays, { "$it jours" }, onDays)
-        if (state.chartRecords.isEmpty()) return@ScrollColumn EmptyState("Aucune donnée sur cette période.")
-        HintText("Barres : valeur du jour · pointillés : objectif")
+        ChoiceChips(CHART_PERIODS, state.chartDays, { stringResource(R.string.charts_1_jours, it) }, onDays)
+        if (state.chartRecords.isEmpty()) return@ScrollColumn EmptyState(stringResource(R.string.charts_aucune_donnee_sur_cette_periode))
+        HintText(stringResource(R.string.charts_barres_valeur_jour_pointilles_objectif))
         METRICS.forEach { MetricChart(it, state) }
         HistoryStats(state)
     }
@@ -61,7 +63,7 @@ private fun HistoryState.goalValue(goal: DailyGoal): Double? = when (goal) {
 private fun MetricChart(metric: Metric, state: HistoryState) {
     val bars = state.chartRecords.mapNotNull { r -> metric.value(r)?.let { ChartPoint(r.date, it) } }
     SectionCard(metric.title) {
-        if (bars.isEmpty()) return@SectionCard HintText("Aucune donnée")
+        if (bars.isEmpty()) return@SectionCard HintText(stringResource(R.string.charts_aucune_donnee))
         val end = state.today.plusDays(1)
         val goal = state.goalValue(metric.goal)
         val top = maxOf(bars.maxOf { it.value }, goal ?: 0.0) * 1.1
@@ -81,25 +83,25 @@ private fun HistoryStats(state: HistoryState) {
     val records = state.chartRecords
     val eaten = records.filter { it.eatenKcal != null }
     fun average(values: List<Double>) = values.takeIf { it.isNotEmpty() }?.average()
-    SectionCard("Sur ${state.chartDays} jours") {
-        StatRow("Jours notés", "${eaten.size} / ${state.chartDays}")
-        average(eaten.mapNotNull { it.eatenKcal })?.let { StatRow("Calories moyennes", "${kcal(it)} / jour") }
-        state.target?.let { StatRow("Objectif", "${kcal(it.target)} / jour") }
-        StatRow("Jours dans l'objectif", "${eaten.count { it.achieved(DailyGoal.CALORIES, state.targets) == true }} / ${eaten.size}")
+    SectionCard(stringResource(R.string.charts_sur_1_jours, state.chartDays)) {
+        StatRow(stringResource(R.string.charts_jours_notes), "${eaten.size} / ${state.chartDays}")
+        average(eaten.mapNotNull { it.eatenKcal })?.let { StatRow(stringResource(R.string.charts_calories_moyennes), stringResource(R.string.common_1_jour, kcal(it))) }
+        state.target?.let { StatRow("Objectif", stringResource(R.string.common_1_jour, kcal(it.target))) }
+        StatRow(stringResource(R.string.charts_jours_dans_objectif), "${eaten.count { it.achieved(DailyGoal.CALORIES, state.targets) == true }} / ${eaten.size}")
         records.sumOf { it.sportKcal }.takeIf { it > 0 }?.let { StatRow("Sport", kcal(it)) }
-        average(records.mapNotNull { it.steps?.takeIf { s -> s > 0 }?.toDouble() })?.let { StatRow("Pas moyens", "${fmt(it, 0)} / jour") }
-        average(records.mapNotNull { it.waterMl?.takeIf { w -> w > 0 }?.toDouble() })?.let { StatRow("Eau moyenne", "${fmt(it, 0)} ml / jour") }
+        average(records.mapNotNull { it.steps?.takeIf { s -> s > 0 }?.toDouble() })?.let { StatRow(stringResource(R.string.charts_pas_moyens), stringResource(R.string.common_1_jour, fmt(it, 0))) }
+        average(records.mapNotNull { it.waterMl?.takeIf { w -> w > 0 }?.toDouble() })?.let { StatRow(stringResource(R.string.charts_eau_moyenne), stringResource(R.string.charts_1_ml_jour, fmt(it, 0))) }
         state.target?.let { t ->
             // Energy not eaten compared with maintenance + sport, converted to fat mass (logged days only).
             val loss = eaten.sumOf { t.tdee + it.sportKcal - (it.eatenKcal ?: 0.0) } / KCAL_PER_KG
-            StatRow("Perte estimée (calories)", "${fmt(loss, 2)} kg")
+            StatRow(stringResource(R.string.charts_perte_estimee_calories), "${fmt(loss, 2)} kg")
         }
         val totals = state.chartTotals
-        StatRow("Protéines moyennes", grams(average(totals.mapNotNull { it.protein })))
-        StatRow("Glucides moyens", grams(average(totals.mapNotNull { it.carbs })))
-        StatRow("Lipides moyens", grams(average(totals.mapNotNull { it.fat })))
+        StatRow(stringResource(R.string.charts_proteines_moyennes), grams(average(totals.mapNotNull { it.protein })))
+        StatRow(stringResource(R.string.charts_glucides_moyens), grams(average(totals.mapNotNull { it.carbs })))
+        StatRow(stringResource(R.string.charts_lipides_moyens), grams(average(totals.mapNotNull { it.fat })))
         Text(
-            "La perte estimée compare vos calories notées à votre maintenance + sport (jours notés uniquement).",
+            stringResource(R.string.charts_perte_estimee_compare_vos_calories),
             style = MaterialTheme.typography.bodySmall,
         )
     }

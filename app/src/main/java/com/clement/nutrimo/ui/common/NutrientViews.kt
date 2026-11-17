@@ -11,7 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.calc.MacroGrams
 import com.clement.nutrimo.domain.model.MicroGroup
 import com.clement.nutrimo.domain.model.NutrientCatalog
@@ -25,7 +27,7 @@ import com.clement.nutrimo.util.kcal
 @Composable
 fun MacroBars(n: Nutrients, targets: MacroGrams?) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        MacroBar("Protéines", n.protein, targets?.protein, NutrimoColors.protein)
+        MacroBar(stringResource(R.string.common_proteines), n.protein, targets?.protein, NutrimoColors.protein)
         MacroBar("Glucides", n.carbs, targets?.carbs, NutrimoColors.carbs)
         MacroBar("Lipides", n.fat, targets?.fat, NutrimoColors.fat)
     }
@@ -42,13 +44,13 @@ private fun MacroBar(label: String, value: Double?, target: Double?, color: andr
 @Composable
 fun NutrientTable(n: Nutrients, title: String? = null) {
     SectionCard(title) {
-        StatRow("Énergie", kcal(n.kcal))
-        StatRow("Matières grasses", grams(n.fat))
-        Sub("dont acides gras saturés", grams(n.satFat))
+        StatRow(stringResource(R.string.nutrient_energie), kcal(n.kcal))
+        StatRow(stringResource(R.string.nutrient_matieres_grasses), grams(n.fat))
+        Sub(stringResource(R.string.nutrient_dont_acides_gras_satures), grams(n.satFat))
         StatRow("Glucides", grams(n.carbs))
-        Sub("dont sucres", grams(n.sugars))
+        Sub(stringResource(R.string.nutrient_dont_sucres), grams(n.sugars))
         StatRow("Fibres", grams(n.fiber))
-        StatRow("Protéines", grams(n.protein))
+        StatRow(stringResource(R.string.common_proteines), grams(n.protein))
         StatRow("Sel", grams(n.salt))
         if (n.micros.isNotEmpty()) MicroSection(n.micros)
     }
@@ -62,7 +64,7 @@ private fun Sub(label: String, value: String) {
 @Composable
 private fun MicroSection(micros: Map<String, Double>) {
     var open by rememberSaveable { mutableStateOf(false) }
-    TextButton(onClick = { open = !open }) { Text(if (open) "Masquer vitamines et minéraux" else "Vitamines et minéraux") }
+    TextButton(onClick = { open = !open }) { Text(if (open) stringResource(R.string.common_masquer_vitamines_mineraux) else stringResource(R.string.nutrient_vitamines_mineraux)) }
     if (!open) return
     MicroGroup.entries.forEach { group ->
         val items = NutrientCatalog.MICROS.filter { it.group == group && micros[it.key] != null }

@@ -19,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.AppTabs
 import com.clement.nutrimo.ui.common.ScreenScaffold
@@ -38,12 +40,12 @@ fun WeighHistoryScreen(onBack: () -> Unit, onNewGoal: () -> Unit, onGoals: () ->
     ScreenScaffold(
         "Historique",
         onBack = onBack,
-        floatingActionButton = { FloatingActionButton(onClick = { adding = true }) { Icon(Icons.Default.Add, "Ajouter une pesée") } },
+        floatingActionButton = { FloatingActionButton(onClick = { adding = true }) { Icon(Icons.Default.Add, stringResource(R.string.weight_screens_ajouter_pesee)) } },
     ) { padding ->
         Column(Modifier.padding(padding)) {
             Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onNewGoal, modifier = Modifier.weight(1f)) { Text("Nouvel objectif") }
-                OutlinedButton(onClick = onGoals, modifier = Modifier.weight(1f)) { Text("Mes objectifs") }
+                OutlinedButton(onClick = onNewGoal, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_nouvel_objectif)) }
+                OutlinedButton(onClick = onGoals, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.common_mes_objectifs)) }
             }
             WeightHistory(state.weights, vm)
         }
@@ -62,7 +64,7 @@ fun MeasurementsScreen(onBack: () -> Unit) {
         onBack = onBack,
         // Only on the list: on the charts tab it would hide part of a chart.
         floatingActionButton = {
-            if (tab == 0) FloatingActionButton(onClick = { editing = MeasurementEntity(date = LocalDate.now()) }) { Icon(Icons.Default.Add, "Ajouter des mensurations") }
+            if (tab == 0) FloatingActionButton(onClick = { editing = MeasurementEntity(date = LocalDate.now()) }) { Icon(Icons.Default.Add, stringResource(R.string.weight_screens_ajouter_mensurations)) }
         },
     ) { padding ->
         Column(Modifier.padding(padding)) {

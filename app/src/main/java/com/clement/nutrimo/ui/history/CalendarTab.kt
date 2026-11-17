@@ -24,8 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.calc.DailyGoal
 import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -62,14 +64,14 @@ fun CalendarTab(state: HistoryState, onMonth: (YearMonth) -> Unit, onSelect: (Lo
 @Composable
 private fun MonthHeader(month: YearMonth, canGoNext: Boolean, onMove: (Long) -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { onMove(-1) }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, "Mois précédent") }
+        IconButton(onClick = { onMove(-1) }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, stringResource(R.string.calendar_mois_precedent)) }
         Text(
             month.format(MONTH_TITLE).replaceFirstChar { it.uppercase() },
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f),
         )
-        IconButton(onClick = { onMove(1) }, enabled = canGoNext) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "Mois suivant") }
+        IconButton(onClick = { onMove(1) }, enabled = canGoNext) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, stringResource(R.string.calendar_mois_suivant)) }
     }
 }
 
@@ -125,20 +127,20 @@ private fun DayDetail(state: HistoryState) {
     val r = state.records[state.selected]
     val t = state.targets
     fun done(goal: DailyGoal) = r?.achieved(goal, t)
-    SectionCard(if (state.selected == state.today) "Aujourd'hui" else state.selected.day()) {
+    SectionCard(if (state.selected == state.today) stringResource(R.string.common_aujourd_hui) else state.selected.day()) {
         val eaten = r?.eatenKcal?.let { e -> r.budgetKcal?.let { "${fmt(e, 0)} / ${kcal(it)}" } ?: kcal(e) }
-        GoalRow(DailyGoal.CALORIES, done(DailyGoal.CALORIES), eaten ?: "Rien noté", "Calories mangées")
+        GoalRow(DailyGoal.CALORIES, done(DailyGoal.CALORIES), eaten ?: stringResource(R.string.calendar_rien_note), stringResource(R.string.calendar_calories_mangees))
         GoalRow(DailyGoal.SPORT, done(DailyGoal.SPORT), "${fmt(r?.sportKcal ?: 0.0, 0)} / ${kcal(t.sportKcal.toDouble())}", "Sport")
         GoalRow(DailyGoal.STEPS, done(DailyGoal.STEPS), "${fmt((r?.steps ?: 0).toDouble(), 0)} / ${fmt(t.steps.toDouble(), 0)}")
         GoalRow(DailyGoal.WATER, done(DailyGoal.WATER), "${r?.waterMl ?: 0} / ${t.waterMl} ml")
         val weight = r?.weightKg?.let { w -> kg(w) + r.previousWeightKg?.let { " (${signedKg(w - it)})" }.orEmpty() }
-        GoalRow(DailyGoal.WEIGHT, done(DailyGoal.WEIGHT), weight ?: "Pas de pesée")
+        GoalRow(DailyGoal.WEIGHT, done(DailyGoal.WEIGHT), weight ?: stringResource(R.string.calendar_pas_pesee))
         val mood = r?.mood?.let { moodText(it) }
         val journal = when {
-            mood != null && r.journaled -> "$mood · avec journal"
+            mood != null && r.journaled -> stringResource(R.string.calendar_1_avec_journal, mood)
             mood != null -> mood
-            r?.journaled == true -> "Journal écrit"
-            else -> "Non notée"
+            r?.journaled == true -> stringResource(R.string.calendar_journal_ecrit)
+            else -> stringResource(R.string.calendar_non_notee)
         }
         GoalRow(DailyGoal.JOURNAL, done(DailyGoal.JOURNAL), journal)
     }
@@ -146,15 +148,13 @@ private fun DayDetail(state: HistoryState) {
 
 @Composable
 private fun Streaks(state: HistoryState) {
-    SectionCard("Séries") {
+    SectionCard(stringResource(R.string.calendar_series)) {
         state.streaks.forEach { (goal, s) ->
-            val unit = if (goal.skipsEmptyDays) "pesée" else "jour"
-            GoalRow(goal, true, "${plural(s.current, unit)} · record ${s.best}")
+            val unit = if (goal.skipsEmptyDays) stringResource(R.string.calendar_pesee) else "jour"
+            GoalRow(goal, true, stringResource(R.string.calendar_1_record_2, plural(s.current, unit), s.best))
         }
         HintText(
-            "Jours consécutifs où l'objectif est atteint. Un jour sans donnée interrompt la série, sauf aujourd'hui " +
-                "(la journée n'est pas finie). Le poids compte les pesées stables ou en baisse. Journée notée : une humeur ou " +
-                "quelques mots dans « Ma journée », avec ou sans l'autre.",
+            stringResource(R.string.calendar_jours_consecutifs_ou_objectif_est),
         )
     }
 }

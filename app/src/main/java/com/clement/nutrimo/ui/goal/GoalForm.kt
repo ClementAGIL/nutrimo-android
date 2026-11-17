@@ -12,7 +12,9 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.domain.calc.Energy
 import com.clement.nutrimo.domain.model.GoalMode
@@ -31,7 +33,7 @@ import java.time.LocalDate
 fun GoalForm(draft: GoalDraft, onChange: (GoalDraft) -> Unit, profile: ProfileEntity?) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            NumberField(draft.startKg, { onChange(draft.copy(startKg = it)) }, "Poids actuel", Modifier.weight(1f), "kg")
+            NumberField(draft.startKg, { onChange(draft.copy(startKg = it)) }, stringResource(R.string.common_poids_actuel), Modifier.weight(1f), "kg")
             NumberField(draft.targetKg, { onChange(draft.copy(targetKg = it)) }, "Objectif", Modifier.weight(1f), "kg")
         }
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
@@ -40,11 +42,11 @@ fun GoalForm(draft: GoalDraft, onChange: (GoalDraft) -> Unit, profile: ProfileEn
                     selected = draft.mode == mode,
                     onClick = { onChange(draft.copy(mode = mode)) },
                     shape = SegmentedButtonDefaults.itemShape(i, GoalMode.entries.size),
-                ) { Text(if (mode == GoalMode.PACE) "Par rythme" else "Par date") }
+                ) { Text(if (mode == GoalMode.PACE) stringResource(R.string.goal_form_par_rythme) else stringResource(R.string.goal_form_par_date)) }
             }
         }
         if (draft.mode == GoalMode.PACE) PaceChooser(draft, onChange)
-        else DateField("Date objectif", draft.endDate, { onChange(draft.copy(endDate = it)) }, Modifier.fillMaxWidth(), min = LocalDate.now().plusDays(7))
+        else DateField(stringResource(R.string.goal_form_date_objectif), draft.endDate, { onChange(draft.copy(endDate = it)) }, Modifier.fillMaxWidth(), min = LocalDate.now().plusDays(7))
         draft.error?.let { if (draft.startKg.isNotEmpty() && draft.targetKg.isNotEmpty()) WarningText(it) }
         GoalPreview(draft, profile)
     }
@@ -56,7 +58,7 @@ private fun PaceChooser(draft: GoalDraft, onChange: (GoalDraft) -> Unit) {
         onChange(draft.copy(preset = it))
     }
     if (draft.preset == CUSTOM_PACE) {
-        NumberField(draft.customPace, { onChange(draft.copy(customPace = it)) }, "Rythme", Modifier.fillMaxWidth(), "kg / semaine")
+        NumberField(draft.customPace, { onChange(draft.copy(customPace = it)) }, "Rythme", Modifier.fillMaxWidth(), stringResource(R.string.goal_form_kg_semaine))
     }
 }
 
@@ -65,17 +67,17 @@ private fun PaceChooser(draft: GoalDraft, onChange: (GoalDraft) -> Unit) {
 private fun GoalPreview(draft: GoalDraft, profile: ProfileEntity?) {
     val start = draft.start ?: return
     val pace = draft.pace?.takeIf { draft.error == null } ?: return
-    SectionCard("Ce que ça représente") {
-        StatRow("Rythme", "${fmt(pace, 2)} kg / semaine")
-        draft.resolvedEnd?.let { StatRow("Date de fin prévue", it.full()) }
+    SectionCard(stringResource(R.string.goal_form_ce_que_ca_represente)) {
+        StatRow("Rythme", stringResource(R.string.common_1_kg_semaine, fmt(pace, 2)))
+        draft.resolvedEnd?.let { StatRow(stringResource(R.string.goal_form_date_fin_prevue), it.full()) }
         if (profile == null) return@SectionCard
         val t = Energy.target(profile.sex, start, profile.heightCm, Energy.age(profile.birthDate), profile.activity, pace)
-        StatRow("Maintenance estimée", kcal(t.tdee))
-        StatRow("Déficit", "${kcal(t.deficit)} / jour")
-        Text("Objectif : ${kcal(t.target)} / jour", style = MaterialTheme.typography.titleMedium)
+        StatRow(stringResource(R.string.goal_form_maintenance_estimee), kcal(t.tdee))
+        StatRow(stringResource(R.string.goal_form_deficit), stringResource(R.string.common_1_jour, kcal(t.deficit)))
+        Text(stringResource(R.string.goal_form_objectif_1_jour, kcal(t.target)), style = MaterialTheme.typography.titleMedium)
         if (t.floorApplied) {
-            WarningText("Minimum de ${kcal(t.target)} appliqué : le rythme réel sera d'environ ${fmt(t.effectivePace, 2)} kg / semaine.")
+            WarningText(stringResource(R.string.goal_form_minimum_1_applique_rythme_reel, kcal(t.target), fmt(t.effectivePace, 2)))
         }
-        if (t.tooFast) WarningText("Plus de 1 % du poids par semaine : rythme déconseillé sans suivi médical.")
+        if (t.tooFast) WarningText(stringResource(R.string.goal_form_plus_1_poids_par_semaine))
     }
 }

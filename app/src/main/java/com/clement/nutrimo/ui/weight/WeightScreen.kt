@@ -32,8 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.FAB_CLEARANCE
 import com.clement.nutrimo.ui.common.IntroText
@@ -59,7 +61,7 @@ fun WeightScreen(actions: WeightHubActions) {
         floatingActionButton = { AddMenu({ adding = true }, { measurement = MeasurementEntity(date = LocalDate.now()) }, actions.onCamera) },
     ) { padding ->
         ScrollColumn(padding) {
-            if (state.weights.isEmpty()) SectionCard { IntroText("Ajoutez votre première pesée avec le bouton +.") }
+            if (state.weights.isEmpty()) SectionCard { IntroText(stringResource(R.string.weight_ajoutez_votre_premiere_pesee_avec)) }
             else WeightHubChart(state, measurements, photos, actions)
             HubButtons(actions)
             WeightDashboard(state, actions.onNewGoal, vm::markGoalAchieved)
@@ -96,7 +98,7 @@ private fun AddMenu(onWeight: () -> Unit, onMeasurement: () -> Unit, onPhoto: ()
     Box {
         FloatingActionButton(onClick = { open = true }) { Icon(Icons.Default.Add, "Ajouter") }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            MenuItem("Pesée", Icons.Default.MonitorWeight) { open = false; onWeight() }
+            MenuItem(stringResource(R.string.common_pesee), Icons.Default.MonitorWeight) { open = false; onWeight() }
             MenuItem("Mensurations", Icons.Default.Straighten) { open = false; onMeasurement() }
             MenuItem("Photo", Icons.Default.PhotoCamera) { open = false; onPhoto() }
         }

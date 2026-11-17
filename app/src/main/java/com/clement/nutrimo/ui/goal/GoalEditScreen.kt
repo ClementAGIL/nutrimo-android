@@ -4,10 +4,12 @@ package com.clement.nutrimo.ui.goal
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -51,10 +53,10 @@ fun GoalEditScreen(onBack: () -> Unit) {
     val vm = appViewModel { c, _ -> GoalEditViewModel(c) }
     val draft by vm.draft.collectAsStateWithLifecycle()
     val profile by vm.profile.collectAsStateWithLifecycle()
-    ScreenScaffold("Nouvel objectif", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.common_nouvel_objectif), onBack = onBack) { padding ->
         ScrollColumn(padding, spacing = 16.dp) {
             GoalForm(draft, { vm.draft.value = it }, profile)
-            WideButton("Démarrer cet objectif", { vm.save(onBack) }, enabled = draft.error == null)
+            WideButton(stringResource(R.string.goal_edit_demarrer_cet_objectif), { vm.save(onBack) }, enabled = draft.error == null)
         }
     }
 }

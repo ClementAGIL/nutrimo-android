@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScrollColumn
@@ -37,14 +39,14 @@ fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
     ScrollColumn(androidx.compose.foundation.layout.PaddingValues()) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Image(
-                shot.asImageBitmap(), "Photo ${state.pose.label}",
+                shot.asImageBitmap(), stringResource(R.string.photo_review_photo_1, state.pose.label),
                 Modifier.fillMaxWidth(0.75f).aspectRatio(shot.width.toFloat() / shot.height).clip(MaterialTheme.shapes.large),
                 contentScale = ContentScale.Fit,
             )
         }
-        Text("Pose : ${state.pose.label}", style = MaterialTheme.typography.titleSmall)
-        OutlinedTextField(state.note, vm::setNote, Modifier.fillMaxWidth(), label = { Text("Note (facultatif)") })
-        NumberField(state.weight, vm::setWeight, "Poids du jour (facultatif)", Modifier.fillMaxWidth(), "kg")
+        Text(stringResource(R.string.photo_review_pose_1, state.pose.label), style = MaterialTheme.typography.titleSmall)
+        OutlinedTextField(state.note, vm::setNote, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.photo_review_note_facultatif)) })
+        NumberField(state.weight, vm::setWeight, stringResource(R.string.photo_review_poids_jour_facultatif), Modifier.fillMaxWidth(), "kg")
         MeasurementsButton(vm)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = vm::retake, Modifier.weight(1f), enabled = !state.saving) { Text("Reprendre") }
@@ -58,6 +60,6 @@ fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
 private fun MeasurementsButton(vm: PhotoCameraViewModel) {
     val scope = rememberCoroutineScope()
     var editing by remember { mutableStateOf<MeasurementEntity?>(null) }
-    TextButton(onClick = { scope.launch { editing = vm.todayMeasurement() } }) { Text("Ajouter des mensurations pour aujourd'hui") }
+    TextButton(onClick = { scope.launch { editing = vm.todayMeasurement() } }) { Text(stringResource(R.string.photo_review_ajouter_mensurations_pour_aujourd_hui)) }
     editing?.let { m -> MeasurementDialog(m, vm::saveMeasurement) { editing = null } }
 }

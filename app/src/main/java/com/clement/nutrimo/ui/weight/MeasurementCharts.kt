@@ -10,7 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.FAB_CLEARANCE
@@ -29,7 +31,7 @@ import com.clement.nutrimo.util.signed
 @Composable
 fun MeasurementCharts(list: List<MeasurementEntity>) {
     var period by rememberSaveable { mutableStateOf(ChartPeriod.ALL) }
-    if (list.isEmpty()) return EmptyState("Ajoutez des mensurations pour voir leur évolution.")
+    if (list.isEmpty()) return EmptyState(stringResource(R.string.measurement_charts_ajoutez_mensurations_pour_voir_leur))
     val from = period.start()
     val visible = list.filter { from == null || !it.date.isBefore(from) }.sortedBy { it.date }
     val charts = MEASUREMENT_FIELDS.mapNotNull { f ->
@@ -37,7 +39,7 @@ fun MeasurementCharts(list: List<MeasurementEntity>) {
     }
     ScrollColumn(PaddingValues(bottom = FAB_CLEARANCE)) {
         PeriodChips(period) { period = it }
-        if (charts.isEmpty()) EmptyState("Aucune mensuration sur cette période.")
+        if (charts.isEmpty()) EmptyState(stringResource(R.string.measurement_charts_aucune_mensuration_sur_cette_periode))
         charts.forEach { (field, points) -> MeasurementChart(field, points, period) }
     }
 }
@@ -48,7 +50,7 @@ private fun MeasurementChart(field: MeasurementField, points: List<ChartPoint>, 
     val series = listOf(ChartSeries(points, field.color, dots = true))
     SectionCard(field.label) {
         StatRow("Actuel", "${fmt(points.last().value)} cm")
-        if (points.size > 1) StatRow("Évolution sur la période", signed(points.last().value - points.first().value, "cm"))
+        if (points.size > 1) StatRow(stringResource(R.string.measurement_charts_evolution_sur_periode), signed(points.last().value - points.first().value, "cm"))
         LineChart(series, windowOf(series, period), Modifier.fillMaxWidth().height(180.dp))
     }
 }

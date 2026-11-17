@@ -77,7 +77,8 @@ fun <T> Dropdown(
     title: String,
     selected: T,
     options: List<T>,
-    label: (T) -> String,
+    /** Composable, so options can be resource strings. */
+    label: @Composable (T) -> String,
     onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {

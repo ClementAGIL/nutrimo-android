@@ -15,7 +15,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.health.connect.client.PermissionController
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.health.HEALTH_CONNECT_PACKAGE
 import com.clement.nutrimo.data.health.HEALTH_PERMISSIONS
 import com.clement.nutrimo.data.health.HealthInfo
@@ -45,22 +47,22 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
         }
         when {
             info == null -> Unit
-            info.status == HealthStatus.UNAVAILABLE -> HintText("Health Connect n'est pas disponible sur ce téléphone.")
+            info.status == HealthStatus.UNAVAILABLE -> HintText(stringResource(R.string.steps_health_connect_n_est_pas))
             info.status == HealthStatus.NEEDS_UPDATE -> {
-                HintText("Installez ou mettez à jour Health Connect pour récupérer vos pas.")
+                HintText(stringResource(R.string.steps_installez_ou_mettez_jour_health))
                 OutlinedButton(
                     onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE)).setPackage("com.android.vending")) },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Ouvrir le Play Store") }
+                ) { Text(stringResource(R.string.steps_ouvrir_play_store)) }
             }
             !info.canReadSteps -> {
-                HintText("Nutrimo peut lire vos pas et vos séances de sport enregistrés par le téléphone, Google Fit, Mi Fitness… via Health Connect.")
-                WideButton("Connecter Health Connect", { permission.launch(HEALTH_PERMISSIONS) }, outlined = true)
+                HintText(stringResource(R.string.steps_nutrimo_peut_lire_vos_pas))
+                WideButton(stringResource(R.string.steps_connecter_health_connect), { permission.launch(HEALTH_PERMISSIONS) }, outlined = true)
             }
             else -> {
                 StepsProgress(info, goal, inBudget)
                 if (!info.allGranted) TextButton(onClick = { permission.launch(HEALTH_PERMISSIONS) }) {
-                    Text("Autoriser aussi le sport et les calories")
+                    Text(stringResource(R.string.steps_autoriser_aussi_sport_calories))
                 }
             }
         }
@@ -70,13 +72,13 @@ fun StepsCard(info: HealthInfo?, goal: Int, inBudget: Boolean, onRefresh: () -> 
 @Composable
 private fun StepsProgress(info: HealthInfo, goal: Int, inBudget: Boolean) {
     val steps = info.steps ?: 0
-    ProgressRow("${fmt(steps.toDouble(), 0)} / ${fmt(goal.toDouble(), 0)} pas", "", steps.toDouble() / goal, NutrimoColors.steps)
+    ProgressRow(stringResource(R.string.steps_1_2_pas, fmt(steps.toDouble(), 0), fmt(goal.toDouble(), 0)), "", steps.toDouble() / goal, NutrimoColors.steps)
     // Health Connect's calories replace our step estimate (see healthBudgetKcal): the summary card shows them.
     if (info.activeKcal != null) return
     val detail = when {
-        steps <= STEPS_BASELINE -> "Les pas au-delà de ${fmt(STEPS_BASELINE.toDouble(), 0)} comptent comme activité."
-        inBudget -> "≈ ${kcal(info.stepsKcal)} ajoutées au budget (pas au-delà de ${fmt(STEPS_BASELINE.toDouble(), 0)})."
-        else -> "≈ ${kcal(info.stepsKcal)} dépensées en plus (non ajoutées au budget, voir Plus → Pas)."
+        steps <= STEPS_BASELINE -> stringResource(R.string.steps_pas_au_dela_1_comptent, fmt(STEPS_BASELINE.toDouble(), 0))
+        inBudget -> stringResource(R.string.steps_1_ajoutees_au_budget_pas, kcal(info.stepsKcal), fmt(STEPS_BASELINE.toDouble(), 0))
+        else -> stringResource(R.string.steps_1_depensees_en_plus_non, kcal(info.stepsKcal))
     }
     HintText(detail)
 }

@@ -45,11 +45,13 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.model.PhotoPose
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.ScreenScaffold
@@ -67,7 +69,7 @@ fun PhotoCameraScreen(onBack: () -> Unit) {
     val snackbar = remember { androidx.compose.material3.SnackbarHostState() }
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
     SecureWindow()
-    ScreenScaffold("Photo de progression", onBack = onBack, snackbar = snackbar) { padding ->
+    ScreenScaffold(stringResource(R.string.photo_camera_photo_progression), onBack = onBack, snackbar = snackbar) { padding ->
         Box(Modifier.padding(padding).fillMaxSize()) {
             PhotoLockGate {
                 if (state.shot == null) CameraWithPermission(vm, state) else PhotoReview(vm, state)
@@ -84,7 +86,7 @@ private fun CameraWithPermission(vm: PhotoCameraViewModel, state: PhotoCameraSta
     }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted = it }
     LaunchedEffect(Unit) { if (!granted) launcher.launch(Manifest.permission.CAMERA) }
-    if (granted) Aiming(vm, state) else EmptyState("L'accès à la caméra est nécessaire pour prendre une photo.")
+    if (granted) Aiming(vm, state) else EmptyState(stringResource(R.string.photo_camera_acces_camera_est_necessaire_pour))
 }
 
 @Composable
@@ -138,13 +140,13 @@ private fun Countdown(seconds: Int) {
 @Composable
 private fun CameraControls(state: PhotoCameraState, vm: PhotoCameraViewModel) {
     Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = vm::switchCamera) { Icon(Icons.Default.Cameraswitch, "Changer de caméra") }
+        IconButton(onClick = vm::switchCamera) { Icon(Icons.Default.Cameraswitch, stringResource(R.string.photo_camera_changer_camera)) }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable(onClick = vm::nextTimer).padding(8.dp)) {
             Icon(if (state.timer == 0) Icons.Default.TimerOff else Icons.Default.Timer, "Retardateur")
-            Text(if (state.timer == 0) " Sans retardateur" else " ${state.timer} s")
+            Text(if (state.timer == 0) stringResource(R.string.photo_camera_sans_retardateur) else " ${state.timer} s")
         }
         IconButton(onClick = vm::toggleGhost, enabled = state.ghost != null) {
-            Icon(if (state.ghostOn) Icons.Default.Layers else Icons.Default.LayersClear, "Calque de la dernière photo")
+            Icon(if (state.ghostOn) Icons.Default.Layers else Icons.Default.LayersClear, stringResource(R.string.photo_camera_calque_derniere_photo))
         }
     }
 }

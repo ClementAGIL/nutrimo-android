@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DayNoteEntity
 import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.ConfirmDialog
@@ -69,7 +71,7 @@ fun DayNoteCard(date: LocalDate, note: DayNoteEntity?, onSave: (DayNoteEntity) -
     var editing by rememberSaveable { mutableStateOf(false) }
     val current = note ?: DayNoteEntity(date)
     SectionCard {
-        CardHeader("Ma journée", "Comment s'est passée votre journée ?")
+        CardHeader(stringResource(R.string.day_note_ma_journee), stringResource(R.string.day_note_comment_est_passee_votre_journee))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             MOODS.forEachIndexed { i, (emoji, label) ->
                 val mood = i + 1
@@ -77,14 +79,14 @@ fun DayNoteCard(date: LocalDate, note: DayNoteEntity?, onSave: (DayNoteEntity) -
                 MoodFace(emoji, label, current.mood == mood) { onSave(current.copy(mood = if (current.mood == mood) null else mood)) }
             }
         }
-        current.mood?.let { HintText("Journée ${MOODS[it - 1].second.lowercase()}") }
+        current.mood?.let { HintText(stringResource(R.string.day_note_journee_1, MOODS[it - 1].second.lowercase())) }
         val text = current.text
         if (text.isEmpty()) {
-            HintText("Une gratitude, une victoire, quelques mots : écrire aide à voir le chemin parcouru et à être doux·ce avec soi.")
+            HintText(stringResource(R.string.day_note_gratitude_victoire_quelques_mots_ecrire))
         } else {
             Text(text, style = MaterialTheme.typography.bodyMedium)
         }
-        OutlinedButton({ editing = true }, Modifier.fillMaxWidth()) { Text(if (text.isEmpty()) "Écrire" else "Modifier") }
+        OutlinedButton({ editing = true }, Modifier.fillMaxWidth()) { Text(if (text.isEmpty()) stringResource(R.string.day_note_ecrire) else "Modifier") }
     }
     if (editing) {
         DayNoteEditor(text = current.text, onSave = { onSave(current.copy(gratitude = "", win = "", note = it)) }) { editing = false }
@@ -94,10 +96,12 @@ fun DayNoteCard(date: LocalDate, note: DayNoteEntity?, onSave: (DayNoteEntity) -
 @Composable
 private fun MoodFace(emoji: String, label: String, selected: Boolean, onClick: () -> Unit) {
     val background = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
+    // Read here: the semantics block is not composable.
+    val description = stringResource(R.string.day_note_journee_1, label) + if (selected) stringResource(R.string.day_note_choisie) else ""
     Box(
         Modifier.size(48.dp).background(background, CircleShape)
             .clickable(role = Role.RadioButton, onClick = onClick)
-            .semantics { contentDescription = "Journée $label" + if (selected) ", choisie" else "" },
+            .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) {
         Text(emoji, fontSize = if (selected) 28.sp else 24.sp)
@@ -125,7 +129,7 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Ma journée") },
+                    title = { Text(stringResource(R.string.day_note_ma_journee)) },
                     navigationIcon = { IconButton(leave) { Icon(Icons.Default.Close, "Fermer") } },
                     actions = {
                         IconButton({ onSave(draft); onClose() }) { Icon(Icons.Outlined.Save, "Enregistrer") }
@@ -143,8 +147,8 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
         // Inside the editor's window, so it shows above it.
         if (confirmLeave) {
             ConfirmDialog(
-                title = "Abandonner le texte ?",
-                text = "Vos modifications ne seront pas enregistrées.",
+                title = stringResource(R.string.day_note_abandonner_texte),
+                text = stringResource(R.string.day_note_vos_modifications_ne_seront_pas),
                 confirmLabel = "Abandonner",
                 onConfirm = onClose,
                 onDismiss = { confirmLeave = false },

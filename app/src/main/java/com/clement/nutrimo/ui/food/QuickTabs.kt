@@ -24,8 +24,10 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.util.fmt
@@ -46,14 +48,14 @@ fun QuickTabs(vm: AddFoodViewModel, actions: AddFoodActions) {
             tabs.forEachIndexed { i, t -> Tab(selected = tab == i, onClick = { tab = i }, text = { Text(t.label) }) }
         }
         when (tabs[tab.coerceIn(tabs.indices)]) {
-            QuickTab.RECENT -> FoodList(recent, "Les aliments utilisés apparaîtront ici.", actions)
+            QuickTab.RECENT -> FoodList(recent, stringResource(R.string.quick_tabs_aliments_utilises_apparaitront_ici), actions)
             QuickTab.MEALS -> SavedMealList(vm, actions)
-            QuickTab.FAVORITES -> FoodList(favorites, "Ajoutez des favoris avec l'étoile d'un aliment.", actions)
+            QuickTab.FAVORITES -> FoodList(favorites, stringResource(R.string.quick_tabs_ajoutez_favoris_avec_etoile_aliment), actions)
             QuickTab.CUSTOM -> Column {
-                OutlinedButton(onClick = { actions.onCreate(null) }, modifier = Modifier.padding(16.dp)) { Text("Créer un aliment") }
-                FoodList(custom, "Aucun aliment personnel.", actions)
+                OutlinedButton(onClick = { actions.onCreate(null) }, modifier = Modifier.padding(16.dp)) { Text(stringResource(R.string.quick_tabs_creer_aliment)) }
+                FoodList(custom, stringResource(R.string.quick_tabs_aucun_aliment_personnel), actions)
             }
-            QuickTab.RECIPES -> if (recipes.isEmpty()) EmptyState("Aucune recette.") else LazyColumn {
+            QuickTab.RECIPES -> if (recipes.isEmpty()) EmptyState(stringResource(R.string.quick_tabs_aucune_recette)) else LazyColumn {
                 items(recipes, key = { it.id }) { RecipeRow(it) { actions.onRecipe(it.id) } }
             }
         }
@@ -69,13 +71,13 @@ private fun FoodList(foods: List<FoodEntity>, empty: String, actions: AddFoodAct
 @Composable
 private fun SavedMealList(vm: AddFoodViewModel, actions: AddFoodActions) {
     val meals by vm.savedMeals.collectAsStateWithLifecycle()
-    if (meals.isEmpty()) return EmptyState("Aucun repas enregistré.\nDans le journal, l'icône signet d'un repas l'enregistre.")
+    if (meals.isEmpty()) return EmptyState(stringResource(R.string.quick_tabs_aucun_repas_enregistre_ndans_journal))
     LazyColumn {
         items(meals, key = { it.id }) { meal ->
             val kcal by produceState<Double?>(null, meal.id) { value = vm.savedMealKcal(meal.id) }
             ListItem(
                 headlineContent = { Text(meal.name) },
-                supportingContent = { Text(kcal?.let { "${fmt(it, 0)} kcal · toucher pour l'ajouter" } ?: "") },
+                supportingContent = { Text(kcal?.let { stringResource(R.string.quick_tabs_1_kcal_toucher_pour_ajouter, fmt(it, 0)) } ?: "") },
                 trailingContent = { IconButton(onClick = { vm.deleteSavedMeal(meal.id) }) { Icon(Icons.Default.Delete, "Supprimer") } },
                 modifier = Modifier.clickable { vm.logSavedMeal(meal.id, actions.onLogged) },
             )

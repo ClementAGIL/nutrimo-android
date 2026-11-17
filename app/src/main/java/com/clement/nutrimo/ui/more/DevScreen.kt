@@ -10,7 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.demo.DemoData
 import com.clement.nutrimo.ui.common.ConfirmDialog
@@ -44,16 +46,15 @@ fun DevScreen(onBack: () -> Unit, onShowIntro: () -> Unit) {
     val vm = appViewModel { c, _ -> DevViewModel(c) }
     var confirm by remember { mutableStateOf<DevAction?>(null) }
     val runner = vm.runner
-    ScreenScaffold("Développeur", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.dev_developpeur), onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            SectionCard("Présentation") {
-                IntroText("La présentation des fonctionnalités ne s'affiche qu'au premier lancement.")
-                WideButton("Revoir la présentation", onShowIntro)
+            SectionCard(stringResource(R.string.dev_presentation)) {
+                IntroText(stringResource(R.string.dev_presentation_fonctionnalites_ne_affiche_qu))
+                WideButton(stringResource(R.string.dev_revoir_presentation), onShowIntro)
             }
-            SectionCard("Données de démo") {
+            SectionCard(stringResource(R.string.dev_donnees_demo)) {
                 IntroText(
-                    "Remplace toutes vos données par un historique fictif : profil, 2 objectifs, 5 mois de pesées, " +
-                        "mensurations, eau, activités, un aliment perso, 3 recettes (dont une sous-recette) 30 jours de repas et 15 photos de progression (silhouettes dessinées).",
+                    stringResource(R.string.dev_remplace_toutes_vos_donnees_par),
                 )
                 DevAction.entries.forEach { action ->
                     WideButton(action.button, { confirm = action }, enabled = !runner.busy, outlined = action == DevAction.CLEAR)
@@ -66,7 +67,7 @@ fun DevScreen(onBack: () -> Unit, onShowIntro: () -> Unit) {
     confirm?.let { action ->
         ConfirmDialog(
             title = action.confirmTitle,
-            text = "Toutes vos données actuelles seront supprimées. Exportez-les avant si besoin.",
+            text = stringResource(R.string.dev_toutes_vos_donnees_actuelles_seront),
             confirmLabel = action.confirmLabel,
             onConfirm = { vm.run(action) },
             onDismiss = { confirm = null },

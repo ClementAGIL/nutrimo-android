@@ -32,8 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.util.kg
@@ -69,7 +71,7 @@ fun PhotoCompareScreen(onBack: () -> Unit) {
 @Composable
 private fun ModeSwitch(overlay: Boolean, onChange: (Boolean) -> Unit) {
     SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        listOf(false to "Côte à côte", true to "Superposer").forEachIndexed { i, (value, label) ->
+        listOf(false to stringResource(R.string.photo_compare_cote_cote), true to "Superposer").forEachIndexed { i, (value, label) ->
             SegmentedButton(selected = overlay == value, onClick = { onChange(value) }, shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(label) }
         }
     }
@@ -105,12 +107,12 @@ private fun OverlayView(a: CompareSide, b: CompareSide, zoomA: ZoomState, zoomB:
             }
         }
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-            Text("Opacité de B : ${(opacity * 100).toInt()} %", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.photo_compare_opacite_b_1, (opacity * 100).toInt()), style = MaterialTheme.typography.labelLarge)
             Slider(opacity, { opacity = it })
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("Déplacer :")
-                FilterChip(selected = !movingB, onClick = { movingB = false }, label = { Text("Photo A") })
-                FilterChip(selected = movingB, onClick = { movingB = true }, label = { Text("Photo B") })
+                Text(stringResource(R.string.photo_compare_deplacer))
+                FilterChip(selected = !movingB, onClick = { movingB = false }, label = { Text(stringResource(R.string.common_photo)) })
+                FilterChip(selected = movingB, onClick = { movingB = true }, label = { Text(stringResource(R.string.common_photo_b)) })
             }
         }
     }

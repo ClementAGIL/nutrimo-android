@@ -9,9 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.calc.STEPS_BASELINE
 import com.clement.nutrimo.ui.common.HintText
@@ -62,16 +64,14 @@ fun StepsScreen(onBack: () -> Unit) {
     val vm = appViewModel { c, _ -> StepsViewModel(c) }
     val context = LocalContext.current
     val form = vm.form
-    ScreenScaffold("Pas et sport", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.steps_pas_sport), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText(
-                "Les pas et les séances de sport sont lus dans Health Connect, où le téléphone, Google Fit, Mi Fitness, " +
-                    "Samsung Health ou Strava les enregistrent. Si rien ne s'affiche, activez la synchronisation vers " +
-                    "Health Connect dans ces applis.",
+                stringResource(R.string.steps_pas_seances_sport_sont_lus),
             )
             GoalsCard(form)
             // Absent on phones without Health Connect: ignore instead of crashing.
-            WideButton("Ouvrir les réglages Health Connect", {
+            WideButton(stringResource(R.string.steps_ouvrir_reglages_health_connect), {
                 runCatching { context.startActivity(Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)) }
             }, outlined = true)
             WideButton("Enregistrer", { vm.save(onBack) }, enabled = form.stepGoal != null && form.sportGoal != null)
@@ -83,20 +83,16 @@ fun StepsScreen(onBack: () -> Unit) {
 private fun GoalsCard(form: ActivityGoalsForm) {
     SectionCard {
         NumberField(
-            form.steps, { form.steps = it.filter(Char::isDigit) }, "Objectif de pas quotidien", Modifier.fillMaxWidth(), "pas",
+            form.steps, { form.steps = it.filter(Char::isDigit) }, stringResource(R.string.steps_objectif_pas_quotidien), Modifier.fillMaxWidth(), "pas",
             isError = form.stepGoal == null,
         )
         NumberField(
-            form.sport, { form.sport = it.filter(Char::isDigit) }, "Objectif sport quotidien", Modifier.fillMaxWidth(), "kcal",
+            form.sport, { form.sport = it.filter(Char::isDigit) }, stringResource(R.string.steps_objectif_sport_quotidien), Modifier.fillMaxWidth(), "kcal",
             isError = form.sportGoal == null,
         )
-        SwitchRow("Ajouter pas et séances au budget calorique", form.inBudget, { form.inBudget = it })
+        SwitchRow(stringResource(R.string.steps_ajouter_pas_seances_au_budget), form.inBudget, { form.inBudget = it })
         HintText(
-            "Votre niveau d'activité inclut déjà la marche quotidienne : seuls les pas au-delà de " +
-                "${fmt(STEPS_BASELINE.toDouble(), 0)} sont comptés (≈ 0,04 kcal par pas pour 90 kg). " +
-                "Les séances de marche et de course ne s'ajoutent pas (leurs pas comptent déjà). " +
-                "Si vous autorisez le sport et les calories dans Health Connect, les calories actives de vos applis " +
-                "(montre, Mi Fitness…) remplacent cette estimation. Ne notez pas à la main une séance déjà importée.",
+            stringResource(R.string.steps_votre_niveau_activite_inclut_deja, fmt(STEPS_BASELINE.toDouble(), 0)),
         )
     }
 }

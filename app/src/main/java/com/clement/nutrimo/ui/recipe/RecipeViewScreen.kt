@@ -13,12 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.repository.RecipeDetail
 import com.clement.nutrimo.ui.common.ConfirmDialog
@@ -63,17 +65,17 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
         IconButton(onClick = { confirmDelete = true }) { Icon(Icons.Default.Delete, "Supprimer") }
     }) { padding ->
         ScrollColumn(padding) {
-            WideButton("Ajouter au journal", { onLog(vm.id) })
-            SectionCard("${fmt(d.recipe.parts)} parts · ${fmt(d.totals.weightPerPart, 0)} g par part") {
+            WideButton(stringResource(R.string.common_ajouter_au_journal), { onLog(vm.id) })
+            SectionCard(stringResource(R.string.recipe_view_1_parts_2_g_par, fmt(d.recipe.parts), fmt(d.totals.weightPerPart, 0))) {
                 d.lines.forEach { StatRow(it.name, ingredientQuantity(it)) }
             }
-            NutrientTable(d.totals.perPart, "Par part")
-            d.totals.per100?.let { SectionCard { StatRow("Pour 100 g", kcal(it.kcal)) } }
+            NutrientTable(d.totals.perPart, stringResource(R.string.common_par_part))
+            d.totals.per100?.let { SectionCard { StatRow(stringResource(R.string.common_pour_100_g), kcal(it.kcal)) } }
         }
     }
     if (confirmDelete) {
-        val warning = if (parents.isEmpty()) "" else "Elle est utilisée dans : ${parents.joinToString()}. "
-        ConfirmDialog("Supprimer la recette ?", "${warning}Les jours déjà enregistrés ne changent pas.", "Supprimer",
+        val warning = if (parents.isEmpty()) "" else stringResource(R.string.recipe_view_elle_est_utilisee_dans_1, parents.joinToString())
+        ConfirmDialog(stringResource(R.string.recipe_view_supprimer_recette), stringResource(R.string.recipe_view_1_sles_jours_deja_enregistres, warning), "Supprimer",
             { vm.delete(onBack) }, { confirmDelete = false })
     }
 }

@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.R
@@ -148,7 +149,7 @@ private fun FallingFood(icon: ImageVector, color: Color, p: Float) {
 @Composable
 private fun RemainingPill(p: Float) {
     Text(
-        "Reste 450 kcal",
+        stringResource(R.string.intro_art_reste_450_kcal),
         Modifier.offset(y = 96.dp + 12.dp * (1f - easeOut(p))).graphicsLayer { alpha = p }
             // White outline: the pill sits on the ring and shares its green.
             .clip(RoundedCornerShape(50)).background(NutrimoColors.weight).border(2.dp, Color.White, RoundedCornerShape(50))

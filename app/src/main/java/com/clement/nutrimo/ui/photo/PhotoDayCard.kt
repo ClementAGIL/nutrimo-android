@@ -25,7 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.HintText
@@ -46,13 +48,13 @@ fun PhotoDayCard(day: PhotoDay, state: PhotosUiState, vm: PhotosViewModel) {
         }
         photo.note?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            OutlinedButton(onClick = { vm.setA(photo) }, Modifier.weight(1f)) { Text("Photo A") }
-            OutlinedButton(onClick = { vm.setB(photo) }, Modifier.weight(1f)) { Text("Photo B") }
-            IconButton(onClick = { deleting = photo }) { Icon(Icons.Default.Delete, "Supprimer la photo") }
+            OutlinedButton(onClick = { vm.setA(photo) }, Modifier.weight(1f)) { Text(stringResource(R.string.common_photo)) }
+            OutlinedButton(onClick = { vm.setB(photo) }, Modifier.weight(1f)) { Text(stringResource(R.string.common_photo_b)) }
+            IconButton(onClick = { deleting = photo }) { Icon(Icons.Default.Delete, stringResource(R.string.photo_day_supprimer_photo)) }
         }
     }
     deleting?.let {
-        ConfirmDialog("Supprimer la photo ?", "Photo « ${it.pose.label} » du ${it.date.day()}.", "Supprimer", { vm.delete(it) }, { deleting = null })
+        ConfirmDialog(stringResource(R.string.photo_day_supprimer_photo_2), stringResource(R.string.photo_day_photo_1_2, it.pose.label, it.date.day()), "Supprimer", { vm.delete(it) }, { deleting = null })
     }
 }
 

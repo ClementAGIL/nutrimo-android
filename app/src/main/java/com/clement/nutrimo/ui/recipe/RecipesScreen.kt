@@ -17,9 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.RecipeEntity
 import com.clement.nutrimo.ui.common.EmptyState
@@ -43,10 +45,10 @@ fun RecipesScreen(onOpen: (String) -> Unit, onCreate: () -> Unit) {
     val vm = appViewModel { c, _ -> RecipesViewModel(c) }
     val recipes by vm.recipes.collectAsStateWithLifecycle()
     ScreenScaffold("Recettes", floatingActionButton = {
-        FloatingActionButton(onClick = onCreate) { Icon(Icons.Default.Add, "Nouvelle recette") }
+        FloatingActionButton(onClick = onCreate) { Icon(Icons.Default.Add, stringResource(R.string.common_nouvelle_recette)) }
     }) { padding ->
         if (recipes.isEmpty()) return@ScreenScaffold EmptyState(
-            "Aucune recette.\nCréez-en une avec + : ingrédients en grammes et nombre de parts.",
+            stringResource(R.string.recipes_aucune_recette_ncreez_en_avec),
             Modifier.padding(padding),
         )
         LazyColumn(Modifier.padding(padding)) {

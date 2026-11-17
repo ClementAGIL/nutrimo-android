@@ -20,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 
 private val STAT_VALUE_MAX_WIDTH = 220.dp
 
@@ -78,5 +80,5 @@ fun SwitchRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Uni
 /** Opens the settings screen where the card's goal is set. */
 @Composable
 fun GoalSettingsButton(onClick: () -> Unit) {
-    IconButton(onClick = onClick) { Icon(Icons.Default.Tune, "Modifier l'objectif") }
+    IconButton(onClick = onClick) { Icon(Icons.Default.Tune, stringResource(R.string.rows_modifier_objectif)) }
 }

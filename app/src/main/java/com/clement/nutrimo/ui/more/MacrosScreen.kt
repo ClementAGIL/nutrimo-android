@@ -13,10 +13,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.calc.MACRO_PRESETS
 import com.clement.nutrimo.domain.calc.MacroSplit
@@ -51,16 +53,16 @@ fun MacrosScreen(onBack: () -> Unit) {
     val latestKg by vm.latestKg.collectAsStateWithLifecycle()
     var split by remember { mutableStateOf(MacroSplit.BALANCED) }
     LaunchedEffect(Unit) { split = vm.saved() }
-    ScreenScaffold("Objectifs de macros", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.macros_objectifs_macros), onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            IntroText("Part de vos calories pour chaque macronutriment.")
+            IntroText(stringResource(R.string.macros_part_vos_calories_pour_chaque))
             ChoiceChips(MACRO_PRESETS, MACRO_PRESETS.find { it.second == split }, { it.first }) { split = it.second }
             PercentFields(split) { split = it }
-            if (split.total != 100) WarningText("Total : ${split.total} % (doit faire 100 %)")
+            if (split.total != 100) WarningText(stringResource(R.string.macros_total_1_doit_faire_100, split.total))
             target?.let { t ->
                 val g = split.grams(t.target)
-                SectionCard("Pour ${fmt(t.target, 0)} kcal / jour") {
-                    StatRow("Protéines", "${fmt(g.protein, 0)} g" + (latestKg?.let { " (${fmt(g.protein / it, 1)} g/kg)" } ?: ""))
+                SectionCard(stringResource(R.string.macros_pour_1_kcal_jour, fmt(t.target, 0))) {
+                    StatRow(stringResource(R.string.common_proteines), "${fmt(g.protein, 0)} g" + (latestKg?.let { " (${fmt(g.protein / it, 1)} g/kg)" } ?: ""))
                     StatRow("Glucides", "${fmt(g.carbs, 0)} g")
                     StatRow("Lipides", "${fmt(g.fat, 0)} g")
                 }
@@ -78,7 +80,7 @@ fun MacrosScreen(onBack: () -> Unit) {
 private fun PercentFields(split: MacroSplit, onChange: (MacroSplit) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         val pct = { text: String -> text.toIntOrNull() ?: 0 }
-        NumberField(split.proteinPct.toString(), { onChange(split.copy(proteinPct = pct(it))) }, "Protéines", Modifier.weight(1f), "%")
+        NumberField(split.proteinPct.toString(), { onChange(split.copy(proteinPct = pct(it))) }, stringResource(R.string.common_proteines), Modifier.weight(1f), "%")
         NumberField(split.carbsPct.toString(), { onChange(split.copy(carbsPct = pct(it))) }, "Glucides", Modifier.weight(1f), "%")
         NumberField(split.fatPct.toString(), { onChange(split.copy(fatPct = pct(it))) }, "Lipides", Modifier.weight(1f), "%")
     }

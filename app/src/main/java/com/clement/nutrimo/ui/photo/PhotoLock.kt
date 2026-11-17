@@ -29,8 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 
 /** Face unlock is "weak" on most phones; the PIN / pattern / password is always accepted as a fallback. */
 private const val AUTHENTICATORS = Authenticators.BIOMETRIC_WEAK or Authenticators.DEVICE_CREDENTIAL
@@ -67,9 +69,9 @@ fun PhotoLockGate(content: @Composable () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(Icons.Default.Lock, null, Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
-        Text("Vos photos sont protégées", style = MaterialTheme.typography.titleMedium)
-        Text(failed ?: "Déverrouillez avec votre empreinte, votre visage ou votre code.", textAlign = TextAlign.Center)
-        Button(onClick = ask) { Text("Déverrouiller") }
+        Text(stringResource(R.string.photo_lock_vos_photos_sont_protegees), style = MaterialTheme.typography.titleMedium)
+        Text(failed ?: stringResource(R.string.photo_lock_deverrouillez_avec_votre_empreinte_votre), textAlign = TextAlign.Center)
+        Button(onClick = ask) { Text(stringResource(R.string.photo_lock_deverrouiller)) }
     }
 }
 

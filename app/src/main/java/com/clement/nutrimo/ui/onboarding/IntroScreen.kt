@@ -26,8 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.splashGone
 import kotlinx.coroutines.delay
@@ -81,7 +83,7 @@ fun IntroScreen(onDone: () -> Unit) {
         }
         PageDots(pager)
         Spacer(Modifier.height(16.dp))
-        WideButton(if (last) "C'est parti" else "Suivant", {
+        WideButton(if (last) stringResource(R.string.intro_c_est_parti) else "Suivant", {
             if (last) onDone() else scope.launch { pager.animateScrollToPage(pager.currentPage + 1) }
         })
     }

@@ -22,8 +22,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.domain.model.PhotoPose
 import com.clement.nutrimo.ui.common.EmptyState
@@ -43,7 +45,7 @@ fun PhotosScreen(onBack: () -> Unit, onCamera: () -> Unit, onCompare: (PhotoEnti
     ScreenScaffold(
         "Photos",
         onBack = onBack,
-        floatingActionButton = { FloatingActionButton(onClick = onCamera) { Icon(Icons.Default.PhotoCamera, "Prendre une photo") } },
+        floatingActionButton = { FloatingActionButton(onClick = onCamera) { Icon(Icons.Default.PhotoCamera, stringResource(R.string.photos_prendre_photo)) } },
     ) { padding ->
         Column(Modifier.padding(padding)) {
             PhotoLockGate { PhotosBody(state, vm, onCompare) }
@@ -54,14 +56,14 @@ fun PhotosScreen(onBack: () -> Unit, onCamera: () -> Unit, onCompare: (PhotoEnti
 @Composable
 private fun PhotosBody(state: PhotosUiState, vm: PhotosViewModel, onCompare: (PhotoEntity, PhotoEntity) -> Unit) {
     if (state.loaded && state.days.isEmpty() && state.pose == null) {
-        return EmptyState("Aucune photo pour l'instant.\nPrenez la première avec le bouton appareil photo.")
+        return EmptyState(stringResource(R.string.photos_aucune_photo_pour_instant_nprenez))
     }
     ScrollColumn(PaddingValues(bottom = FAB_CLEARANCE)) {
         PoseFilter(state.pose, vm::setPose)
         SectionCard {
-            if (state.days.isEmpty()) HintText("Aucune photo pour cette pose.")
+            if (state.days.isEmpty()) HintText(stringResource(R.string.photos_aucune_photo_pour_cette_pose))
             PhotoTimeline(state, vm::select)
-            HintText("Touchez un point pour voir les photos du jour.")
+            HintText(stringResource(R.string.photos_touchez_point_pour_voir_photos))
         }
         CompareBar(state, vm, onCompare)
         state.selectedDay?.let { PhotoDayCard(it, state, vm) }
@@ -86,8 +88,8 @@ private fun CompareBar(state: PhotosUiState, vm: PhotosViewModel, onCompare: (Ph
         }
         val a = state.a
         val b = state.b
-        Button(onClick = { if (a != null && b != null) onCompare(a, b) }, enabled = a != null && b != null) { Text("Comparer A et B") }
-        if (a == null || b == null) HintText("Choisissez deux photos dans la frise (« Photo A », « Photo B »).")
+        Button(onClick = { if (a != null && b != null) onCompare(a, b) }, enabled = a != null && b != null) { Text(stringResource(R.string.photos_comparer_b)) }
+        if (a == null || b == null) HintText(stringResource(R.string.photos_choisissez_deux_photos_dans_frise))
     }
 }
 
@@ -97,7 +99,7 @@ private fun CompareSlot(letter: String, photo: PhotoEntity?, modifier: Modifier)
         Text(letter, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
         Spacer(Modifier.width(8.dp))
         if (photo == null) {
-            HintText("Pas encore choisie")
+            HintText(stringResource(R.string.photos_pas_encore_choisie))
         } else {
             PhotoThumb(photo, Modifier.size(42.dp, 56.dp).clip(MaterialTheme.shapes.small))
             Spacer(Modifier.width(8.dp))

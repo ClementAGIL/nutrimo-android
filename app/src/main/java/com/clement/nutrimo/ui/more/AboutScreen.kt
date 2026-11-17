@@ -4,26 +4,27 @@ package com.clement.nutrimo.ui.more
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import com.clement.nutrimo.BuildConfig
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
-    ScreenScaffold("À propos", onBack = onBack) { padding ->
+    ScreenScaffold(stringResource(R.string.about_propos), onBack = onBack) { padding ->
         ScrollColumn(padding) {
-            SectionCard("Nutrimo ${BuildConfig.VERSION_NAME}") {
-                Text("Vos données restent sur ce téléphone. Pensez à les exporter (Plus → Sauvegarde).")
+            SectionCard(stringResource(R.string.about_nutrimo_1, BuildConfig.VERSION_NAME)) {
+                Text(stringResource(R.string.about_vos_donnees_restent_sur_ce))
             }
-            SectionCard("Sources des données") {
-                Text("Table de composition nutritionnelle Ciqual 2020, ANSES — Licence Ouverte / Etalab.")
-                Text("Open Food Facts (openfoodfacts.org) — données sous Open Database License (ODbL).")
+            SectionCard(stringResource(R.string.about_sources_donnees)) {
+                Text(stringResource(R.string.about_table_composition_nutritionnelle_ciqual_2020))
+                Text(stringResource(R.string.about_open_food_facts_openfoodfacts_org))
             }
             SectionCard("Avertissement") {
                 Text(
-                    "Les besoins caloriques sont des estimations (formule de Mifflin-St Jeor). " +
-                        "Une perte de poids rapide ou un apport très bas doit se faire avec un suivi médical.",
+                    stringResource(R.string.about_besoins_caloriques_sont_estimations_formule),
                 )
             }
         }

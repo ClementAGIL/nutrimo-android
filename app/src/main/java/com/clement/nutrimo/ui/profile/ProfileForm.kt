@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.domain.calc.DEFAULT_WATER_GOAL_ML
 import com.clement.nutrimo.domain.model.ActivityLevel
@@ -50,7 +52,7 @@ fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ChoiceChips(Sex.entries, draft.sex, { it.label }) { onChange(draft.copy(sex = it)) }
         DateField(
-            label = "Date de naissance",
+            label = stringResource(R.string.profile_form_date_naissance),
             date = draft.birthDate,
             onDateChange = { onChange(draft.copy(birthDate = it)) },
             max = LocalDate.now().minusYears(10),
@@ -65,7 +67,7 @@ fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
             modifier = Modifier.fillMaxWidth(),
         )
         Dropdown(
-            title = "Activité physique",
+            title = stringResource(R.string.common_activite_physique),
             selected = draft.activity,
             options = ActivityLevel.entries,
             label = { "${it.label} — ${it.description}" },
@@ -75,7 +77,7 @@ fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
         NumberField(
             value = draft.waterGoal,
             onValueChange = { onChange(draft.copy(waterGoal = it)) },
-            label = "Objectif d'eau par jour",
+            label = stringResource(R.string.profile_form_objectif_eau_par_jour),
             suffix = "ml",
             modifier = Modifier.fillMaxWidth(),
         )

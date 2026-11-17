@@ -19,7 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.domain.calc.Activities
@@ -47,14 +49,14 @@ fun ActivityCard(
     var adding by remember { mutableStateOf(false) }
     val total = activities.sumOf { it.kcal } + imported.sumOf { it.kcal }
     SectionCard {
-        CardHeader("Activité physique", "Activités notées : ajoutées au budget") {
+        CardHeader(stringResource(R.string.common_activite_physique), stringResource(R.string.activity_activites_notees_ajoutees_au_budget)) {
             GoalSettingsButton(onGoalSettings)
-            IconButton(onClick = { adding = true }) { Icon(Icons.Default.Add, "Ajouter une activité") }
+            IconButton(onClick = { adding = true }) { Icon(Icons.Default.Add, stringResource(R.string.activity_ajouter_activite)) }
         }
         ProgressRow("${fmt(total, 0)} / ${kcal(goalKcal.toDouble())}", "", total / goalKcal, NutrimoColors.sport)
         activities.forEach { a ->
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val minutes = a.minutes?.let { " · $it min" }.orEmpty()
+                val minutes = a.minutes?.let { stringResource(R.string.activity_1_min, it) }.orEmpty()
                 Text("${Activities.byKey(a.type).label}$minutes", Modifier.weight(1f))
                 Text(kcal(a.kcal))
                 IconButton(onClick = { onDelete(a) }) { Icon(Icons.Default.Close, "Supprimer") }
@@ -68,10 +70,10 @@ fun ActivityCard(
 /** Read-only workouts from Health Connect (they count in the budget only if enabled in Plus → Pas). */
 @Composable
 private fun ImportedSessions(sessions: List<ImportedActivity>) {
-    Text("Depuis Health Connect", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+    Text(stringResource(R.string.activity_depuis_health_connect), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
     sessions.forEach { s ->
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("${s.label} · ${s.minutes} min", Modifier.weight(1f))
+            Text(stringResource(R.string.activity_1_2_min, s.label, s.minutes), Modifier.weight(1f))
             Text("${kcal(s.kcal)}${if (s.measured) "" else " (est.)"}")
         }
     }
@@ -84,14 +86,14 @@ private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: ()
     var manual by remember { mutableStateOf("") }
     val valid = if (type.met != null) minutes.toDecimal()?.let { it > 0 } == true else manual.toDecimal()?.let { it > 0 } == true
     FormDialog(
-        "Activité", onDismiss,
+        stringResource(R.string.activity_activite), onDismiss,
         { onAdd(type.key, minutes.toDecimal()?.toInt()?.takeIf { type.met != null }, manual.toDecimal()) },
         confirmLabel = "Ajouter", canConfirm = valid,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Dropdown("Type", type, Activities.TYPES, { it.label }, { type = it }, Modifier.fillMaxWidth())
-            if (type.met != null) NumberField(minutes, { minutes = it }, "Durée", Modifier.fillMaxWidth(), "min")
-            else NumberField(manual, { manual = it }, "Calories dépensées", Modifier.fillMaxWidth(), "kcal")
+            if (type.met != null) NumberField(minutes, { minutes = it }, stringResource(R.string.activity_duree), Modifier.fillMaxWidth(), "min")
+            else NumberField(manual, { manual = it }, stringResource(R.string.activity_calories_depensees), Modifier.fillMaxWidth(), "kcal")
         }
     }
 }

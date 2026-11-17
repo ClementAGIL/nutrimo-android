@@ -1,7 +1,6 @@
 // Daily goal visuals: one color per goal, a dot (filled = achieved, ring = missed) and labelled rows.
 package com.clement.nutrimo.ui.history
 
-import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
@@ -15,9 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.calc.DailyGoal
+import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.theme.NutrimoColors
 
@@ -64,6 +66,6 @@ fun GoalLegend() {
         }
     }
     HintText(
-        "Rond plein : objectif atteint · anneau : manqué · rien : aucune donnée ce jour-là.",
+        stringResource(R.string.goal_rond_plein_objectif_atteint_anneau),
     )
 }

@@ -21,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.util.day
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.kg
@@ -48,9 +50,9 @@ fun DayBubble(day: HubDay, x: Float, actions: WeightHubActions, onClose: () -> U
                 Text(day.date.day(), Modifier.weight(1f), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
                 IconButton(onClick = onClose) { Icon(Icons.Default.Close, "Fermer") }
             }
-            day.kg?.let { Text(if (day.weighed) "Pesée : ${kg(it)}" else "≈ ${kg(it)} (courbe)", style = MaterialTheme.typography.bodySmall) }
+            day.kg?.let { Text(if (day.weighed) stringResource(R.string.day_bubble_pesee_1, kg(it)) else stringResource(R.string.day_bubble_1_courbe, kg(it)), style = MaterialTheme.typography.bodySmall) }
             day.measurement?.let { Text(measurementSummary(it), style = MaterialTheme.typography.bodySmall) }
-            if (day.photos.isNotEmpty()) Text("Photos : ${day.photos.joinToString { it.pose.label }}", style = MaterialTheme.typography.bodySmall)
+            if (day.photos.isNotEmpty()) Text(stringResource(R.string.day_bubble_photos_1, day.photos.joinToString { it.pose.label }), style = MaterialTheme.typography.bodySmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
                 if (day.weighed) TextButton(onClick = actions.onHistory) { Text("Historique") }
                 if (day.measurement != null) TextButton(onClick = actions.onMeasurements) { Text("Mensurations") }

@@ -15,6 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
+import com.clement.nutrimo.R
 
 /**
  * Dialog with [content], a confirm button ([confirmLabel], enabled by [canConfirm]) and "Annuler".
@@ -69,7 +71,7 @@ fun TextDialog(title: String, label: String, initial: String = "", onConfirm: (S
 fun InfoButton(title: String, text: String) {
     var open by remember { mutableStateOf(false) }
     IconButton({ open = true }) {
-        Icon(Icons.Outlined.Info, contentDescription = "Aide : $title", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.dialogs_aide_1, title), tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
     if (open) {
         AlertDialog(
