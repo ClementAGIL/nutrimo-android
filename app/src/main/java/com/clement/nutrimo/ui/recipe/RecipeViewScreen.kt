@@ -1,7 +1,6 @@
 // Recipe detail: per part and per 100 g nutrition, ingredients; edit, delete, add to the journal.
 package com.clement.nutrimo.ui.recipe
 
-import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -32,6 +30,7 @@ import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
 import com.clement.nutrimo.ui.navigation.RecipeViewRoute
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.kcal

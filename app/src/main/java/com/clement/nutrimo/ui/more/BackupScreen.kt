@@ -1,8 +1,6 @@
 // Backups: on the PC server (data only), or a ZIP file with the data and the progress photos; import reads ZIP or JSON.
 package com.clement.nutrimo.ui.more
 
-import com.clement.nutrimo.ui.common.asString
-import com.clement.nutrimo.util.uiText
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
@@ -34,9 +32,11 @@ import com.clement.nutrimo.ui.common.StatusRunner
 import com.clement.nutrimo.ui.common.SwitchRow
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
 import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import com.clement.nutrimo.util.dateTime
 import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate

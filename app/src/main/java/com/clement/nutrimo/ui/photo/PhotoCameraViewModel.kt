@@ -1,20 +1,20 @@
 // State of the photo camera: pose, camera, timer, ghost of the last photo, then the review of the shot before saving.
 package com.clement.nutrimo.ui.photo
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.domain.model.PhotoPose
 import com.clement.nutrimo.ui.navigation.PhotoCameraRoute
+import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.toDecimal
 import com.clement.nutrimo.util.toInput
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

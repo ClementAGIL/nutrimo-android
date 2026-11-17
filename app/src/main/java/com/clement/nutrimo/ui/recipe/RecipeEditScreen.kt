@@ -1,8 +1,6 @@
 // Recipe editor: name, parts, cooked weight, ingredient list (tap to change the quantity), live totals.
 package com.clement.nutrimo.ui.recipe
 
-import com.clement.nutrimo.ui.common.asString
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +38,7 @@ import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.kcal
 import com.clement.nutrimo.util.toDecimal
@@ -95,7 +95,7 @@ private fun TotalsCard(draft: RecipeDraft) {
     SectionCard(stringResource(R.string.recipe_edit_valeurs)) {
         StatRow(stringResource(R.string.recipe_edit_total), kcal(t.total.kcal))
         StatRow(stringResource(R.string.common_par_part), kcal(t.perPart.kcal))
-        StatRow(stringResource(R.string.recipe_edit_poids_total), "${fmt(t.weightG, 0)} g${if (t.cookedWeightG == null) " (cru)" else ""}")
+        StatRow(stringResource(R.string.recipe_edit_poids_total), stringResource(if (t.cookedWeightG == null) R.string.recipe_edit_raw_weight else R.string.recipe_edit_weight, fmt(t.weightG, 0)))
         t.per100?.let { StatRow(stringResource(R.string.common_pour_100_g), kcal(it.kcal)) }
     }
 }

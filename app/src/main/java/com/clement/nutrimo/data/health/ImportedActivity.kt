@@ -1,11 +1,11 @@
 // Health Connect workouts turned into journal activities: label, calories (measured or estimated), budget rule.
 package com.clement.nutrimo.data.health
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
 import androidx.health.connect.client.records.ExerciseSessionRecord as E
+import com.clement.nutrimo.R
 import com.clement.nutrimo.domain.calc.Activities
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.util.uiText
 
 /** Health Connect exercise type → key of Activities.TYPES (for the label and the MET estimate). */
 private val TYPE_TO_ACTIVITY = mapOf(

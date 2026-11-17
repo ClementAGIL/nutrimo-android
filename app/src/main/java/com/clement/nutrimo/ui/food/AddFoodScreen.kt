@@ -1,7 +1,6 @@
 // Food search screen: search field with barcode button, quick tabs when empty, merged results otherwise.
 package com.clement.nutrimo.ui.food
 
-import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,6 +31,7 @@ import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.WarningText
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
 
 /** Where the search screen can go next. */
 data class AddFoodActions(

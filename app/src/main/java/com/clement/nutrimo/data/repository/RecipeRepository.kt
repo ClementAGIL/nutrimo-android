@@ -1,10 +1,8 @@
 // Recipes: storage, nutrition (recursive through sub-recipes) and cycle protection.
 package com.clement.nutrimo.data.repository
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
 import androidx.room.withTransaction
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.IngredientEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.db.RecipeEntity
@@ -15,7 +13,9 @@ import com.clement.nutrimo.domain.calc.RecipeMath
 import com.clement.nutrimo.domain.calc.RecipeTotals
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.normalized
+import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.fmt
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

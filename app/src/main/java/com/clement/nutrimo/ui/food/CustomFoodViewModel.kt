@@ -1,12 +1,12 @@
 // Create / edit a custom food: label nutrients mandatory, fiber and micros optional, own portions.
 package com.clement.nutrimo.ui.food
 
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.PortionEntity

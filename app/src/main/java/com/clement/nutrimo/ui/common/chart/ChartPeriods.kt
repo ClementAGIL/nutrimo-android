@@ -1,8 +1,6 @@
 // Shared pieces for line charts over time: period filter (chips), visible window from the data, and the legend.
 package com.clement.nutrimo.ui.common.chart
 
-import androidx.compose.ui.res.stringResource
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -18,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.common.ChoiceChips
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

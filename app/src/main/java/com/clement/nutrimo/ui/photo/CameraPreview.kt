@@ -1,9 +1,6 @@
 // CameraX for progress photos: 4:3 preview + still capture, front or back camera, delivered as an upright Bitmap.
 package com.clement.nutrimo.ui.photo
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.CameraSelector
@@ -23,6 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.clement.nutrimo.R
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.util.uiText
 
 /** Preview and photos share the 4:3 sensor ratio, so the ghost of a past photo (cropped the same way) lines up. */
 private val RATIO_4_3 = ResolutionSelector.Builder().setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY).build()

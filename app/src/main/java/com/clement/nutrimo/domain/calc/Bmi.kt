@@ -1,8 +1,8 @@
 // Body mass index and its WHO category.
 package com.clement.nutrimo.domain.calc
 
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
+import com.clement.nutrimo.R
 
 /** BMI from [min] (inclusive) to [max] (exclusive); null = open-ended. */
 data class BmiZone(val min: Double?, val max: Double?, @StringRes val label: Int)

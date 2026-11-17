@@ -1,13 +1,11 @@
 // Food search: instant local results, then the PC backend (or Open Food Facts on submit), plus barcode lookup.
 package com.clement.nutrimo.ui.food
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.RecipeEntity
@@ -16,6 +14,8 @@ import com.clement.nutrimo.data.repository.RemoteSource
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import com.clement.nutrimo.ui.navigation.AddFoodRoute
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

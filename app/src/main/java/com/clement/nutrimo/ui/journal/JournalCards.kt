@@ -67,7 +67,7 @@ fun SummaryCard(state: JournalUiState, onClick: () -> Unit, onGoalSettings: () -
 /** Budget, maintenance and what is left; over the goal but under maintenance is yellow (still losing), not red. */
 @Composable
 private fun KcalBalance(state: JournalUiState, budget: Double) {
-    Text("${if (state.burned > 0) "Budget" else "Objectif"} : ${kcal(budget)}")
+    Text(stringResource(if (state.burned > 0) R.string.journal_budget_line else R.string.journal_goal_line, kcal(budget)))
     if (state.burned > 0) Text(stringResource(R.string.journal_dont_1_activite_pas, kcal(state.burned)), style = MaterialTheme.typography.bodySmall)
     state.maintenance?.let { Text(stringResource(R.string.journal_maintenance_1, kcal(it)), style = MaterialTheme.typography.bodySmall) }
     val eaten = state.total.kcal

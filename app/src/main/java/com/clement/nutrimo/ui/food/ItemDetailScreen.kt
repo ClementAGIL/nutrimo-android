@@ -1,7 +1,6 @@
 // Quantity screen for a food or recipe: amount + unit, meal, live nutrients, favorite; add / save / delete.
 package com.clement.nutrimo.ui.food
 
-import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +31,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
 import com.clement.nutrimo.util.fmt
 
 data class ItemDetailActions(

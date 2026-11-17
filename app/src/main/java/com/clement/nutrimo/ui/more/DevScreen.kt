@@ -1,9 +1,6 @@
 // Developer section: replay the feature tour, load the demo history, or erase every personal data (back to onboarding).
 package com.clement.nutrimo.ui.more
 
-import com.clement.nutrimo.ui.common.asString
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.LinearProgressIndicator
@@ -27,6 +24,9 @@ import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatusRunner
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.util.uiText
 
 /** Each action with its button, confirmation texts and the work it does (returns the success message). */
 enum class DevAction(

@@ -1,13 +1,11 @@
 // Recipe editor state: name, parts, optional cooked weight, ingredients (foods in g, sub-recipes in parts).
 package com.clement.nutrimo.ui.recipe
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.IngredientEntity
 import com.clement.nutrimo.data.db.RecipeEntity
@@ -17,8 +15,10 @@ import com.clement.nutrimo.data.repository.RecipeDetail
 import com.clement.nutrimo.domain.calc.RecipeMath
 import com.clement.nutrimo.domain.calc.RecipeTotals
 import com.clement.nutrimo.ui.navigation.RecipeEditRoute
+import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.toDecimal
 import com.clement.nutrimo.util.toInput
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

@@ -39,12 +39,12 @@ fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
     ScrollColumn(androidx.compose.foundation.layout.PaddingValues()) {
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Image(
-                shot.asImageBitmap(), stringResource(R.string.photo_review_photo_1, state.pose.label),
+                shot.asImageBitmap(), stringResource(R.string.photo_review_photo_1, stringResource(state.pose.label)),
                 Modifier.fillMaxWidth(0.75f).aspectRatio(shot.width.toFloat() / shot.height).clip(MaterialTheme.shapes.large),
                 contentScale = ContentScale.Fit,
             )
         }
-        Text(stringResource(R.string.photo_review_pose_1, state.pose.label), style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(R.string.photo_review_pose_1, stringResource(state.pose.label)), style = MaterialTheme.typography.titleSmall)
         OutlinedTextField(state.note, vm::setNote, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.photo_review_note_facultatif)) })
         NumberField(state.weight, vm::setWeight, stringResource(R.string.photo_review_poids_jour_facultatif), Modifier.fillMaxWidth(), "kg")
         MeasurementsButton(vm)

@@ -3,12 +3,16 @@
 // Wording is gender-neutral (no "fier / fière") and never guilt-inducing.
 package com.clement.nutrimo.domain.calc
 
+import androidx.annotation.StringRes
+import com.clement.nutrimo.R
+import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.count
 import com.clement.nutrimo.util.kg
+import com.clement.nutrimo.util.uiText
 import java.time.LocalDate
 import kotlin.math.floor
 
-data class Nudge(val title: String, val text: String)
+data class Nudge(val title: UiText, val text: UiText)
 
 data class EncouragementFacts(
     val today: LocalDate,
@@ -40,29 +44,20 @@ object Encouragement {
         f.heightCm?.let { h ->
             val now = Bmi.zoneOf(Bmi.of(last.kg, h))
             if (Bmi.ZONES.indexOf(now) < Bmi.ZONES.indexOf(Bmi.zoneOf(Bmi.of(previous.kg, h)))) {
-                return Nudge(
-                    "Nouvelle catégorie d'IMC 🎉",
-                    "Vous voici en « ${now.label} ». C'est un vrai cap, franchi grâce à vos efforts de chaque jour : prenez le temps de le savourer.",
-                )
+                return nudge(R.string.enc_bmi_title, uiText(R.string.enc_bmi_text, uiText(now.label)))
             }
         }
         f.goalStartKg?.let { start ->
             val lostNow = floor(start - last.kg).toInt()
             if (lostNow >= 1 && lostNow > floor(start - previous.kg).toInt()) {
-                return Nudge(
-                    "$lostNow kg de moins 🎉",
-                    "Depuis le début de votre objectif, $lostNow kg de moins. Chaque kilo raconte des choix faits un jour après l'autre : bravo.",
-                )
+                return Nudge(uiText(R.string.enc_kilo_title, lostNow), uiText(R.string.enc_kilo_text, lostNow))
             }
         }
         val sinceStart = f.weights.filter { f.goalStart == null || !it.date.isBefore(f.goalStart) }.dropLast(1)
         if (sinceStart.isNotEmpty() && last.kg < sinceStart.minOf { it.kg }) {
-            return Nudge("Nouveau plus bas 🌟", "${kg(last.kg)} : votre poids le plus bas depuis le début de l'objectif. Votre constance paie.")
+            return nudge(R.string.enc_low_title, uiText(R.string.enc_low_text, kg(last.kg)))
         }
-        return Nudge(
-            "${kg(previous.kg - last.kg)} de moins",
-            "Depuis votre dernière pesée, la balance descend. Continuez à votre rythme, vous êtes sur le bon chemin.",
-        )
+        return Nudge(uiText(R.string.enc_down_title, kg(previous.kg - last.kg)), uiText(R.string.enc_down_text))
     }
 
     /** The longest streak still open today (not yet reached), with what is left to keep it. */
@@ -74,36 +69,31 @@ object Encouragement {
             .maxByOrNull { it.second } ?: return null
         val (goal, days) = open
         val left = when (goal) {
-            DailyGoal.STEPS -> "encore ${number(f.targets.steps - (today?.steps ?: 0))} pas, une petite marche peut suffire"
-            DailyGoal.WATER -> "encore ${number(f.targets.waterMl - (today?.waterMl ?: 0))} ml d'eau"
-            DailyGoal.JOURNAL -> "choisissez l'humeur du jour dans « Ma journée », un seul geste suffit"
-            else -> "encore ${number(f.targets.sportKcal - (today?.sportKcal ?: 0.0).toInt())} kcal d'activité"
+            DailyGoal.STEPS -> uiText(R.string.enc_left_steps, number(f.targets.steps - (today?.steps ?: 0)))
+            DailyGoal.WATER -> uiText(R.string.enc_left_water, number(f.targets.waterMl - (today?.waterMl ?: 0)))
+            DailyGoal.JOURNAL -> uiText(R.string.enc_left_journal)
+            else -> uiText(R.string.enc_left_sport, number(f.targets.sportKcal - (today?.sportKcal ?: 0.0).toInt()))
         }
         val what = when (goal) {
-            DailyGoal.STEPS -> "Objectif de pas atteint"
-            DailyGoal.WATER -> "Objectif d'eau atteint"
-            DailyGoal.JOURNAL -> "Journée notée"
-            else -> "Objectif de sport atteint"
+            DailyGoal.STEPS -> R.string.enc_streak_steps
+            DailyGoal.WATER -> R.string.enc_streak_water
+            DailyGoal.JOURNAL -> R.string.enc_streak_journal
+            else -> R.string.enc_streak_sport
         }
-        return Nudge("$days jours d'affilée 🔥", "$what $days jours de suite. Pour continuer la série aujourd'hui : $left.")
+        return Nudge(uiText(R.string.enc_streak_title, days), uiText(R.string.enc_streak_text, uiText(what), days, left))
     }
 
-    /** Goals already beaten today (steps, sport, water), the biggest margin first. */
+    /** Goals already beaten today (steps, sport, water), in that order. */
     private fun proudOfToday(f: EncouragementFacts): Nudge? {
         val d = f.records[f.today] ?: return null
         val steps = d.steps?.takeIf { d.achieved(DailyGoal.STEPS, f.targets) == true }
         if (steps != null) {
-            return Nudge(
-                "Objectif de pas atteint 👟",
-                "${number(steps)} pas aujourd'hui, ${number(steps - f.targets.steps)} de plus que votre objectif. Votre corps vous remercie.",
-            )
+            return nudge(R.string.enc_steps_title, uiText(R.string.enc_steps_text, number(steps), number(steps - f.targets.steps)))
         }
         if (d.achieved(DailyGoal.SPORT, f.targets) == true) {
-            return Nudge("Sport fait 💪", "${number(d.sportKcal.toInt())} kcal d'activité aujourd'hui, au-delà de votre objectif. Une belle victoire, savourez-la.")
+            return nudge(R.string.enc_sport_title, uiText(R.string.enc_sport_text, number(d.sportKcal.toInt())))
         }
-        if (d.achieved(DailyGoal.WATER, f.targets) == true) {
-            return Nudge("Objectif d'eau atteint 💧","Objectif d'eau atteint aujourd'hui. Ce sont ces petits gestes qui font les grands changements.")
-        }
+        if (d.achieved(DailyGoal.WATER, f.targets) == true) return nudge(R.string.enc_water_title, uiText(R.string.enc_water_text))
         return null
     }
 
@@ -112,38 +102,24 @@ object Encouragement {
         if (d.achieved(DailyGoal.CALORIES, f.targets) == true) {
             val eaten = d.eatenKcal ?: return null
             val budget = d.budgetKcal ?: return null
-            return Nudge(
-                "Belle journée hier ✨",
-                "Hier, ${number(eaten.toInt())} kcal pour un budget de ${number(budget.toInt())} : une journée réussie de plus. Vous pouvez vous en féliciter.",
-            )
+            return nudge(R.string.enc_yesterday_title, uiText(R.string.enc_yesterday_text, number(eaten.toInt()), number(budget.toInt())))
         }
         if (d.achieved(DailyGoal.SPORT, f.targets) == true) {
-            return Nudge("Hier, du sport 💪", "Votre objectif de sport d'hier est atteint. Un jour après l'autre, vous construisez quelque chose de solide.")
+            return nudge(R.string.enc_yesterday_sport_title, uiText(R.string.enc_yesterday_sport_text))
         }
         return null
     }
 
     private fun hardMoment(f: EncouragementFacts): Nudge? {
         val quiet = (1..QUIET_DAYS).none { f.records.containsKey(f.today.minusDays(it)) } && !f.records.containsKey(f.today)
-        if (quiet && f.records.isNotEmpty()) {
-            return Nudge(
-                "Bon retour 🌱",
-                "Quelques jours sans nouvelles, et ce n'est pas grave. Reprendre, c'est déjà réussir : notez simplement un repas aujourd'hui.",
-            )
-        }
+        if (quiet && f.records.isNotEmpty()) return nudge(R.string.enc_back_title, uiText(R.string.enc_back_text))
         if (f.records[f.today.minusDays(1)]?.achieved(DailyGoal.CALORIES, f.targets) == false) {
-            return Nudge(
-                "Une nouvelle page 🌅",
-                "Hier a été plus difficile, et c'est humain. Une journée ne défait pas vos progrès : accordez-vous de la douceur, aujourd'hui est une nouvelle page.",
-            )
+            return nudge(R.string.enc_new_page_title, uiText(R.string.enc_new_page_text))
         }
         if (f.weights.size >= 2 && f.weights.last().kg > f.weights[f.weights.size - 2].kg &&
             !f.weights.last().date.isBefore(f.today.minusDays(RECENT_WEIGH_IN_DAYS))
         ) {
-            return Nudge(
-                "Regardez la tendance 📉",
-                "Le poids varie d'un jour à l'autre (eau, sel, sommeil). Un chiffre ne dit pas tout : vos efforts comptent, continuez.",
-            )
+            return nudge(R.string.enc_trend_title, uiText(R.string.enc_trend_text))
         }
         return null
     }
@@ -151,14 +127,16 @@ object Encouragement {
     private fun gentle(f: EncouragementFacts): Nudge = GENTLE[Math.floorMod(f.today.toEpochDay(), GENTLE.size.toLong()).toInt()]
 
     private val GENTLE = listOf(
-        Nudge("Un pas après l'autre 🌱", "Le progrès n'est pas une ligne droite. Ce que vous faites aujourd'hui compte, même si c'est petit."),
-        Nudge("De la douceur pour vous 💛","Parlez-vous comme à quelqu'un que vous aimez : avec patience et douceur. Vous faites de votre mieux."),
-        Nudge("Un moment pour vous ✍️", "Qu'est-ce qui vous a fait du bien aujourd'hui ? Prenez une minute pour le noter dans « Ma journée »."),
-        Nudge("Vous êtes encore là 💪", "Rester, même les jours difficiles, c'est la vraie force. Ne lâchez rien, vous avancez."),
-        Nudge("Petites victoires ✨", "Un verre d'eau, quelques pas, un repas noté : chaque petite victoire mérite d'être fêtée."),
-        Nudge("Votre rythme 🐢", "Il n'y a pas de course. Avancer doucement, c'est toujours avancer."),
-        Nudge("Gratitude 🙏", "Ce soir, pensez à une chose pour laquelle vous ressentez de la gratitude. Notez-la dans « Ma journée »."),
+        nudge(R.string.enc_gentle_1_title, uiText(R.string.enc_gentle_1_text)),
+        nudge(R.string.enc_gentle_2_title, uiText(R.string.enc_gentle_2_text)),
+        nudge(R.string.enc_gentle_3_title, uiText(R.string.enc_gentle_3_text)),
+        nudge(R.string.enc_gentle_4_title, uiText(R.string.enc_gentle_4_text)),
+        nudge(R.string.enc_gentle_5_title, uiText(R.string.enc_gentle_5_text)),
+        nudge(R.string.enc_gentle_6_title, uiText(R.string.enc_gentle_6_text)),
+        nudge(R.string.enc_gentle_7_title, uiText(R.string.enc_gentle_7_text)),
     )
+
+    private fun nudge(@StringRes title: Int, text: UiText) = Nudge(uiText(title), text)
 
     /** Counts in messages are never negative ("encore 0 pas" rather than "-200"). */
     private fun number(n: Number): String = count(n.toLong().coerceAtLeast(0))

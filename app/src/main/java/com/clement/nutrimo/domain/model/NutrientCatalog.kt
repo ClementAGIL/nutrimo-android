@@ -1,8 +1,8 @@
 // Display catalogue of vitamins and minerals; keys match the API's MICROS (nutrimo-api src/foods/nutrients.ts).
 package com.clement.nutrimo.domain.model
 
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
+import com.clement.nutrimo.R
 
 data class MicroNutrient(val key: String, @StringRes val label: Int, val unit: String, val group: MicroGroup)
 

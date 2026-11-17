@@ -1,7 +1,6 @@
 // Goal form (weights, pace preset or end date) with a live calorie preview; used by onboarding and GoalEdit.
 package com.clement.nutrimo.ui.goal
 
-import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +24,7 @@ import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
+import com.clement.nutrimo.ui.common.asString
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.full
 import com.clement.nutrimo.util.kcal

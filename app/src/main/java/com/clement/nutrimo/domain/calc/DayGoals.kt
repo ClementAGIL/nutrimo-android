@@ -2,8 +2,8 @@
 // is neither a success nor a failure, so forgetting to log a meal never counts as "under the target".
 package com.clement.nutrimo.domain.calc
 
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
+import com.clement.nutrimo.R
 import java.time.LocalDate
 import kotlin.math.max
 

@@ -1,8 +1,6 @@
 // Diary entry helpers: quantity text ("120 g", "1,5 part(s)", "2 × 1 pot") and swipe-to-delete.
 package com.clement.nutrimo.ui.journal
 
-import com.clement.nutrimo.R
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +15,9 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.QuantityUnit
 import com.clement.nutrimo.util.fmt

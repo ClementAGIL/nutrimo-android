@@ -1,13 +1,13 @@
 // Editable goal state: pace preset or end date, resolved into a pace + end date and validated.
 package com.clement.nutrimo.ui.goal
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.GoalEntity
 import com.clement.nutrimo.domain.calc.GoalMath
 import com.clement.nutrimo.domain.model.GoalMode
+import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.toDecimal
+import com.clement.nutrimo.util.uiText
 import java.time.LocalDate
 
 /** Pace presets in kg/week; [CUSTOM_PACE] selects the free field. */

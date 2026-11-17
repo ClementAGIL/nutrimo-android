@@ -2,11 +2,11 @@
 // Import reads the JSON from such a ZIP or from a plain .json file; photos are not re-imported (yet).
 package com.clement.nutrimo.data.repository
 
-import com.clement.nutrimo.util.fail
 import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.data.db.points
 import com.clement.nutrimo.domain.calc.kgAt
+import com.clement.nutrimo.util.fail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

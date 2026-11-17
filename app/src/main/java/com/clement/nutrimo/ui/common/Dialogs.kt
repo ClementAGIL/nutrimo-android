@@ -27,7 +27,7 @@ fun FormDialog(
     title: String?,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit,
-    confirmLabel: String = "OK",
+    confirmLabel: String = stringResource(R.string.common_ok),
     canConfirm: Boolean = true,
     closeOnConfirm: Boolean = true,
     content: @Composable () -> Unit,
@@ -76,7 +76,7 @@ fun InfoButton(title: String, text: String) {
     if (open) {
         AlertDialog(
             onDismissRequest = { open = false },
-            confirmButton = { TextButton({ open = false }) { Text("OK") } },
+            confirmButton = { TextButton({ open = false }) { Text(stringResource(R.string.common_ok)) } },
             title = { Text(title) },
             text = { Text(text) },
         )

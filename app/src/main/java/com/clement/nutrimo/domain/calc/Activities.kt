@@ -1,8 +1,8 @@
 // Physical activities and the energy they burn (MET values from the Compendium of Physical Activities).
 package com.clement.nutrimo.domain.calc
 
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
+import com.clement.nutrimo.R
 
 /** [met] = energy cost relative to rest; null means the user types the kcal ("Autre"). */
 data class ActivityType(val key: String, @StringRes val label: Int, val met: Double?)

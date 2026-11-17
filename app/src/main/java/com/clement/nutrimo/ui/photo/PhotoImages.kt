@@ -1,7 +1,6 @@
 // Photo images loaded off the main thread: thumbnails for lists, larger versions for the comparison.
 package com.clement.nutrimo.ui.photo
 
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.ui.common.appContainer
 

@@ -115,6 +115,8 @@ export a backup first).
 Architecture, conventions and the shared UI kit (`ui/common`: layout, rows, inputs, dialogs, charts; `util/Format`:
 French numbers and dates) are described in `CLAUDE.md`. Unit tests for the pure logic (encouragement, trend, BMI,
 reminder times, weight chart periods, formatting): `./gradlew :app:testDebugUnitTest`.
+All the interface text is in `app/src/main/res/values/strings.xml`: translating the app means adding a
+`values-<lang>/strings.xml` (see the text rules in `CLAUDE.md`).
 
 ## Data sources and licences
 

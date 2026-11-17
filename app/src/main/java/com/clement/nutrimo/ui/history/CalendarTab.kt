@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -150,8 +151,8 @@ private fun DayDetail(state: HistoryState) {
 private fun Streaks(state: HistoryState) {
     SectionCard(stringResource(R.string.calendar_series)) {
         state.streaks.forEach { (goal, s) ->
-            val unit = if (goal.skipsEmptyDays) stringResource(R.string.calendar_pesee) else "jour"
-            GoalRow(goal, true, stringResource(R.string.calendar_1_record_2, plural(s.current, unit), s.best))
+            val count = pluralStringResource(if (goal.skipsEmptyDays) R.plurals.streak_weigh_ins else R.plurals.streak_days, s.current, s.current)
+            GoalRow(goal, true, stringResource(R.string.calendar_1_record_2, count, s.best))
         }
         HintText(
             stringResource(R.string.calendar_jours_consecutifs_ou_objectif_est),
@@ -159,4 +160,3 @@ private fun Streaks(state: HistoryState) {
     }
 }
 
-private fun plural(n: Int, unit: String) = "$n $unit${if (n > 1) "s" else ""}"

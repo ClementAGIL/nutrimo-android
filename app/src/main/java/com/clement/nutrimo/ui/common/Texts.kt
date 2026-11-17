@@ -1,13 +1,13 @@
 // Text styles repeated across screens: intro paragraph, grey hint, warning.
 package com.clement.nutrimo.ui.common
 
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import com.clement.nutrimo.util.UiText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import com.clement.nutrimo.util.UiText
 
 /** Explanation at the top of a settings screen. */
 @Composable

@@ -2,8 +2,6 @@
 package com.clement.nutrimo.ui.more
 
 import androidx.annotation.StringRes
-import com.clement.nutrimo.R
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.navigation.AboutRoute
 import com.clement.nutrimo.ui.navigation.BackupRoute

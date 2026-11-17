@@ -1,12 +1,6 @@
 // Animated illustrations of the tour, part 2: habit tiles getting checked, and a week-long streak lighting a flame.
 package com.clement.nutrimo.ui.onboarding
 
-import java.util.Locale
-import java.time.format.TextStyle
-import java.time.DayOfWeek
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
-import com.clement.nutrimo.R
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,9 +33,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import java.time.DayOfWeek
+import java.time.format.TextStyle
+import java.util.Locale
 
 private class Habit(@StringRes val label: Int, val icon: ImageVector, val color: Color, val tilt: Float)
 

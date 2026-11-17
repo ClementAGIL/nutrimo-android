@@ -28,9 +28,9 @@ import java.util.concurrent.TimeUnit
 
 object Reminders {
     fun createChannels(context: Context) {
-        val reminders = NotificationChannel(REMINDERS_CHANNEL, "Rappels", NotificationManager.IMPORTANCE_DEFAULT)
-        val encouragements = NotificationChannel(ENCOURAGEMENTS_CHANNEL, "Encouragements", NotificationManager.IMPORTANCE_DEFAULT)
-            .apply { description = "Un message bienveillant par jour" }
+        val reminders = NotificationChannel(REMINDERS_CHANNEL, context.getString(R.string.channel_reminders), NotificationManager.IMPORTANCE_DEFAULT)
+        val encouragements = NotificationChannel(ENCOURAGEMENTS_CHANNEL, context.getString(R.string.channel_encouragements), NotificationManager.IMPORTANCE_DEFAULT)
+            .apply { description = context.getString(R.string.channel_encouragements_hint) }
         context.getSystemService(NotificationManager::class.java).createNotificationChannels(listOf(reminders, encouragements))
     }
 
@@ -75,7 +75,11 @@ object Reminders {
             .setContentIntent(intent)
             .setAutoCancel(true)
             .build()
-        NotificationManagerCompat.from(context).notify(kind.notificationId, notification)
+        // canNotify() checked above; the permission can still be revoked in between, which must not crash a worker.
+        try {
+            NotificationManagerCompat.from(context).notify(kind.notificationId, notification)
+        } catch (_: SecurityException) {
+        }
     }
 }
 

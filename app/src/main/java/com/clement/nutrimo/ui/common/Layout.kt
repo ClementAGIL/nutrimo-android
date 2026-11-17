@@ -1,8 +1,6 @@
 // Screen and card structure shared by every screen: scaffold, scrollable body, cards, card header, sub-tabs, empty state.
 package com.clement.nutrimo.ui.common
 
-import com.clement.nutrimo.R
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,9 +32,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 
 /** Bottom space to keep the last items of a list reachable above a floating action button. */
 val FAB_CLEARANCE = 88.dp

@@ -1,7 +1,6 @@
 // Journal card: progress to the daily sport goal, the day's activities (manual + Health Connect) and an add dialog.
 package com.clement.nutrimo.ui.journal
 
-import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +32,7 @@ import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ProgressRow
 import com.clement.nutrimo.ui.common.SectionCard
+import com.clement.nutrimo.ui.common.asString
 import com.clement.nutrimo.ui.theme.NutrimoColors
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.kcal
@@ -75,7 +75,7 @@ private fun ImportedSessions(sessions: List<ImportedActivity>) {
     sessions.forEach { s ->
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.activity_1_2_min, s.label.asString(), s.minutes), Modifier.weight(1f))
-            Text("${kcal(s.kcal)}${if (s.measured) "" else " (est.)"}")
+            Text(if (s.measured) kcal(s.kcal) else stringResource(R.string.activity_estimated, kcal(s.kcal)))
         }
     }
 }

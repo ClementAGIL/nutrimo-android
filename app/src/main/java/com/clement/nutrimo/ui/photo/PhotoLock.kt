@@ -77,8 +77,8 @@ fun PhotoLockGate(content: @Composable () -> Unit) {
 
 private fun authenticate(context: Context, onSuccess: () -> Unit, onError: (String) -> Unit) = try {
     BiometricPrompt.Builder(context)
-        .setTitle("Photos de progression")
-        .setSubtitle("Déverrouillez pour voir vos photos")
+        .setTitle(context.getString(R.string.photo_lock_title))
+        .setSubtitle(context.getString(R.string.photo_lock_subtitle))
         .setAllowedAuthenticators(AUTHENTICATORS)
         .build()
         .authenticate(CancellationSignal(), context.mainExecutor, object : BiometricPrompt.AuthenticationCallback() {
@@ -86,7 +86,7 @@ private fun authenticate(context: Context, onSuccess: () -> Unit, onError: (Stri
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) = onError(errString.toString())
         })
 } catch (e: RuntimeException) {
-    onError("Déverrouillage impossible : ${e.message}")
+    onError(context.getString(R.string.photo_lock_error, e.message.orEmpty()))
 }
 
 /** Screens showing photos stay out of screenshots and the recent-apps preview; counted so nested screens don't clear it. */

@@ -1,8 +1,6 @@
 // Nutrimo API settings: server URL on the home network, optional API key, connection test.
 package com.clement.nutrimo.ui.more
 
-import com.clement.nutrimo.ui.common.asString
-import com.clement.nutrimo.util.uiText
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -26,6 +24,8 @@ import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.StatusRunner
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.asString
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.launch
 
 class ServerViewModel(private val c: AppContainer) : ViewModel() {

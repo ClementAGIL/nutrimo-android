@@ -1,8 +1,6 @@
 // Backups on the user's PC (nutrimo-api /backups): manual push/restore and a daily automatic push.
 package com.clement.nutrimo.data.sync
 
-import com.clement.nutrimo.util.fail
-import com.clement.nutrimo.R
 import android.content.Context
 import android.os.Build
 import androidx.work.Constraints
@@ -13,10 +11,12 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.clement.nutrimo.NutrimoApp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.network.NutrimoApi
 import com.clement.nutrimo.data.repository.BackupRepository
 import com.clement.nutrimo.data.repository.BackupSummary
 import com.clement.nutrimo.data.repository.SettingsRepository
+import com.clement.nutrimo.util.fail
 import java.util.concurrent.TimeUnit
 
 private const val AUTO_BACKUP_WORK = "auto_backup"

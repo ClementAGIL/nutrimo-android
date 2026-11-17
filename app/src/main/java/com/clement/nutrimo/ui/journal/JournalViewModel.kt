@@ -1,14 +1,12 @@
 // State of the journal: entries of the selected day grouped by meal, totals, target, water and "Ma journée".
 package com.clement.nutrimo.ui.journal
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
-import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.ActivityEntity
+import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import com.clement.nutrimo.data.db.DayNoteEntity
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.data.db.WaterEntity
@@ -21,6 +19,8 @@ import com.clement.nutrimo.domain.calc.MacroSplit
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
 import com.clement.nutrimo.ui.common.stateWhileSubscribed
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

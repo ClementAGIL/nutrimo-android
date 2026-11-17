@@ -1,8 +1,6 @@
 // Animated illustration of the tour's body page: a weight chart drawing itself down to its goal line.
 package com.clement.nutrimo.ui.onboarding
 
-import com.clement.nutrimo.R
-import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,7 +25,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.clement.nutrimo.R
 import com.clement.nutrimo.ui.theme.NutrimoColors
 
 private val WEIGHTS = listOf(82.4f, 81.9f, 82.1f, 81.3f, 80.8f, 81.0f, 80.3f, 79.9f, 79.4f)

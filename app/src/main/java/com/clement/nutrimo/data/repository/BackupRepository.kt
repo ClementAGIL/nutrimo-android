@@ -1,9 +1,8 @@
 // JSON export / import of all personal data (the bundled CIQUAL foods are not exported).
 package com.clement.nutrimo.data.repository
 
-import com.clement.nutrimo.util.fail
-import com.clement.nutrimo.R
 import androidx.room.withTransaction
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DayNoteEntity
 import com.clement.nutrimo.data.db.DiaryEntity
@@ -19,6 +18,7 @@ import com.clement.nutrimo.data.db.SavedMealEntity
 import com.clement.nutrimo.data.db.SavedMealItemEntity
 import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.data.db.WeightEntity
+import com.clement.nutrimo.util.fail
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 

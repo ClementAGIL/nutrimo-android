@@ -1,11 +1,9 @@
 // Foods: bundled CIQUAL seed, local search, remote search (PC backend, then Open Food Facts), barcode, custom foods.
 package com.clement.nutrimo.data.repository
 
-import com.clement.nutrimo.util.uiText
-import com.clement.nutrimo.util.UiText
-import com.clement.nutrimo.R
-import androidx.annotation.StringRes
 import android.content.Context
+import androidx.annotation.StringRes
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.data.db.PortionEntity
@@ -21,6 +19,8 @@ import com.clement.nutrimo.domain.model.FoodSource
 import com.clement.nutrimo.domain.model.Loggable
 import com.clement.nutrimo.domain.model.Portion
 import com.clement.nutrimo.domain.model.normalized
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.util.uiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
