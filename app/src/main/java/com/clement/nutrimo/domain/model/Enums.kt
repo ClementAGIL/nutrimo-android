@@ -50,3 +50,6 @@ enum class QuantityUnit { GRAM, PART, PORTION }
 enum class GoalMode { PACE, DATE }
 
 enum class GoalStatus(val label: String) { ACTIVE("En cours"), ACHIEVED("Atteint"), ARCHIVED("Archivé") }
+
+/** Pose of a progress photo; comparisons usually pair photos of the same pose. */
+enum class PhotoPose(val label: String) { FRONT("Face"), SIDE("Profil"), BACK("Dos") }

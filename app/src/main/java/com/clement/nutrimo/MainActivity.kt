@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import com.clement.nutrimo.ui.NutrimoRoot
 import com.clement.nutrimo.ui.common.SPLASH_ANIMATION_MS
 import com.clement.nutrimo.ui.common.SplashState
+import com.clement.nutrimo.ui.photo.PhotoLock
 import com.clement.nutrimo.ui.theme.NutrimoTheme
 
 private const val SPLASH_FADE_MS = 300L
@@ -26,6 +27,12 @@ class MainActivity : ComponentActivity() {
         splashScreen.setOnExitAnimationListener(::exitSplash)
         enableEdgeToEdge()
         setContent { NutrimoTheme { NutrimoRoot() } }
+    }
+
+    /** Photos must be unlocked again after the app was in the background. */
+    override fun onStop() {
+        super.onStop()
+        PhotoLock.lock()
     }
 
     /** The app is usually ready before the bloom ends: wait for the icon animation, then fade out. */

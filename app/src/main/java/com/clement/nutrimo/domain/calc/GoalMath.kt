@@ -40,7 +40,10 @@ object GoalMath {
         end: LocalDate,
         startKg: Double,
         targetKg: Double,
+        /** Weigh-ins since [start]: current weight, lost, paces. */
         weights: List<WeightPoint>,
+        /** Weigh-ins the trend is fitted on (see [Trend.recent]); may predate [start]. */
+        trendPoints: List<WeightPoint> = weights,
         today: LocalDate = LocalDate.now(),
     ): GoalProgress {
         val current = weights.maxByOrNull { it.date }?.kg ?: startKg
@@ -48,7 +51,7 @@ object GoalMath {
         val totalDays = ChronoUnit.DAYS.between(start, end).coerceAtLeast(1)
         val elapsed = ChronoUnit.DAYS.between(start, today).coerceIn(0, totalDays)
         val remainingDays = ChronoUnit.DAYS.between(today, end).coerceAtLeast(0)
-        val trend = Trend.fit(weights)
+        val trend = Trend.fit(trendPoints)
         return GoalProgress(
             startKg = startKg,
             currentKg = current,

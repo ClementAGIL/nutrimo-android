@@ -57,4 +57,6 @@ fun HealthSession.toImported(weightKg: Double): ImportedActivity {
  * workouts other than walks and runs.
  */
 fun healthBudgetKcal(activeKcal: Double?, stepsKcal: Double, sessions: List<ImportedActivity>): Double =
-    activeKcal ?: (stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal })
+    // The day can't burn less than its own workouts (e.g. an estimated session, or calories not synced yet).
+    activeKcal?.let { maxOf(it, sessions.sumOf { s -> s.kcal }) }
+        ?: (stepsKcal + sessions.filter { it.countsInBudget }.sumOf { it.kcal })

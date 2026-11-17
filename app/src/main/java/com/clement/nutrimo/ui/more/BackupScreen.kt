@@ -1,4 +1,4 @@
-// Export all personal data to a JSON file, or import one (rows with the same id are replaced).
+// Backups: on the PC server (data only), or a ZIP file with the data and the progress photos; import reads ZIP or JSON.
 package com.clement.nutrimo.ui.more
 
 import android.net.Uri
@@ -8,10 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.clement.nutrimo.data.repository.PhotoStorage
 import com.clement.nutrimo.data.sync.ServerBackup
 import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.HintText
@@ -24,12 +26,15 @@ import com.clement.nutrimo.ui.common.SwitchRow
 import com.clement.nutrimo.ui.common.WideButton
 import com.clement.nutrimo.ui.common.appContainer
 import com.clement.nutrimo.ui.common.dateTime
+import com.clement.nutrimo.ui.common.fmt
 import com.clement.nutrimo.ui.common.rememberStatusRunner
 import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 private const val MIME_JSON = "application/json"
+private const val MIME_ZIP = "application/zip"
+private const val BYTES_PER_MB = 1_000_000.0
 
 @Composable
 fun BackupScreen(onBack: () -> Unit) {
@@ -38,7 +43,7 @@ fun BackupScreen(onBack: () -> Unit) {
         ScrollColumn(padding) {
             IntroText(
                 "Vos données (profil, objectifs, pesées, mensurations, journal, recettes, aliments perso) sont " +
-                    "stockées sur ce téléphone. Sauvegardez-les sur votre PC ou dans un fichier.",
+                    "stockées sur ce téléphone, jamais dans les sauvegardes Google. Sauvegardez-les sur votre PC ou dans un fichier.",
             )
             ServerCard(runner)
             FileCard(runner)
@@ -52,29 +57,38 @@ fun BackupScreen(onBack: () -> Unit) {
 private fun FileCard(runner: StatusRunner) {
     val c = appContainer()
     val resolver = LocalContext.current.contentResolver
-    val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(MIME_JSON)) { uri: Uri? ->
+    val exporter = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(MIME_ZIP)) { uri: Uri? ->
         uri ?: return@rememberLauncherForActivityResult
         runner.run {
-            val json = c.backup.export()
-            withContext(Dispatchers.IO) { resolver.openOutputStream(uri)?.use { it.write(json.toByteArray()) } }
-            "Sauvegarde exportée."
+            withContext(Dispatchers.IO) { resolver.openOutputStream(uri) }?.use { c.archive.write(it) }
+            "Sauvegarde exportée (données et photos)."
         }
     }
     val importer = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
         uri ?: return@rememberLauncherForActivityResult
         runner.run {
-            val text = withContext(Dispatchers.IO) { resolver.openInputStream(uri)?.use { it.readBytes().decodeToString() } } ?: ""
-            val s = c.backup.import(text)
+            val bytes = withContext(Dispatchers.IO) { resolver.openInputStream(uri)?.use { it.readBytes() } } ?: ByteArray(0)
+            val s = c.backup.import(c.archive.backupText(bytes))
             "Importé : ${s.weights} pesées, ${s.diary} entrées du journal, ${s.recipes} recettes, ${s.foods} aliments."
         }
     }
     SectionCard("Fichier") {
-        WideButton("Exporter", { exporter.launch("nutrimo-${LocalDate.now()}.json") })
-        WideButton("Importer une sauvegarde", { importer.launch(arrayOf(MIME_JSON, "*/*")) }, outlined = true)
+        HintText("Un fichier ZIP avec vos données et vos photos de progression. L'import reprend les données (pas les photos).")
+        PhotoStorageText()
+        WideButton("Exporter", { exporter.launch("nutrimo-${LocalDate.now()}.zip") })
+        WideButton("Importer une sauvegarde", { importer.launch(arrayOf(MIME_ZIP, MIME_JSON, "*/*")) }, outlined = true)
     }
 }
 
-/** Backup on the Nutrimo server: now, restore the latest, and the daily automatic backup. */
+/** "12 photos · 9,4 Mo": what the photos take on the phone (and in the export). */
+@Composable
+private fun PhotoStorageText() {
+    val c = appContainer()
+    val storage by produceState<PhotoStorage?>(null) { value = c.photos.storage() }
+    storage?.let { HintText("Photos : ${it.count} · ${fmt(it.bytes / BYTES_PER_MB)} Mo") }
+}
+
+/** Backup on the Nutrimo server (data only, never the photos): now, restore the latest, and the daily automatic backup. */
 @Composable
 private fun ServerCard(runner: StatusRunner) {
     val c = appContainer()

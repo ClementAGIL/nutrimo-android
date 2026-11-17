@@ -46,7 +46,7 @@ fun DevScreen(onBack: () -> Unit, onShowIntro: () -> Unit) {
             SectionCard("Données de démo") {
                 IntroText(
                     "Remplace toutes vos données par un historique fictif : profil, 2 objectifs, 5 mois de pesées, " +
-                        "mensurations, eau, activités, un aliment perso, 3 recettes (dont une sous-recette) et 30 jours de repas.",
+                        "mensurations, eau, activités, un aliment perso, 3 recettes (dont une sous-recette) 30 jours de repas et 15 photos de progression (silhouettes dessinées).",
                 )
                 DevAction.entries.forEach { action ->
                     WideButton(action.button, { confirm = action }, enabled = !runner.busy, outlined = action == DevAction.CLEAR)

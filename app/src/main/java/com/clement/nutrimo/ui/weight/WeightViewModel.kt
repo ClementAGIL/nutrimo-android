@@ -1,4 +1,4 @@
-// State of the weight tab: goal progress, BMI, calorie target, the weigh-in list and the body measurements.
+// State of the weight screens: goal progress, BMI, calorie target, weigh-ins, body measurements and photo days.
 package com.clement.nutrimo.ui.weight
 
 import androidx.lifecycle.ViewModel
@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.db.GoalEntity
 import com.clement.nutrimo.data.db.MeasurementEntity
+import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.data.db.ProfileEntity
 import com.clement.nutrimo.data.db.WeightEntity
 import com.clement.nutrimo.domain.calc.Bmi
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.GoalMath
 import com.clement.nutrimo.domain.calc.GoalProgress
+import com.clement.nutrimo.domain.calc.Trend
 import com.clement.nutrimo.domain.calc.WeightPoint
 import com.clement.nutrimo.domain.model.GoalStatus
 import com.clement.nutrimo.ui.common.stateWhileSubscribed
@@ -47,9 +49,17 @@ class WeightViewModel(private val c: AppContainer) : ViewModel() {
         )
     }.stateWhileSubscribed(viewModelScope, WeightUiState())
 
+    /** Oldest first: their days are marked on the hub chart. */
+    val photos: StateFlow<List<PhotoEntity>> = c.photos.photos.stateWhileSubscribed(viewModelScope, emptyList())
+
     /** Newest first. */
     val measurements: StateFlow<List<MeasurementEntity>> =
         c.body.measurementHistory.stateWhileSubscribed(viewModelScope, emptyList())
+
+    init {
+        // Repairs goals whose start weigh-in was changed before the start followed the weigh-ins.
+        viewModelScope.launch { c.body.syncGoalStart() }
+    }
 
     suspend fun existingOn(date: LocalDate): WeightEntity? = c.body.weightOn(date)
 
@@ -64,11 +74,15 @@ class WeightViewModel(private val c: AppContainer) : ViewModel() {
     fun markGoalAchieved() = viewModelScope.launch { c.body.closeActiveGoal(GoalStatus.ACHIEVED) }
 }
 
-/** Only the weigh-ins since the goal started count for its progress and trend. */
-fun progressOf(goal: GoalEntity, weights: List<WeightEntity>): GoalProgress = GoalMath.progress(
-    start = goal.startDate,
-    end = goal.endDate,
-    startKg = goal.startKg,
-    targetKg = goal.targetKg,
-    weights = weights.filter { !it.date.isBefore(goal.startDate) }.map { WeightPoint(it.date, it.kg) },
-)
+/** The weigh-ins since the goal started count for its progress; the trend follows the recent ones, even older. */
+fun progressOf(goal: GoalEntity, weights: List<WeightEntity>): GoalProgress {
+    val points = weights.map { WeightPoint(it.date, it.kg) }
+    return GoalMath.progress(
+        start = goal.startDate,
+        end = goal.endDate,
+        startKg = goal.startKg,
+        targetKg = goal.targetKg,
+        weights = points.filter { !it.date.isBefore(goal.startDate) },
+        trendPoints = Trend.recent(points),
+    )
+}

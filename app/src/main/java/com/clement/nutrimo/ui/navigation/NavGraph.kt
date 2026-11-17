@@ -26,6 +26,10 @@ import com.clement.nutrimo.ui.more.AboutScreen
 import com.clement.nutrimo.ui.more.BackupScreen
 import com.clement.nutrimo.ui.more.DevScreen
 import com.clement.nutrimo.ui.onboarding.IntroScreen
+import com.clement.nutrimo.ui.photo.PhotoCameraScreen
+import com.clement.nutrimo.ui.photo.PhotoLock
+import com.clement.nutrimo.ui.photo.PhotoCompareScreen
+import com.clement.nutrimo.ui.photo.PhotosScreen
 import com.clement.nutrimo.ui.more.MacrosScreen
 import com.clement.nutrimo.ui.more.MoreScreen
 import com.clement.nutrimo.ui.more.RemindersScreen
@@ -35,6 +39,9 @@ import com.clement.nutrimo.ui.profile.ProfileScreen
 import com.clement.nutrimo.ui.recipe.RecipeEditScreen
 import com.clement.nutrimo.ui.recipe.RecipeViewScreen
 import com.clement.nutrimo.ui.recipe.RecipesScreen
+import com.clement.nutrimo.ui.weight.MeasurementsScreen
+import com.clement.nutrimo.ui.weight.WeighHistoryScreen
+import com.clement.nutrimo.ui.weight.WeightHubActions
 import com.clement.nutrimo.ui.weight.WeightScreen
 import java.time.LocalDate
 import java.time.LocalTime
@@ -52,7 +59,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
             ),
         )
     }
-    composable<WeightRoute> { WeightScreen(onNewGoal = { nav.navigate(GoalEditRoute) }, onGoals = { nav.navigate(GoalsRoute) }) }
+    weightDestinations(nav, back)
     composable<RecipesRoute> { RecipesScreen(onOpen = { nav.navigate(RecipeViewRoute(it)) }, onCreate = { nav.navigate(RecipeEditRoute()) }) }
     recipeDestinations(nav, back)
     composable<MoreRoute> { MoreScreen(onOpen = { nav.navigate(it) }) }
@@ -70,6 +77,29 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     composable<IntroRoute> { IntroScreen(onDone = back) }
     composable<MacrosRoute> { MacrosScreen(onBack = back) }
     composable<StepsRoute> { StepsScreen(onBack = back) }
+}
+
+/** Weight hub and the screens it leads to; photos are locked again whenever they are entered from outside. */
+private fun NavGraphBuilder.weightDestinations(nav: NavHostController, back: () -> Unit) {
+    val toPhotos = { PhotoLock.lock(); nav.navigate(PhotosRoute) }
+    composable<WeightRoute> {
+        WeightScreen(
+            WeightHubActions(
+                onHistory = { nav.navigate(WeighHistoryRoute) },
+                onNewGoal = { nav.navigate(GoalEditRoute) },
+                onMeasurements = { nav.navigate(MeasurementsRoute) },
+                onPhotos = toPhotos,
+                onCamera = { PhotoLock.lock(); nav.navigate(PhotoCameraRoute()) },
+            ),
+        )
+    }
+    composable<WeighHistoryRoute> { WeighHistoryScreen(back, onNewGoal = { nav.navigate(GoalEditRoute) }, onGoals = { nav.navigate(GoalsRoute) }) }
+    composable<MeasurementsRoute> { MeasurementsScreen(back) }
+    composable<PhotosRoute> {
+        PhotosScreen(back, onCamera = { nav.navigate(PhotoCameraRoute()) }, onCompare = { a, b -> nav.navigate(PhotoCompareRoute(a.id, b.id)) })
+    }
+    composable<PhotoCameraRoute> { PhotoCameraScreen(onBack = back) }
+    composable<PhotoCompareRoute> { PhotoCompareScreen(onBack = back) }
 }
 
 /** Search → (scanner) → quantity screen, and custom foods. */

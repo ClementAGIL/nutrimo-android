@@ -95,9 +95,7 @@ class HealthRepository(private val context: Context) {
         val calories = if (sessions.isEmpty()) emptyList() else readAll(ActiveCaloriesBurnedRecord::class, range).orEmpty()
         return sessions.map { s ->
             // Same app only: a watch and its phone app often both record the workout's calories.
-            val kcal = calories
-                .filter { it.metadata.dataOrigin == s.metadata.dataOrigin && it.startTime < s.endTime && it.endTime > s.startTime }
-                .sumOf { it.energy.inKilocalories }
+            val kcal = calories.filter { it.metadata.dataOrigin == s.metadata.dataOrigin }.sumOf { it.kcalDuring(s) }
             val minutes = Duration.between(s.startTime, s.endTime).toMinutes().toInt()
             s.startTime.atZone(ZoneId.systemDefault()).toLocalDate() to HealthSession(s.title, s.exerciseType, minutes, kcal.takeIf { it > 0 })
         }
@@ -113,6 +111,17 @@ class HealthRepository(private val context: Context) {
                 token = page.pageToken
             } while (token != null)
         }
+    }
+
+    /**
+     * Share of this record's calories that falls inside [session]: apps often write calories in long blocks
+     * (e.g. one per hour), which would otherwise count whole into a 20-minute workout.
+     */
+    private fun ActiveCaloriesBurnedRecord.kcalDuring(session: ExerciseSessionRecord): Double {
+        val length = Duration.between(startTime, endTime)
+        if (length.isZero) return if (startTime >= session.startTime && startTime < session.endTime) energy.inKilocalories else 0.0
+        val overlap = Duration.between(maxOf(startTime, session.startTime), minOf(endTime, session.endTime))
+        return if (overlap.isNegative || overlap.isZero) 0.0 else energy.inKilocalories * overlap.toMillis() / length.toMillis()
     }
 
     private fun dayRange(from: LocalDate, to: LocalDate) =

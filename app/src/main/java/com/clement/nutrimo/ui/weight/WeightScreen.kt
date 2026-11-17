@@ -1,91 +1,109 @@
-// Weight tab: a Poids / Mensurations switch, each with its sub-tabs, and the "+" button adding to the current one.
+// Weight tab = hub: one chart (weight, goal, trend, measurement and photo days), the goal's Bilan, the ways into
+// Historique / Mensurations / Photos, and a "+" offering a weigh-in, measurements or a photo.
 package com.clement.nutrimo.ui.weight
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.MonitorWeight
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.data.db.MeasurementEntity
-import com.clement.nutrimo.ui.common.AppTabs
+import com.clement.nutrimo.ui.common.FAB_CLEARANCE
+import com.clement.nutrimo.ui.common.IntroText
 import com.clement.nutrimo.ui.common.ScreenScaffold
+import com.clement.nutrimo.ui.common.ScrollColumn
+import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.appViewModel
 import java.time.LocalDate
 
-private enum class BodyView(val label: String, val tabs: List<String>, val addLabel: String) {
-    WEIGHT("Poids", listOf("Bilan", "Historique", "Graphique"), "Ajouter une pesée"),
-    MEASUREMENTS("Mensurations", listOf("Historique", "Graphiques"), "Ajouter des mensurations"),
-}
+/** Where the hub leads; [onPhotos] and [onCamera] lock the photos again (entering them from outside). */
+class WeightHubActions(val onHistory: () -> Unit, val onNewGoal: () -> Unit, val onMeasurements: () -> Unit, val onPhotos: () -> Unit, val onCamera: () -> Unit)
 
 @Composable
-fun WeightScreen(onNewGoal: () -> Unit, onGoals: () -> Unit) {
+fun WeightScreen(actions: WeightHubActions) {
     val vm = appViewModel { c, _ -> WeightViewModel(c) }
-    var view by rememberSaveable { mutableStateOf(BodyView.WEIGHT) }
-    var tab by rememberSaveable { mutableIntStateOf(0) }
+    val state by vm.state.collectAsStateWithLifecycle()
+    val measurements by vm.measurements.collectAsStateWithLifecycle()
+    val photos by vm.photos.collectAsStateWithLifecycle()
     var adding by remember { mutableStateOf(false) }
     var measurement by remember { mutableStateOf<MeasurementEntity?>(null) }
     ScreenScaffold(
         title = "Poids",
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                if (view == BodyView.WEIGHT) adding = true else measurement = MeasurementEntity(date = LocalDate.now())
-            }) { Icon(Icons.Default.Add, view.addLabel) }
-        },
+        floatingActionButton = { AddMenu({ adding = true }, { measurement = MeasurementEntity(date = LocalDate.now()) }, actions.onCamera) },
     ) { padding ->
-        Column(Modifier.padding(padding)) {
-            ViewSwitch(view) {
-                view = it
-                tab = 0
-            }
-            AppTabs(view.tabs, tab) { tab = it }
-            if (view == BodyView.WEIGHT) WeightTabs(vm, tab, onNewGoal, onGoals) else MeasurementTabs(vm, tab) { measurement = it }
+        ScrollColumn(padding) {
+            if (state.weights.isEmpty()) SectionCard { IntroText("Ajoutez votre première pesée avec le bouton +.") }
+            else WeightHubChart(state, measurements, photos, actions)
+            HubButtons(actions)
+            WeightDashboard(state, actions.onNewGoal, vm::markGoalAchieved)
+            Spacer(Modifier.height(FAB_CLEARANCE))
         }
     }
     if (adding) WeightDialog(vm, onDismiss = { adding = false })
     measurement?.let { MeasurementDialog(it, vm::saveMeasurement) { measurement = null } }
 }
 
+/** The chart is the main entry; these buttons are for users who don't know they can tap it. */
 @Composable
-private fun ViewSwitch(view: BodyView, onSelect: (BodyView) -> Unit) {
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        BodyView.entries.forEachIndexed { i, v ->
-            SegmentedButton(
-                selected = view == v,
-                onClick = { onSelect(v) },
-                shape = SegmentedButtonDefaults.itemShape(i, BodyView.entries.size),
-            ) { Text(v.label) }
+private fun HubButtons(actions: WeightHubActions) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        HubButton("Historique", Icons.Default.History, actions.onHistory, Modifier.weight(1f))
+        HubButton("Mensurations", Icons.Default.Straighten, actions.onMeasurements, Modifier.weight(1f))
+        HubButton("Photos", Icons.Default.PhotoLibrary, actions.onPhotos, Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun HubButton(label: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier) {
+    OutlinedButton(onClick = onClick, modifier = modifier, contentPadding = PaddingValues(vertical = 12.dp, horizontal = 4.dp)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(icon, null)
+            Text(label, maxLines = 1)
         }
     }
 }
 
 @Composable
-private fun WeightTabs(vm: WeightViewModel, tab: Int, onNewGoal: () -> Unit, onGoals: () -> Unit) {
-    val state by vm.state.collectAsStateWithLifecycle()
-    when (tab) {
-        0 -> WeightDashboard(state, onNewGoal, onGoals, vm::markGoalAchieved)
-        1 -> WeightHistory(state.weights, vm)
-        else -> WeightChartTab(state)
+private fun AddMenu(onWeight: () -> Unit, onMeasurement: () -> Unit, onPhoto: () -> Unit) {
+    var open by remember { mutableStateOf(false) }
+    Box {
+        FloatingActionButton(onClick = { open = true }) { Icon(Icons.Default.Add, "Ajouter") }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            MenuItem("Pesée", Icons.Default.MonitorWeight) { open = false; onWeight() }
+            MenuItem("Mensurations", Icons.Default.Straighten) { open = false; onMeasurement() }
+            MenuItem("Photo", Icons.Default.PhotoCamera) { open = false; onPhoto() }
+        }
     }
 }
 
 @Composable
-private fun MeasurementTabs(vm: WeightViewModel, tab: Int, onEdit: (MeasurementEntity) -> Unit) {
-    val list by vm.measurements.collectAsStateWithLifecycle()
-    if (tab == 0) MeasurementList(list, onEdit) { vm.deleteMeasurement(it.id) } else MeasurementCharts(list)
+private fun MenuItem(label: String, icon: ImageVector, onClick: () -> Unit) {
+    DropdownMenuItem(text = { Text(label) }, onClick = onClick, leadingIcon = { Icon(icon, null) }, modifier = Modifier.padding(end = 8.dp))
 }

@@ -9,6 +9,8 @@ import com.clement.nutrimo.data.db.WeightEntity
 import com.clement.nutrimo.data.db.now
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.Energy
+import com.clement.nutrimo.domain.calc.GoalMath
+import com.clement.nutrimo.domain.model.GoalMode
 import com.clement.nutrimo.domain.model.GoalStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -43,9 +45,29 @@ class BodyRepository(private val db: NutrimoDatabase) {
     suspend fun saveWeight(date: LocalDate, kg: Double) {
         val existing = weights.byDate(date)
         weights.upsert(existing?.copy(kg = kg, updatedAt = now()) ?: WeightEntity(date = date, kg = kg))
+        syncGoalStart()
     }
 
-    suspend fun deleteWeight(id: String) = weights.delete(id)
+    suspend fun deleteWeight(id: String) {
+        weights.delete(id)
+        syncGoalStart()
+    }
+
+    /**
+     * The active goal's start weight follows the weigh-ins: the one of its start day, else the first after, else the
+     * last before. A typo fixed or deleted there no longer leaves the goal line starting from a wrong weight. A pace
+     * goal keeps its pace, so its end date moves with it.
+     */
+    suspend fun syncGoalStart() {
+        val goal = goals.active() ?: return
+        val all = weights.all()
+        val start = all.firstOrNull { !it.date.isBefore(goal.startDate) } ?: all.lastOrNull() ?: return
+        if (start.kg == goal.startKg) return
+        val end = if (goal.mode == GoalMode.PACE && start.kg > goal.targetKg) {
+            GoalMath.endDateForPace(goal.startDate, start.kg, goal.targetKg, goal.paceKgPerWeek)
+        } else goal.endDate
+        goals.upsert(goal.copy(startKg = start.kg, endDate = end, updatedAt = now()))
+    }
 
     suspend fun measurementOn(date: LocalDate): MeasurementEntity? = measurements.byDate(date)
 

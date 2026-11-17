@@ -1,4 +1,4 @@
-// Weigh-in and meal reminders: WorkManager periodic jobs that notify only when nothing was logged today.
+// Weigh-in, meal and photo reminders: WorkManager jobs that notify only when nothing was logged (today / this month).
 package com.clement.nutrimo.data.reminders
 
 import android.Manifest
@@ -33,6 +33,8 @@ private const val WEIGH_WORK = "weigh_reminder"
 private const val MEAL_WORK = "meal_reminder"
 private const val WEIGH_NOTIFICATION = 1
 private const val MEAL_NOTIFICATION = 2
+private const val PHOTO_WORK = "photo_reminder"
+private const val PHOTO_NOTIFICATION = 3
 
 object Reminders {
     fun createChannel(context: Context) {
@@ -64,9 +66,28 @@ object Reminders {
         enqueue(context, MEAL_WORK, PeriodicWorkRequestBuilder<MealReminderWorker>(1, TimeUnit.DAYS), Duration.between(now, next))
     }
 
-    private fun enqueue(context: Context, name: String, builder: PeriodicWorkRequest.Builder, delay: Duration) {
+    /**
+     * Every day at the chosen time; the worker only notifies on the 1st of the month (months differ in length, a daily
+     * job is simpler than re-planning a one-time one). [replace] = false keeps an already planned job (app start).
+     */
+    fun schedulePhoto(context: Context, r: ReminderSettings, replace: Boolean = true) {
+        if (!r.enabled) {
+            WorkManager.getInstance(context).cancelUniqueWork(PHOTO_WORK)
+            return
+        }
+        val now = LocalDateTime.now()
+        var next = now.withHour(r.hour).withMinute(r.minute).withSecond(0)
+        if (next.isBefore(now)) next = next.plusDays(1)
+        val policy = if (replace) ExistingPeriodicWorkPolicy.UPDATE else ExistingPeriodicWorkPolicy.KEEP
+        enqueue(context, PHOTO_WORK, PeriodicWorkRequestBuilder<PhotoReminderWorker>(1, TimeUnit.DAYS), Duration.between(now, next), policy)
+    }
+
+    private fun enqueue(
+        context: Context, name: String, builder: PeriodicWorkRequest.Builder, delay: Duration,
+        policy: ExistingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.UPDATE,
+    ) {
         val request = builder.setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS).build()
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(name, ExistingPeriodicWorkPolicy.UPDATE, request)
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(name, policy, request)
     }
 
     fun notify(context: Context, id: Int, title: String, text: String) {
@@ -103,6 +124,17 @@ class MealReminderWorker(context: Context, params: WorkerParameters) : Coroutine
     override suspend fun doWork(): Result {
         if (!applicationContext.container().diary.hasEntries(LocalDate.now())) {
             Reminders.notify(applicationContext, MEAL_NOTIFICATION, "Journal vide aujourd'hui", "Pensez à noter vos repas.")
+        }
+        return Result.success()
+    }
+}
+
+class PhotoReminderWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result {
+        val today = LocalDate.now()
+        if (today.dayOfMonth != 1) return Result.success()
+        if (applicationContext.container().photos.latestDate()?.isBefore(today.withDayOfMonth(1)) != false) {
+            Reminders.notify(applicationContext, PHOTO_NOTIFICATION, "Photos du mois", "Prenez vos photos de progression pour suivre l'évolution.")
         }
         return Result.success()
     }

@@ -1,18 +1,12 @@
-// Dashboard tab: goal and time progress bars, and the key figures of the current goal.
+// Bilan cards of the weight hub: goal and time progress bars, and the key figures of the current goal.
 package com.clement.nutrimo.ui.weight
 
 import com.clement.nutrimo.ui.common.HintText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.domain.calc.Bmi
 import com.clement.nutrimo.domain.calc.GoalProgress
 import com.clement.nutrimo.domain.calc.MIN_TREND_POINTS
-import com.clement.nutrimo.ui.common.FAB_CLEARANCE
+import com.clement.nutrimo.domain.calc.TREND_WINDOW_DAYS
 import com.clement.nutrimo.ui.common.ProgressBar
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
@@ -35,29 +29,20 @@ import com.clement.nutrimo.ui.common.kcal
 import com.clement.nutrimo.ui.common.kg
 import com.clement.nutrimo.ui.common.percent
 import com.clement.nutrimo.ui.theme.NutrimoColors
+import java.time.LocalDate
 
 @Composable
-fun WeightDashboard(state: WeightUiState, onNewGoal: () -> Unit, onGoals: () -> Unit, onAchieved: () -> Unit) {
-    Column(
-        Modifier.verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        val progress = state.progress
-        if (state.goal == null || progress == null) {
-            SectionCard("Aucun objectif en cours") {
-                WideButton("Définir un objectif", onNewGoal)
-            }
-        } else {
-            if (state.goalReached) GoalReachedCard(onAchieved)
-            ProgressCard(progress)
-            FiguresCard(state, progress)
+fun WeightDashboard(state: WeightUiState, onNewGoal: () -> Unit, onAchieved: () -> Unit) {
+    val progress = state.progress
+    if (state.goal == null || progress == null) {
+        SectionCard("Aucun objectif en cours") {
+            WideButton("Définir un objectif", onNewGoal)
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = onNewGoal, modifier = Modifier.weight(1f)) { Text("Nouvel objectif") }
-            OutlinedButton(onClick = onGoals, modifier = Modifier.weight(1f)) { Text("Mes objectifs") }
-        }
-        Spacer(Modifier.height(FAB_CLEARANCE))
+        return
     }
+    if (state.goalReached) GoalReachedCard(onAchieved)
+    ProgressCard(progress)
+    FiguresCard(state, progress)
 }
 
 @Composable
@@ -100,19 +85,29 @@ private fun FiguresCard(state: WeightUiState, p: GoalProgress) {
         StatRow("Perdu", kg(p.lostKg))
         StatRow("Reste à perdre", kg(p.remainingKg))
         state.bmi?.let { StatRow("IMC", "${fmt(it)} · ${Bmi.category(it)}") }
+        state.profile?.let { profile -> NextBmiZone(p, profile.heightCm) }
         p.avgLossPerWeek?.let { StatRow("Perte moyenne", "${fmt(it, 2)} kg / semaine") }
         p.requiredPace?.let { StatRow("Rythme nécessaire", "${fmt(it, 2)} kg / semaine") }
         state.target?.let { StatRow("Objectif calorique", "${kcal(it.target)} / jour") }
         StatRow("Date prévue", goal.endDate.full())
         StatRow("Estimation (tendance)", estimate(p))
         HintText(
-            "L'estimation prolonge la droite de tendance de vos pesées depuis le début de l'objectif.",
+            "L'estimation prolonge la droite de tendance de vos pesées des $TREND_WINDOW_DAYS derniers jours.",
         )
     }
 }
 
-private fun estimate(p: GoalProgress): String = when {
+/** "Obésité sévère : sous 141,1 kg, encore 5,9 kg" and the date the trend gets there. */
+@Composable
+private fun NextBmiZone(p: GoalProgress, heightCm: Double) {
+    val (zone, threshold) = Bmi.nextLower(p.currentKg, heightCm) ?: return
+    StatRow("Prochaine catégorie", zone.label)
+    StatRow("Seuil", "sous ${kg(threshold)} · encore ${kg(p.currentKg - threshold)}")
+    StatRow("Atteinte estimée (tendance)", estimate(p, p.trend?.dateReaching(threshold)))
+}
+
+private fun estimate(p: GoalProgress, date: LocalDate? = p.estimatedEnd): String = when {
     p.trend == null -> "$MIN_TREND_POINTS pesées minimum"
-    p.estimatedEnd == null -> "pas de tendance à la baisse"
-    else -> p.estimatedEnd.full()
+    date == null -> "pas de tendance à la baisse"
+    else -> date.full()
 }

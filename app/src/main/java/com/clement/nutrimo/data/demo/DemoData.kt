@@ -1,5 +1,6 @@
 // Developer tool: replaces all personal data with a realistic demo history (profile, 2 goals, weigh-ins,
-// measurements, water, activities, custom food, recipes with a sub-recipe, 30 days of meals) so every screen has content.
+// measurements, water, activities, custom food, recipes with a sub-recipe, 30 days of meals, progress photos) so every
+// screen has content.
 package com.clement.nutrimo.data.demo
 
 import com.clement.nutrimo.data.AppContainer
@@ -46,6 +47,7 @@ class DemoData(private val c: AppContainer) {
     /** Wipes the database, restores CIQUAL, then writes the demo history. */
     suspend fun load() {
         withContext(Dispatchers.IO) { c.db.clearAllTables() }
+        c.photos.deleteAll()
         c.foods.seedCiqualIfNeeded()
         c.body.saveProfile(ProfileEntity(sex = Sex.MALE, birthDate = LocalDate.of(1990, 5, 14), heightCm = 178.0, activity = ActivityLevel.LIGHT))
         goals()
@@ -56,6 +58,7 @@ class DemoData(private val c: AppContainer) {
         recipes()
         DemoDiary(c, random, today).fill()
         activities()
+        DemoPhotos(c, today).create()
         listOf(DemoFoods.BANANA, DemoFoods.YOGURT).forEach { c.foods.setFavorite(it, true) }
         c.recipes.setFavorite(DEMO_CAKE_ID, true)
         c.settings.setOnboardingDone()
@@ -64,6 +67,7 @@ class DemoData(private val c: AppContainer) {
     /** Wipes everything; the app goes back to onboarding. */
     suspend fun clear() {
         withContext(Dispatchers.IO) { c.db.clearAllTables() }
+        c.photos.deleteAll()
         c.foods.seedCiqualIfNeeded()
     }
 

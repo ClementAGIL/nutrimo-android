@@ -8,6 +8,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.clement.nutrimo.domain.calc.DEFAULT_WATER_GOAL_ML
+import com.clement.nutrimo.domain.calc.WeightPoint
 import com.clement.nutrimo.domain.model.ActivityLevel
 import com.clement.nutrimo.domain.model.GoalMode
 import com.clement.nutrimo.domain.model.GoalStatus
@@ -46,6 +47,9 @@ data class WeightEntity(
     val kg: Double,
     val updatedAt: Long = now(),
 )
+
+/** For the weight math (trend, weight on a given day). */
+fun List<WeightEntity>.points(): List<WeightPoint> = map { WeightPoint(it.date, it.kg) }
 
 /** Body measurements in cm, one row per day, every field optional. */
 @Serializable

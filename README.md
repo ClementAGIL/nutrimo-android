@@ -9,10 +9,15 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - First launch: profile (sex, birth date, height, activity) and first goal.
 - Goal by pace (0.5 / 1 / 2 kg per week or custom) or by end date, with the daily calorie target
   (Mifflin-St Jeor maintenance − deficit, never below 1200 kcal women / 1500 kcal men) and safety warnings.
-- Weight tab: dashboard (weight and time progress bars with their % on the bar line, start / current / target, lost, remaining, BMI,
+- Weight tab (hub): one chart with the weight, objective and trend lines over tinted BMI zones (WHO categories for the
+  profile height); under the plot, a diamond on each measurement day and a ring on each photo day; 3 months / 6 months / 1 year / all chips
+  (the last weigh-in at 3/4 of the width, the goal and trend lines ahead); the trend line follows the weigh-ins of
+  the last 30 days (even from before the goal start), pinch to zoom and side drag to move in time; tap a day for a bubble (weight, measurements, photos) with links. Below: Bilan, Mensurations and Photos,
+  and a "+" to add a weigh-in, measurements or a photo.
+- Bilan: dashboard (weight and time progress bars with their % on the bar line, start / current / target, lost, remaining, BMI
+  and the next BMI category down (threshold weight, kg left, date by the trend),
   average loss per week, required pace, calorie target, planned and estimated end dates), weigh-in history
-  (one per day, edit / delete, change since the previous one) and graph (weight, objective line, trend line
-  projected to the estimated end date; 1 / 3 / 6 months or everything). Goal history in "Mes objectifs".
+  (one per day, edit / delete, change since the previous one). Goal history in "Mes objectifs".
 - Journal: day by day, calories eaten / target / maintenance / remaining, protein-carbs-fat bars. The calorie ring
   is green under the target, yellow above it but still under maintenance (still losing, just slower), red above
   maintenance. 4 meals (breakfast, lunch, dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
@@ -45,13 +50,21 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Recipes: ingredients picked from the same search (foods in grams, other recipes in parts), number of parts,
   optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal. The list shows
   how many times each recipe was logged: favorites first, then the most used.
-- Body measurements (waist, hips, chest, arm, thigh) in the Poids tab (Poids / Mensurations switch): history and
-  one evolution chart per measurement (1 / 3 / 6 months or everything).
+- Body measurements (waist, hips, chest, arm, thigh), from the Poids hub: history and one evolution chart per
+  measurement (1 / 3 / 6 months or everything).
+- Progress photos (Poids -> Photos), only taken in the app and stored privately on the phone (never in the gallery or
+  Google backups), unlocked with fingerprint / face / PIN each time, no screenshots:
+  - Camera: Face / Profil / Dos, front or back camera, the last photo of the pose shown at 30 % to line up, timer
+    3 or 10 s; then a note, the day's weight and measurements. One photo per day and pose (a new one replaces it).
+  - Timeline: the weight curve with a point per photo day; tap a day, pick photo A and photo B.
+  - Comparison: side by side, or B over A with an opacity slider; each photo zooms and moves on its own.
+  - Reminder on the 1st of each month (Plus -> Rappels, can be turned off).
 - Each journal card with a goal (calories, steps, sport, water) has a settings button opening the screen where
   that goal is set.
-- Reminders: weekly weigh-in and daily meal logging (only when nothing was logged that day).
+- Reminders: weekly weigh-in and daily meal logging (only when nothing was logged that day), monthly photos.
 - Backup (Plus → Sauvegarde): send everything to the Nutrimo server on your PC (now, or automatically every day
-  on Wi-Fi) and restore the latest server backup; or export / import a JSON file.
+  on Wi-Fi) and restore the latest server backup (data only, never the photos); or export a ZIP file with the data and
+  the photos (named with date, pose and weight) and import its data (or an older JSON export).
 - Server: set the Nutrimo API address (e.g. `http://192.168.1.20:3000`) and test the connection (Plus → Serveur).
 
 ## Launcher icon, splash and tour

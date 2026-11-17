@@ -38,8 +38,8 @@ NutrimoApp.kt / MainActivity.kt   Application (holds AppContainer) / single acti
 data/
   AppContainer.kt                 creates db, Http, repositories; seeds CIQUAL on first launch
   db/                             Room: BodyEntities (profile, weights, measurements, goals, water),
-                                  FoodEntities (foods, portions, recipes, ingredients, diary, saved meals + items), DAOs, Converters.
-                                  Schema changes: bump the version and add an AutoMigration (schemas in app/schemas)
+                                  FoodEntities (foods, portions, recipes, ingredients, diary, saved meals + items), PhotoEntities
+                                  (photos: one per day and pose, + PhotoDao), DAOs, Converters. Schema changes: bump the version and add an AutoMigration (schemas in app/schemas)
   network/                        Http (OkHttp wrapper), FoodDto (+ mapping to entities), FoodApis
                                   (NutrimoApi = PC backend, OffApi = Open Food Facts + mapOffProduct)
   Errors.kt                       nullOnError (failures of network / Health Connect → null, cancellation kept)
@@ -49,17 +49,22 @@ data/
   sync/ServerBackup.kt            push / restore the JSON backup on nutrimo-api (/backups), AutoBackupWorker (daily,
                                   Wi-Fi only, retries when away from home)
   demo/                           DemoData (wipe + realistic history: profile, 2 goals, 5 months of weigh-ins, measurements,
-                                  water, custom food, recipes incl. a sub-recipe), DemoDiary (30 days of meals, fixed CIQUAL ids)
+                                  water, custom food, recipes incl. a sub-recipe), DemoDiary (30 days of meals, fixed CIQUAL ids),
+                                  DemoPhotos (drawn silhouettes, 5 sessions x 3 poses, slimmer with the weight)
   reminders/Reminders.kt          notification channel, WorkManager scheduling, weigh-in / meal workers (notify
-                                  only when nothing was logged today)
+                                  only when nothing was logged today), photo worker (daily job, notifies on the 1st when no
+                                  photo this month; on by default, planned at app start with KEEP)
   repository/                     Settings (DataStore), Activity (MET × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
-                                  nutrition, cycle check), Diary (entries + water), Backup (JSON export/import)
+                                  nutrition, cycle check), Diary (entries + water), Backup (JSON export/import),
+                                  Photo (files/photos/<id>.jpg at 2,500 px + thumbs/, upright and never mirrored; storage),
+                                  BackupArchive (ZIP export = backup.json + photos/<date>_<pose>_<kg>_<id>.jpg + photos.json;
+                                  import reads ZIP or JSON, photos not re-imported). The server backup never carries photos
 domain/
   model/                          Nutrients (scale/plus), enums with French labels, NutrientCatalog (micros),
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
-                                  Trend (linear regression, estimated end), Bmi, RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets),
+                                  Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table), Macros (MacroSplit % → grams, presets),
                                   DayGoals (DailyGoal, GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
                                   streaks; AppSettings.goalTargets(profile) builds the targets)
 ui/
@@ -95,19 +100,33 @@ ui/
   recipe/                         RecipesScreen (favorites first, then by use count = diary entries, counted live in SQL; kcal/part), RecipeViewScreen (per part / 100 g, delete warns
                                   about parent recipes), RecipeEditScreen/ViewModel (ingredients picked through
                                   AddFood(forRecipe) → ItemDetail → NavResults.INGREDIENT; cycle check)
-  weight/                         WeightScreen (Poids / Mensurations switch, each with sub-tabs; FAB adds to the shown one),
-                                  Measurements (MEASUREMENT_FIELDS shared by list, dialog and charts), MeasurementCharts
-                                  (one line chart per measurement, reuses windowOf), WeightViewModel (progressOf), WeightDashboard,
-                                  WeightHistory, WeightDialog (one per day, confirm replace), WeightChartTab (series)
+  weight/                         WeightScreen = hub: WeightHubChart (weight + goal + trend over Bmi.ZONES bands; chips = presetRange, last weigh-in at 3/4
+                                  width; pinch / drag = custom dates, marker lane
+                                  under the plot: diamond = measurement day, ring = photo day; tap -> DayBubble with links), Bilan / Mensurations / Photos buttons, "+" menu
+                                  (weigh-in, measurements, photo). WeightScreens: WeighBilanScreen (WeightDashboard + history
+                                  link), WeighHistoryScreen, MeasurementsScreen (list / charts tabs). Measurements
+                                  (MEASUREMENT_FIELDS shared by list, dialog and charts), MeasurementCharts, WeightViewModel
+                                  (progressOf), WeightHistory, WeightDialog (one per day, confirm replace)
+  photo/                          PhotoLock (PhotoLockGate: device unlock via the platform BiometricPrompt, weak biometrics or
+                                  PIN; PhotoLock.lock() when entering from the hub and in MainActivity.onStop; SecureWindow =
+                                  FLAG_SECURE), CameraPreview (CameraX 4:3 preview + capture -> upright Bitmap), PhotoCamera
+                                  Screen/ViewModel (pose chips, front/back, ghost of the last photo of the pose at 30 %, timer
+                                  0/3/10 s; PhotoReview: note, day's weight, measurements; then the next pose), PhotosScreen/
+                                  ViewModel (pose filter, PhotoTimeline = scrollable weight curve with photo points, A/B slots,
+                                  PhotoDayCard), PhotoCompareScreen/ViewModel (side by side or B over A with opacity; each photo
+                                  has its own ZoomState), PhotoImages (thumbnails / larger images loaded off the main thread)
   common/                         Shared UI, split by role (look here before writing a new widget):
                                   Layout (ScreenScaffold, ScrollColumn = standard scrollable body, SectionCard, CardHeader,
                                   AppTabs, EmptyState), Rows (StatRow, ProgressRow, ProgressBar, SwitchRow, GoalSettingsButton),
                                   Inputs (NumberField, ChoiceChips, WideButton), Texts (IntroText, HintText, WarningText),
-                                  Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog), StatusRunner (action →
+                                  Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog, InfoButton = ⓘ opening a help dialog: use it instead of long HintText in crowded cards), StatusRunner (action →
                                   status message / busy), Pickers (DateField, Dropdown), Format (fr numbers/dates, dateTime,
                                   signed), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
-  common/chart/                   LineChart (generic Canvas date/value chart: lines, dots, daily bars), ChartPeriods
-                                  (ChartPeriod + PeriodChips, windowOf, ChartLegend); used by weight, measurements, history
+  common/chart/                   LineChart (generic Canvas date/value chart: lines, dots, daily bars, ChartBand value zones,
+                                  ChartMarker in a lane under the plot (one row per kind),
+                                  zoomBounds + onZoom = pinch-zoom / sideways drag-pan, selected
+                                  day, onTap(date, xOf)), ChartPeriods (ChartPeriod + PeriodChips, windowOf(period) and windowOf(start, end) for a zoomed view, ChartLegend with
+                                  marker symbols); used by weight, measurements, history
   theme/Theme.kt                  brand color schemes (cards = surface, page = background), shapes, bold titles + fixed chart colors
                                   (SectionCard: white, 20 dp corners, 1 dp elevation; AppTabs / top bar use the page color)
 ```
@@ -143,7 +162,8 @@ ui/
 - ✅ Journal, food search (local / PC / OFF), barcode scan, quantity screen, custom foods, day nutrients.
 - ✅ Recipes: list, detail, editor with sub-recipes and cooked weight, log parts in the journal.
 - ✅ Steps and workouts from Health Connect (read-only; opt-in budget: the day's active kcal measured
-  by the user's apps when the sport + calorie permissions are granted, otherwise our estimate = steps beyond 5,000 + non-walking sessions).
+  by the user's apps when the sport + calorie permissions are granted
+  (never less than the day's workouts; workout kcal = share of each calorie record inside the session), otherwise our estimate = steps beyond 5,000 + non-walking sessions).
   Guava is an explicit dependency: Health Connect otherwise hides CameraX's ListenableFuture.
   Every Health Connect read permission must also be declared in the manifest, or the request silently skips it.
   The Pas card has a refresh button (data synced by other apps can arrive while the journal is open).
@@ -154,6 +174,10 @@ ui/
 - ✅ Developer section (Plus → Développeur): replay the tour, demo data / erase everything. Use it to test every screen.
 - ✅ History (journal top bar): goal calendar with streaks (default tab) + charts for calories, sport, steps, water.
 - ✅ Server backup (manual + daily automatic) and restore.
-- ✅ Plus tab: server, reminders, JSON backup, goals, about. Measurements live in the Poids tab (list + charts).
+- ✅ Plus tab: server, reminders, backup, goals, about.
+- ✅ Poids hub + progress photos (camera with ghost and timer, timeline, A/B comparison, lock, no screenshots, monthly
+  reminder, ZIP export, demo silhouettes). DB v4 via AutoMigration(3 -> 4). Android backups are off
+  (allowBackup=false + data_extraction_rules): nothing leaves the phone except the user's export / server backup.
+  To test on the phone: camera framing, front-camera orientation, lock prompt, timeline taps.
 - ✅ Tested on the user's phone (Xiaomi): onboarding, journal, server search + caching, product portions, weight tab, graph.
 - ⏳ Not fully exercised on a device (no emulator acceleration on the dev PC): test on the phone, then polish.

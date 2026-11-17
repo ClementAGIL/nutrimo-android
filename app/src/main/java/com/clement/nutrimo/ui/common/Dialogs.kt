@@ -1,7 +1,12 @@
-// Dialogs: generic form dialog (confirm + "Annuler"), confirmation, and a text-input dialog.
+// Dialogs: generic form dialog (confirm + "Annuler"), confirmation, a text-input dialog, and an ⓘ help button.
 package com.clement.nutrimo.ui.common
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -56,5 +61,22 @@ fun TextDialog(title: String, label: String, initial: String = "", onConfirm: (S
     var text by remember { mutableStateOf(initial) }
     FormDialog(title, onDismiss, { onConfirm(text.trim()) }, canConfirm = text.isNotBlank()) {
         OutlinedTextField(text, { text = it }, label = { Text(label) }, singleLine = true)
+    }
+}
+
+/** An ⓘ icon button that opens [title] / [text] in a dialog: keeps help text out of crowded cards. */
+@Composable
+fun InfoButton(title: String, text: String) {
+    var open by remember { mutableStateOf(false) }
+    IconButton({ open = true }) {
+        Icon(Icons.Outlined.Info, contentDescription = "Aide : $title", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+    if (open) {
+        AlertDialog(
+            onDismissRequest = { open = false },
+            confirmButton = { TextButton({ open = false }) { Text("OK") } },
+            title = { Text(title) },
+            text = { Text(text) },
+        )
     }
 }

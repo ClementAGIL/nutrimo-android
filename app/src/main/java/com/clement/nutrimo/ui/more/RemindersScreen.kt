@@ -1,4 +1,4 @@
-// Reminder settings: weekly weigh-in (day + time) and daily meal logging (time). Asks for the notification permission.
+// Reminder settings: weekly weigh-in (day + time), daily meal logging (time) and monthly photos (time). Asks for the notification permission.
 package com.clement.nutrimo.ui.more
 
 import android.Manifest
@@ -54,6 +54,10 @@ fun RemindersScreen(onBack: () -> Unit) {
             ReminderCard("Saisie des repas", "Chaque jour, si le journal est vide.", s.mealReminder, withDay = false) { r ->
                 if (r.enabled) askPermission()
                 scope.launch { settingsRepo.setMealReminder(r); Reminders.scheduleMeal(context, r) }
+            }
+            ReminderCard("Photos de progression", "Le 1er de chaque mois, si aucune photo ce mois-ci.", s.photoReminder, withDay = false) { r ->
+                if (r.enabled) askPermission()
+                scope.launch { settingsRepo.setPhotoReminder(r); Reminders.schedulePhoto(context, r) }
             }
         }
     }

@@ -38,6 +38,13 @@ import kotlinx.serialization.Serializable
 @Serializable object IntroRoute
 @Serializable object MacrosRoute
 @Serializable object StepsRoute
+@Serializable object WeighHistoryRoute
+@Serializable object MeasurementsRoute
+@Serializable object PhotosRoute
+
+/** [pose] is a PhotoPose name; null starts on the front pose. */
+@Serializable data class PhotoCameraRoute(val pose: String? = null)
+@Serializable data class PhotoCompareRoute(val aId: String, val bId: String)
 
 /** savedStateHandle keys used to return results to a previous screen. */
 object NavResults {

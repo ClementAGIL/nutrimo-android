@@ -1,4 +1,4 @@
-// App settings in DataStore: backend server, onboarding flag, reminders, backup and macro split.
+// App settings in DataStore: backend server, onboarding flag, reminders (weigh-in, meals, photos), backup and macro split.
 package com.clement.nutrimo.data.repository
 
 import android.content.Context
@@ -36,6 +36,8 @@ data class AppSettings(
     val onboardingDone: Boolean = false,
     val weighReminder: ReminderSettings = ReminderSettings(false, 8, 0, DayOfWeek.MONDAY),
     val mealReminder: ReminderSettings = ReminderSettings(false, 20, 0),
+    /** On the 1st of each month; on by default (progress photos are only useful when taken regularly). */
+    val photoReminder: ReminderSettings = ReminderSettings(true, 10, 0),
     val autoBackup: Boolean = false,
     /** Epoch millis of the last successful server backup, 0 if none. */
     val lastServerBackup: Long = 0,
@@ -63,6 +65,9 @@ class SettingsRepository(private val context: Context) {
         val mealEnabled = booleanPreferencesKey("meal_enabled")
         val mealHour = intPreferencesKey("meal_hour")
         val mealMinute = intPreferencesKey("meal_minute")
+        val photoEnabled = booleanPreferencesKey("photo_enabled")
+        val photoHour = intPreferencesKey("photo_hour")
+        val photoMinute = intPreferencesKey("photo_minute")
         val autoBackup = booleanPreferencesKey("auto_backup")
         val lastServerBackup = longPreferencesKey("last_server_backup")
         val proteinPct = intPreferencesKey("protein_pct")
@@ -113,6 +118,12 @@ class SettingsRepository(private val context: Context) {
         it[Keys.mealMinute] = r.minute
     }
 
+    suspend fun setPhotoReminder(r: ReminderSettings) = edit {
+        it[Keys.photoEnabled] = r.enabled
+        it[Keys.photoHour] = r.hour
+        it[Keys.photoMinute] = r.minute
+    }
+
     private suspend fun edit(block: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
         context.dataStore.edit(block)
     }
@@ -133,6 +144,11 @@ class SettingsRepository(private val context: Context) {
                 enabled = this[Keys.mealEnabled] ?: d.mealReminder.enabled,
                 hour = this[Keys.mealHour] ?: d.mealReminder.hour,
                 minute = this[Keys.mealMinute] ?: d.mealReminder.minute,
+            ),
+            photoReminder = ReminderSettings(
+                enabled = this[Keys.photoEnabled] ?: d.photoReminder.enabled,
+                hour = this[Keys.photoHour] ?: d.photoReminder.hour,
+                minute = this[Keys.photoMinute] ?: d.photoReminder.minute,
             ),
             autoBackup = this[Keys.autoBackup] ?: false,
             lastServerBackup = this[Keys.lastServerBackup] ?: 0,

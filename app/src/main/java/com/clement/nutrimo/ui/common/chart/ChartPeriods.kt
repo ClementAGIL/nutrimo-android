@@ -1,9 +1,12 @@
 // Shared pieces for line charts over time: period filter (chips), visible window from the data, and the legend.
 package com.clement.nutrimo.ui.common.chart
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -11,10 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.ui.common.ChoiceChips
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -22,14 +30,15 @@ import kotlin.math.floor
 private const val Y_MARGIN = 1.0
 
 enum class ChartPeriod(val label: String, val months: Long?) {
-    M1("1 mois", 1), M3("3 mois", 3), M6("6 mois", 6), ALL("Tout", null);
+    M3("3 mois", 3), M6("6 mois", 6), Y1("1 an", 12), ALL("Tout", null);
 
-    /** First visible day, or null for the whole history. */
-    fun start(): LocalDate? = months?.let { LocalDate.now().minusMonths(it) }
+    /** First visible day, counted back from [from], or null for the whole history. */
+    fun start(from: LocalDate = LocalDate.now()): LocalDate? = months?.let { from.minusMonths(it) }
 }
 
+/** [period] null = none highlighted (e.g. a zoomed custom view). */
 @Composable
-fun PeriodChips(period: ChartPeriod, onSelect: (ChartPeriod) -> Unit) {
+fun PeriodChips(period: ChartPeriod?, onSelect: (ChartPeriod) -> Unit) {
     ChoiceChips(ChartPeriod.entries, period, { it.label }, onSelect)
 }
 
@@ -48,15 +57,61 @@ fun windowOf(series: List<ChartSeries>, period: ChartPeriod): ChartWindow {
     )
 }
 
-/** One colored square + label per series. */
+/**
+ * Window over [start]..[end] (a zoomed view), the values framed on the points inside it plus where each line crosses
+ * the two edges, so a line entering or leaving the view is never cut off; [series] must not be empty.
+ */
+fun windowOf(series: List<ChartSeries>, start: LocalDate, end: LocalDate): ChartWindow {
+    val visible = series.flatMap { s ->
+        val points = s.points.sortedBy { it.date }
+        points.filter { !it.date.isBefore(start) && !it.date.isAfter(end) } + listOfNotNull(valueAt(points, start), valueAt(points, end))
+    }.ifEmpty { series.flatMap { it.points } }
+    return ChartWindow(
+        start = start,
+        end = if (end.isAfter(start)) end else start.plusDays(1),
+        min = floor(visible.minOf { it.value } - Y_MARGIN),
+        max = ceil(visible.maxOf { it.value } + Y_MARGIN),
+    )
+}
+
+/** The line's value on [date] between its two surrounding points, null outside the line; [points] sorted by date. */
+private fun valueAt(points: List<ChartPoint>, date: LocalDate): ChartPoint? {
+    val after = points.indexOfFirst { !it.date.isBefore(date) }
+    if (after <= 0) return null
+    val a = points[after - 1]
+    val b = points[after]
+    val t = ChronoUnit.DAYS.between(a.date, date).toDouble() / ChronoUnit.DAYS.between(a.date, b.date)
+    return ChartPoint(date, a.value + (b.value - a.value) * t)
+}
+
+/** One colored square + label per series, then one symbol per marker kind ([ChartMarker.ring] = ring, else diamond). */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ChartLegend(items: List<Pair<Color, String>>) {
-    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+fun ChartLegend(items: List<Pair<Color, String>>, markers: List<ChartMarker> = emptyList()) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         items.forEach { (color, label) ->
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Box(Modifier.size(12.dp).background(color, MaterialTheme.shapes.small))
-                Text(label, style = MaterialTheme.typography.bodySmall)
-            }
+            LegendItem(label) { Box(Modifier.size(12.dp).background(color, MaterialTheme.shapes.small)) }
+        }
+        markers.forEach { m -> LegendItem(m.label) { MarkerSymbol(m) } }
+    }
+}
+
+@Composable
+private fun LegendItem(label: String, symbol: @Composable () -> Unit) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        symbol()
+        Text(label, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+private fun MarkerSymbol(m: ChartMarker) {
+    Canvas(Modifier.size(12.dp)) {
+        if (m.ring) {
+            drawCircle(m.color, size.minDimension / 2 - 1.5.dp.toPx(), style = Stroke(2.5.dp.toPx()))
+        } else {
+            val side = size.minDimension * 0.7f
+            rotate(45f) { drawRect(m.color, center - Offset(side / 2, side / 2), Size(side, side)) }
         }
     }
 }
