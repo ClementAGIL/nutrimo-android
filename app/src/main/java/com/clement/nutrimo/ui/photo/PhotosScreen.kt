@@ -74,7 +74,7 @@ private fun PhotosBody(state: PhotosUiState, vm: PhotosViewModel, onCompare: (Ph
 private fun PoseFilter(pose: PhotoPose?, onSelect: (PhotoPose?) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         FilterChip(selected = pose == null, onClick = { onSelect(null) }, label = { Text(stringResource(R.string.photos_toutes)) })
-        PhotoPose.entries.forEach { p -> FilterChip(selected = pose == p, onClick = { onSelect(p) }, label = { Text(p.label) }) }
+        PhotoPose.entries.forEach { p -> FilterChip(selected = pose == p, onClick = { onSelect(p) }, label = { Text(stringResource(p.label)) }) }
     }
 }
 
@@ -105,7 +105,7 @@ private fun CompareSlot(letter: String, photo: PhotoEntity?, modifier: Modifier)
             Spacer(Modifier.width(8.dp))
             Column {
                 Text(photo.date.short(), style = MaterialTheme.typography.bodyMedium)
-                HintText(photo.pose.label)
+                HintText(stringResource(photo.pose.label))
             }
         }
     }

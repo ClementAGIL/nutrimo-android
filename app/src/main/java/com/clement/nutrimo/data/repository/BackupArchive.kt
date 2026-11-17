@@ -59,10 +59,11 @@ class BackupArchive(private val backup: BackupRepository, private val photos: Ph
     }
 }
 
-/** "2026-06-14_face_110,2kg_1a2b3c4d.jpg": readable in a file manager, unique thanks to the id prefix. */
+/** "2026-06-14_front_110,2kg_1a2b3c4d.jpg": readable in a file manager, unique thanks to the id prefix; the pose is
+ * its enum name so file names don't depend on the display language. */
 private fun exportOf(photo: PhotoEntity, kg: Double?): PhotoExport {
     val weight = kg?.let { "_" + String.format(Locale.FRANCE, "%.1fkg", it) }.orEmpty()
-    val name = "${photo.date}_${photo.pose.label.lowercase(Locale.FRANCE)}${weight}_${photo.id.take(8)}.jpg"
+    val name = "${photo.date}_${photo.pose.name.lowercase(Locale.ROOT)}${weight}_${photo.id.take(8)}.jpg"
     return PhotoExport(name, photo.date.toString(), photo.pose.name, photo.frontCamera, photo.note, kg)
 }
 

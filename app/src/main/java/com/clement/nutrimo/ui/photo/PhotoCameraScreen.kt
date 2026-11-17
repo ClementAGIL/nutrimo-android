@@ -67,7 +67,8 @@ fun PhotoCameraScreen(onBack: () -> Unit) {
     val vm = appViewModel { c, handle -> PhotoCameraViewModel(c, handle) }
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { androidx.compose.material3.SnackbarHostState() }
-    LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
+    val resources = LocalContext.current.resources
+    LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it.resolve(resources)) } }
     SecureWindow()
     ScreenScaffold(stringResource(R.string.photo_camera_photo_progression), onBack = onBack, snackbar = snackbar) { padding ->
         Box(Modifier.padding(padding).fillMaxSize()) {
@@ -154,7 +155,7 @@ private fun CameraControls(state: PhotoCameraState, vm: PhotoCameraViewModel) {
 @Composable
 private fun PoseChips(pose: PhotoPose, onSelect: (PhotoPose) -> Unit) {
     Row(Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
-        PhotoPose.entries.forEach { p -> FilterChip(selected = p == pose, onClick = { onSelect(p) }, label = { Text(p.label) }) }
+        PhotoPose.entries.forEach { p -> FilterChip(selected = p == pose, onClick = { onSelect(p) }, label = { Text(stringResource(p.label)) }) }
     }
 }
 

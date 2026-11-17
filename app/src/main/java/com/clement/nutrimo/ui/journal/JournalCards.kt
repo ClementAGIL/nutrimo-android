@@ -113,7 +113,7 @@ class MealCardActions(
 fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
     var naming by remember { mutableStateOf(false) }
     SectionCard {
-        CardHeader(meal.label, kcal(entries.sumOf { it.nutrients.kcal })) {
+        CardHeader(stringResource(meal.label), kcal(entries.sumOf { it.nutrients.kcal })) {
             if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille)) }
             else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, stringResource(R.string.journal_enregistrer_ce_repas)) }
             IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, stringResource(R.string.common_ajouter)) }
@@ -121,7 +121,7 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
         entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
     }
-    if (naming) TextDialog(stringResource(R.string.journal_enregistrer_ce_repas), stringResource(R.string.journal_nom_ex_petit_dej_habituel), meal.label, actions.onSave) { naming = false }
+    if (naming) TextDialog(stringResource(R.string.journal_enregistrer_ce_repas), stringResource(R.string.journal_nom_ex_petit_dej_habituel), stringResource(meal.label), actions.onSave) { naming = false }
 }
 
 @Composable

@@ -23,7 +23,7 @@ import com.clement.nutrimo.util.fmt
 
 @Composable
 fun FoodRow(food: FoodEntity, onClick: () -> Unit) {
-    ResultRow(food.name, food.brand, stringResource(R.string.food_rows_1_kcal_100_g, fmt(food.per100.kcal, 0)), food.source.label, food.isFavorite, onClick)
+    ResultRow(food.name, food.brand, stringResource(R.string.food_rows_1_kcal_100_g, fmt(food.per100.kcal, 0)), stringResource(food.source.label), food.isFavorite, onClick)
 }
 
 @Composable

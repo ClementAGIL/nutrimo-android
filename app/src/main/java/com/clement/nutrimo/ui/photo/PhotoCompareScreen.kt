@@ -123,7 +123,7 @@ private fun OverlayView(a: CompareSide, b: CompareSide, zoomA: ZoomState, zoomB:
 private fun SideLabel(letter: String, side: CompareSide, modifier: Modifier) {
     val weight = side.kg?.let { " · ${kg(it)}" }.orEmpty()
     Text(
-        "$letter · ${side.photo.date.short()} · ${side.photo.pose.label}$weight",
+        "$letter · ${side.photo.date.short()} · ${stringResource(side.photo.pose.label)}$weight",
         modifier.padding(6.dp).background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(50)).padding(horizontal = 10.dp, vertical = 3.dp),
         color = Color.White,
         style = MaterialTheme.typography.labelMedium,

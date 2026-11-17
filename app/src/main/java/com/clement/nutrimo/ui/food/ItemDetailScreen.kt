@@ -59,7 +59,7 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
             item.subtitle?.let { IntroText(it) }
             item.per100?.let { HintText(stringResource(R.string.item_detail_1_kcal_pour_100_g, fmt(it.kcal, 0))) }
             QuantityRow(state, vm)
-            if (!vm.route.forRecipe) Dropdown(stringResource(R.string.item_detail_repas), state.meal, Meal.entries, { it.label }, vm::setMeal, Modifier.fillMaxWidth())
+            if (!vm.route.forRecipe) Dropdown(stringResource(R.string.item_detail_repas), state.meal, Meal.entries, { stringResource(it.label) }, vm::setMeal, Modifier.fillMaxWidth())
             state.preview?.let { NutrientTable(it, stringResource(R.string.item_detail_pour_cette_quantite)) }
             Buttons(state, vm, actions)
         }

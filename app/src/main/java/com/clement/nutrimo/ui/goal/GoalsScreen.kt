@@ -42,7 +42,7 @@ fun GoalsScreen(onBack: () -> Unit) {
                     supportingContent = {
                         Text(stringResource(R.string.goals_1_2_3_kg_sem, goal.startDate.full(), goal.endDate.full(), fmt(goal.paceKgPerWeek, 2)))
                     },
-                    trailingContent = { Text(goal.status.label) },
+                    trailingContent = { Text(stringResource(goal.status.label)) },
                 )
                 HorizontalDivider()
             }

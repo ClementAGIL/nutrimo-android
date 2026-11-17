@@ -50,7 +50,7 @@ data class ProfileDraft(
 @Composable
 fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        ChoiceChips(Sex.entries, draft.sex, { it.label }) { onChange(draft.copy(sex = it)) }
+        ChoiceChips(Sex.entries, draft.sex, { stringResource(it.label) }) { onChange(draft.copy(sex = it)) }
         DateField(
             label = stringResource(R.string.profile_form_date_naissance),
             date = draft.birthDate,
@@ -70,7 +70,7 @@ fun ProfileForm(draft: ProfileDraft, onChange: (ProfileDraft) -> Unit) {
             title = stringResource(R.string.common_activite_physique),
             selected = draft.activity,
             options = ActivityLevel.entries,
-            label = { "${it.label} — ${it.description}" },
+            label = { "${stringResource(it.label)} — ${stringResource(it.description)}" },
             onSelect = { onChange(draft.copy(activity = it)) },
             modifier = Modifier.fillMaxWidth(),
         )

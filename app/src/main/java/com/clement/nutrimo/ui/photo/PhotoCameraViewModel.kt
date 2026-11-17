@@ -1,6 +1,9 @@
 // State of the photo camera: pose, camera, timer, ghost of the last photo, then the review of the shot before saving.
 package com.clement.nutrimo.ui.photo
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -40,7 +43,7 @@ data class PhotoCameraState(
 
 class PhotoCameraViewModel(private val c: AppContainer, handle: SavedStateHandle) : ViewModel() {
     val state = MutableStateFlow(PhotoCameraState())
-    val messages = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val messages = MutableSharedFlow<UiText>(extraBufferCapacity = 1)
     private val today = LocalDate.now()
 
     init {
@@ -90,7 +93,7 @@ class PhotoCameraViewModel(private val c: AppContainer, handle: SavedStateHandle
         viewModelScope.launch {
             c.photos.save(today, s.pose, s.front, s.note, shot)
             s.weight.toDecimal()?.let { kg -> if (c.body.weightOn(today)?.kg != kg) c.body.saveWeight(today, kg) }
-            messages.tryEmit("Photo « ${s.pose.label} » enregistrée")
+            messages.tryEmit(uiText(R.string.photo_camera_saved, uiText(s.pose.label)))
             val next = PhotoPose.entries[(s.pose.ordinal + 1) % PhotoPose.entries.size]
             state.update { it.copy(shot = null, note = "", saving = false) }
             setPose(next)

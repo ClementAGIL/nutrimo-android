@@ -1,6 +1,7 @@
 // Photo images loaded off the main thread: thumbnails for lists, larger versions for the comparison.
 package com.clement.nutrimo.ui.photo
 
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,8 +25,9 @@ const val COMPARE_SIDE = 2000
 @Composable
 fun PhotoThumb(photo: PhotoEntity, modifier: Modifier) {
     val image by rememberPhoto(photo, THUMB_SIDE, thumbnail = true)
+    val description = stringResource(photo.pose.label)
     Box(modifier.background(MaterialTheme.colorScheme.surfaceVariant)) {
-        image?.let { Image(it, photo.pose.label, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
+        image?.let { Image(it, description, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
     }
 }
 

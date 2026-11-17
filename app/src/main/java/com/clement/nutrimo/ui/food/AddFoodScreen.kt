@@ -52,7 +52,7 @@ fun AddFoodScreen(actions: AddFoodActions, scannedBarcode: String?, onBarcodeCon
         onBarcodeConsumed()
         vm.lookupBarcode(code, actions.onFood) { actions.onCreate(it) }
     }
-    val title = if (vm.route.forRecipe) stringResource(R.string.common_ajouter_ingredient) else Meal.valueOf(vm.route.meal).label
+    val title = if (vm.route.forRecipe) stringResource(R.string.common_ajouter_ingredient) else stringResource(Meal.valueOf(vm.route.meal).label)
     ScreenScaffold(title, onBack = actions.onBack) { padding ->
         Column(Modifier.padding(padding)) {
             OutlinedTextField(

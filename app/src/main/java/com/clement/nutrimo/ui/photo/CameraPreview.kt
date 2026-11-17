@@ -1,6 +1,9 @@
 // CameraX for progress photos: 4:3 preview + still capture, front or back camera, delivered as an upright Bitmap.
 package com.clement.nutrimo.ui.photo
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import androidx.camera.core.CameraSelector
@@ -35,14 +38,15 @@ class PhotoCapture {
      * The in-memory image is the sensor's view, upright once rotated: never mirrored, even from the front camera
      * (only the preview is shown as a mirror), so front and back photos compare the same way.
      */
-    fun take(context: android.content.Context, onPhoto: (Bitmap) -> Unit, onError: (String) -> Unit) {
+    fun take(context: android.content.Context, onPhoto: (Bitmap) -> Unit, onError: (UiText) -> Unit) {
         useCase.takePicture(ContextCompat.getMainExecutor(context), object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 val bitmap = image.use { it.toBitmap().rotated(it.imageInfo.rotationDegrees) }
                 onPhoto(bitmap)
             }
 
-            override fun onError(exception: ImageCaptureException) = onError(exception.message ?: "Erreur de l'appareil photo")
+            override fun onError(exception: ImageCaptureException) =
+                onError(exception.message?.let { UiText.Raw(it) } ?: uiText(R.string.camera_error))
         })
     }
 }

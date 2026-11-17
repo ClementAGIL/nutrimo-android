@@ -75,6 +75,6 @@ private fun DayThumb(photo: PhotoEntity, selected: Boolean, chosen: String?, onC
             photo,
             Modifier.size(90.dp, 120.dp).clip(MaterialTheme.shapes.medium).border(3.dp, border, MaterialTheme.shapes.medium).clickable(onClick = onClick),
         )
-        Text(photo.pose.label + (chosen?.let { " · $it" } ?: ""), style = MaterialTheme.typography.labelMedium)
+        Text(stringResource(photo.pose.label) + (chosen?.let { " · $it" } ?: ""), style = MaterialTheme.typography.labelMedium)
     }
 }

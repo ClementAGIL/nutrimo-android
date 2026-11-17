@@ -39,7 +39,7 @@ fun DayNutrientsScreen(onBack: () -> Unit) {
     ScreenScaffold(date.day(), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             SectionCard(stringResource(R.string.day_nutrients_par_repas)) {
-                Meal.entries.forEach { meal -> StatRow(meal.label, kcal(entries.filter { it.meal == meal }.sumOf { it.nutrients.kcal })) }
+                Meal.entries.forEach { meal -> StatRow(stringResource(meal.label), kcal(entries.filter { it.meal == meal }.sumOf { it.nutrients.kcal })) }
             }
             NutrientTable(Nutrients.sum(entries.map { it.nutrients }), stringResource(R.string.day_nutrients_total_journee))
         }

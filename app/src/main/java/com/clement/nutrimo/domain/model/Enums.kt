@@ -1,22 +1,25 @@
-// Small enums of the domain, with their French labels.
+// Small enums of the domain; their labels are string resources (resolved by the UI).
 package com.clement.nutrimo.domain.model
 
-enum class Sex(val label: String) { FEMALE("Femme"), MALE("Homme") }
+import androidx.annotation.StringRes
+import com.clement.nutrimo.R
+
+enum class Sex(@StringRes val label: Int) { FEMALE(R.string.sex_female), MALE(R.string.sex_male) }
 
 /** Multipliers of the basal metabolic rate (standard Harris-Benedict / Mifflin activity factors). */
-enum class ActivityLevel(val factor: Double, val label: String, val description: String) {
-    SEDENTARY(1.2, "Sédentaire", "Peu ou pas d'exercice"),
-    LIGHT(1.375, "Légère", "Exercice 1 à 3 jours / semaine"),
-    MODERATE(1.55, "Modérée", "Exercice 3 à 5 jours / semaine"),
-    HIGH(1.725, "Élevée", "Exercice 6 à 7 jours / semaine"),
-    VERY_HIGH(1.9, "Très élevée", "Travail physique ou sport intense"),
+enum class ActivityLevel(val factor: Double, @StringRes val label: Int, @StringRes val description: Int) {
+    SEDENTARY(1.2, R.string.activity_sedentary, R.string.activity_sedentary_hint),
+    LIGHT(1.375, R.string.activity_light, R.string.activity_light_hint),
+    MODERATE(1.55, R.string.activity_moderate, R.string.activity_moderate_hint),
+    HIGH(1.725, R.string.activity_high, R.string.activity_high_hint),
+    VERY_HIGH(1.9, R.string.activity_very_high, R.string.activity_very_high_hint),
 }
 
-enum class Meal(val label: String) {
-    BREAKFAST("Petit-déjeuner"),
-    LUNCH("Déjeuner"),
-    DINNER("Dîner"),
-    SNACK("Collations"),
+enum class Meal(@StringRes val label: Int) {
+    BREAKFAST(R.string.meal_breakfast),
+    LUNCH(R.string.meal_lunch),
+    DINNER(R.string.meal_dinner),
+    SNACK(R.string.meal_snack),
     ;
 
     companion object {
@@ -31,10 +34,10 @@ enum class Meal(val label: String) {
 }
 
 /** Food ids are "<source>:<key>", e.g. "off:3017620422003" or "custom:<uuid>" (same ids as the Nutrimo API). */
-enum class FoodSource(val label: String) {
-    CIQUAL("CIQUAL"),
-    OFF("OFF"),
-    CUSTOM("Perso"),
+enum class FoodSource(@StringRes val label: Int) {
+    CIQUAL(R.string.source_ciqual),
+    OFF(R.string.source_off),
+    CUSTOM(R.string.source_custom),
     ;
 
     private val prefix get() = "${name.lowercase()}:"
@@ -49,7 +52,7 @@ enum class QuantityUnit { GRAM, PART, PORTION }
 
 enum class GoalMode { PACE, DATE }
 
-enum class GoalStatus(val label: String) { ACTIVE("En cours"), ACHIEVED("Atteint"), ARCHIVED("Archivé") }
+enum class GoalStatus(@StringRes val label: Int) { ACTIVE(R.string.goal_status_active), ACHIEVED(R.string.goal_status_achieved), ARCHIVED(R.string.goal_status_archived) }
 
 /** Pose of a progress photo; comparisons usually pair photos of the same pose. */
-enum class PhotoPose(val label: String) { FRONT("Face"), SIDE("Profil"), BACK("Dos") }
+enum class PhotoPose(@StringRes val label: Int) { FRONT(R.string.pose_front), SIDE(R.string.pose_side), BACK(R.string.pose_back) }

@@ -52,7 +52,7 @@ fun DayBubble(day: HubDay, x: Float, actions: WeightHubActions, onClose: () -> U
             }
             day.kg?.let { Text(if (day.weighed) stringResource(R.string.day_bubble_pesee_1, kg(it)) else stringResource(R.string.day_bubble_1_courbe, kg(it)), style = MaterialTheme.typography.bodySmall) }
             day.measurement?.let { Text(measurementSummary(it), style = MaterialTheme.typography.bodySmall) }
-            if (day.photos.isNotEmpty()) Text(stringResource(R.string.day_bubble_photos_1, day.photos.joinToString { it.pose.label }), style = MaterialTheme.typography.bodySmall)
+            if (day.photos.isNotEmpty()) Text(stringResource(R.string.day_bubble_photos_1, day.photos.map { stringResource(it.pose.label) }.joinToString()), style = MaterialTheme.typography.bodySmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(0.dp)) {
                 if (day.weighed) TextButton(onClick = actions.onHistory) { Text(stringResource(R.string.common_historique)) }
                 if (day.measurement != null) TextButton(onClick = actions.onMeasurements) { Text(stringResource(R.string.common_mensurations)) }
