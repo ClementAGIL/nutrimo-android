@@ -123,7 +123,8 @@ ui/
                                   FLAG_SECURE), CameraPreview (CameraX 4:3 preview + capture -> upright Bitmap), PhotoCamera
                                   Screen/ViewModel (pose chips, front/back, ghost of the last photo of the pose at 30 %, timer
                                   0/3/10 s; PhotoReview: note, day's weight, measurements; then the next pose), PhotosScreen/
-                                  ViewModel (pose filter, PhotoTimeline = scrollable weight curve with photo points, A/B slots,
+                                  ViewModel (pose filter, PhotoTimeline = scrollable weight curve with photo points on a TimelineAxis (periods
+                                  around photos + today kept day by day, > 183 days without photo = 12-day "…" break; tested), A/B slots,
                                   PhotoDayCard), PhotoCompareScreen/ViewModel (side by side or B over A with opacity; each photo
                                   has its own ZoomState), PhotoImages (thumbnails / larger images loaded off the main thread)
   common/                         Shared UI, split by role (look here before writing a new widget):

@@ -59,7 +59,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   Google backups), unlocked with fingerprint / face / PIN each time, no screenshots:
   - Camera: Face / Profil / Dos, front or back camera, the last photo of the pose shown at 30 % to line up, timer
     3 or 10 s; then a note, the day's weight and measurements. One photo per day and pose (a new one replaces it).
-  - Timeline: the weight curve with a point per photo day; tap a day, pick photo A and photo B.
+  - Timeline: the weight curve with a point per photo day; tap a day, pick photo A and photo B. More than 6 months
+    without a photo shrink to a short "…" break, so years of history stay compact.
   - Comparison: side by side, or B over A with an opacity slider; each photo zooms and moves on its own.
   - Reminder on the 1st of each month (Plus -> Rappels, can be turned off).
 - Each journal card with a goal (calories, steps, sport, water) has a settings button opening the screen where
