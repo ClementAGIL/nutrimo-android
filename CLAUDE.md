@@ -130,7 +130,7 @@ ui/
                                   Layout (ScreenScaffold, ScrollColumn = standard scrollable body, SectionCard, CardHeader,
                                   AppTabs, EmptyState), Rows (StatRow, ProgressRow, ProgressBar, SwitchRow, GoalSettingsButton),
                                   Inputs (NumberField, ChoiceChips, WideButton), Texts (IntroText, HintText, WarningText),
-                                  Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog, InfoButton = ⓘ opening a help dialog: use it instead of long HintText in crowded cards), StatusRunner (action →
+                                  Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog, InfoButton = ⓘ opening a help dialog: use it instead of long HintText in crowded cards), StatusRunner (owned by a VM: action →
                                   status message / busy), Pickers (DateField, Dropdown), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
   common/chart/                   LineChart (public types + composable of the generic Canvas date/value chart; drawing in
                                   ChartDrawing (PlotArea, bands, grid, bars, lines, drawMarkerShape shared with the legend),
@@ -156,7 +156,11 @@ ui/
 - Diary entries store a **nutrient snapshot**: editing a food or recipe never changes past days.
 - One weigh-in per day (`weights.date` unique); saving on a day that has one replaces it.
 - Screens: `ui/<feature>/XxxScreen.kt` + `XxxViewModel.kt` exposing `StateFlow` UI state; create VMs with
-  `appViewModel { container, handle -> ... }`; read nav args with `handle.toRoute<XxxRoute>()`.
+  `appViewModel { container, handle -> ... }`; read nav args with `handle.toRoute<XxxRoute>()`. Every screen reads
+  and writes data through its ViewModel (small screens keep the VM class at the top of the screen file); saves and
+  long actions run in `viewModelScope` (or `c.appScope`), never in a composition scope that leaving the screen cancels.
+  Actions ending with a message use a `StatusRunner(viewModelScope)` owned by the VM. `appContainer()` in composables
+  is only for image loading helpers (PhotoImages).
 - Results between screens go through `savedStateHandle` with the keys in `NavResults`.
 
 ## Code quality rules

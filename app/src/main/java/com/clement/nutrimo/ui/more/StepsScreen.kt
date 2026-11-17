@@ -4,15 +4,15 @@ package com.clement.nutrimo.ui.more
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.health.connect.client.HealthConnectClient
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.calc.STEPS_BASELINE
 import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.IntroText
@@ -22,7 +22,7 @@ import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.SwitchRow
 import com.clement.nutrimo.ui.common.WideButton
-import com.clement.nutrimo.ui.common.appContainer
+import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.util.fmt
 import kotlinx.coroutines.launch
 
@@ -30,7 +30,7 @@ private const val MIN_STEP_GOAL = 1000
 private const val MIN_SPORT_KCAL = 50
 
 /** Form texts; the values are valid when the parsed goals are not null. */
-private class ActivityGoalsForm(steps: String = "", sport: String = "", inBudget: Boolean = false) {
+class ActivityGoalsForm(steps: String = "", sport: String = "", inBudget: Boolean = false) {
     var steps by mutableStateOf(steps)
     var sport by mutableStateOf(sport)
     var inBudget by mutableStateOf(inBudget)
@@ -38,18 +38,30 @@ private class ActivityGoalsForm(steps: String = "", sport: String = "", inBudget
     val sportGoal: Int? get() = sport.toIntOrNull()?.takeIf { it >= MIN_SPORT_KCAL }
 }
 
+class StepsViewModel(private val c: AppContainer) : ViewModel() {
+    val form = ActivityGoalsForm()
+
+    init {
+        viewModelScope.launch {
+            val s = c.settings.current()
+            form.steps = s.stepGoal.toString()
+            form.sport = s.sportGoalKcal.toString()
+            form.inBudget = s.healthInBudget
+        }
+    }
+
+    fun save(onDone: () -> Unit) {
+        val steps = form.stepGoal ?: return
+        val sport = form.sportGoal ?: return
+        viewModelScope.launch { c.settings.setActivityGoals(steps, sport, form.inBudget); onDone() }
+    }
+}
+
 @Composable
 fun StepsScreen(onBack: () -> Unit) {
-    val c = appContainer()
+    val vm = appViewModel { c, _ -> StepsViewModel(c) }
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val form = remember { ActivityGoalsForm() }
-    LaunchedEffect(Unit) {
-        val s = c.settings.current()
-        form.steps = s.stepGoal.toString()
-        form.sport = s.sportGoalKcal.toString()
-        form.inBudget = s.healthInBudget
-    }
+    val form = vm.form
     ScreenScaffold("Pas et sport", onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText(
@@ -62,11 +74,7 @@ fun StepsScreen(onBack: () -> Unit) {
             WideButton("Ouvrir les réglages Health Connect", {
                 runCatching { context.startActivity(Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)) }
             }, outlined = true)
-            WideButton("Enregistrer", {
-                val steps = form.stepGoal ?: return@WideButton
-                val sport = form.sportGoal ?: return@WideButton
-                scope.launch { c.settings.setActivityGoals(steps, sport, form.inBudget); onBack() }
-            }, enabled = form.stepGoal != null && form.sportGoal != null)
+            WideButton("Enregistrer", { vm.save(onBack) }, enabled = form.stepGoal != null && form.sportGoal != null)
         }
     }
 }

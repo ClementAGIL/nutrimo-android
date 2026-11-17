@@ -10,17 +10,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.ui.common.EmptyState
 import com.clement.nutrimo.ui.common.ScreenScaffold
-import com.clement.nutrimo.ui.common.appContainer
+import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.full
 import com.clement.nutrimo.util.kg
 
+class GoalsViewModel(c: AppContainer) : ViewModel() {
+    /** Newest first. */
+    val goals = c.body.allGoals.stateWhileSubscribed(viewModelScope, emptyList())
+}
+
 @Composable
 fun GoalsScreen(onBack: () -> Unit) {
-    val goals by appContainer().body.allGoals.collectAsStateWithLifecycle(initialValue = emptyList())
+    val vm = appViewModel { c, _ -> GoalsViewModel(c) }
+    val goals by vm.goals.collectAsStateWithLifecycle()
     ScreenScaffold("Mes objectifs", onBack = onBack) { padding ->
         if (goals.isEmpty()) return@ScreenScaffold EmptyState("Aucun objectif", Modifier.padding(padding))
         LazyColumn(Modifier.padding(padding)) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.domain.model.PhotoPose
 import com.clement.nutrimo.ui.navigation.PhotoCameraRoute
 import com.clement.nutrimo.util.toDecimal
@@ -69,6 +70,11 @@ class PhotoCameraViewModel(private val c: AppContainer, handle: SavedStateHandle
             state.update { it.copy(weight = kg?.toInput().orEmpty()) }
         }
     }
+
+    /** Today's measurements, or an empty entry to fill. */
+    suspend fun todayMeasurement(): MeasurementEntity = c.body.measurementOn(LocalDate.now()) ?: MeasurementEntity(date = LocalDate.now())
+
+    fun saveMeasurement(m: MeasurementEntity) = viewModelScope.launch { c.body.saveMeasurement(m) }
 
     fun retake() = state.update { it.copy(shot = null) }
 

@@ -19,20 +19,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.clement.nutrimo.ui.common.appContainer
+import com.clement.nutrimo.data.AppContainer
+import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import com.clement.nutrimo.ui.navigation.JournalRoute
 import com.clement.nutrimo.ui.navigation.MoreRoute
 import com.clement.nutrimo.ui.navigation.RecipesRoute
 import com.clement.nutrimo.ui.navigation.WeightRoute
 import com.clement.nutrimo.ui.navigation.nutrimoGraph
 import com.clement.nutrimo.ui.onboarding.OnboardingScreen
+import kotlinx.coroutines.flow.map
 import kotlin.reflect.KClass
 
 private data class Tab(val route: Any, val type: KClass<*>, val label: String, val icon: ImageVector)
@@ -44,13 +49,18 @@ private val TABS = listOf(
     Tab(MoreRoute, MoreRoute::class, "Plus", Icons.Default.MoreHoriz),
 )
 
+class RootViewModel(c: AppContainer) : ViewModel() {
+    /** Null until the settings are read: nothing is shown before, so the onboarding never flashes. */
+    val onboardingDone = c.settings.settings.map { it.onboardingDone }.stateWhileSubscribed(viewModelScope, null)
+}
+
 @Composable
 fun NutrimoRoot() {
-    val container = appContainer()
-    val settings by container.settings.settings.collectAsStateWithLifecycle(initialValue = null)
-    val loaded = settings ?: return
+    val vm = appViewModel { c, _ -> RootViewModel(c) }
+    val onboardingDone by vm.onboardingDone.collectAsStateWithLifecycle()
+    val done = onboardingDone ?: return
     // Onboarding lives outside the graph: once it saves onboardingDone, this recomposes into the main app.
-    if (!loaded.onboardingDone) return OnboardingScreen(onDone = {})
+    if (!done) return OnboardingScreen(onDone = {})
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val showBar = TABS.any { tab -> entry?.destination?.hasRoute(tab.type) == true }

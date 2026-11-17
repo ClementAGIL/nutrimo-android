@@ -1,16 +1,16 @@
 // Runs a screen action that ends with a message for the user ("Sauvegarde exportée.", "Erreur : …").
 package com.clement.nutrimo.ui.common
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-/** [status] is the last message, [busy] is true while an action runs. */
+/**
+ * [status] is the last message, [busy] is true while an action runs. Owned by a ViewModel, with its viewModelScope
+ * (or the app scope for work that must finish even if the screen is closed).
+ */
 class StatusRunner(private val scope: CoroutineScope) {
     var status by mutableStateOf<String?>(null)
         private set
@@ -26,7 +26,3 @@ class StatusRunner(private val scope: CoroutineScope) {
         }
     }
 }
-
-/** Pass the app scope for work that must finish even if the user leaves the screen. */
-@Composable
-fun rememberStatusRunner(scope: CoroutineScope = rememberCoroutineScope()): StatusRunner = remember(scope) { StatusRunner(scope) }

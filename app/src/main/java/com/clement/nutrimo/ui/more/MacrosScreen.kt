@@ -11,11 +11,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.calc.MACRO_PRESETS
 import com.clement.nutrimo.domain.calc.MacroSplit
 import com.clement.nutrimo.ui.common.ChoiceChips
@@ -26,18 +28,29 @@ import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
 import com.clement.nutrimo.ui.common.WarningText
-import com.clement.nutrimo.ui.common.appContainer
+import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
 import com.clement.nutrimo.util.fmt
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+
+class MacrosViewModel(private val c: AppContainer) : ViewModel() {
+    val target = c.body.calorieTarget.stateWhileSubscribed(viewModelScope, null)
+    val latestKg = c.body.weightHistory.map { it.lastOrNull()?.kg }.stateWhileSubscribed(viewModelScope, null)
+
+    suspend fun saved(): MacroSplit = c.settings.current().macroSplit
+
+    /** In the ViewModel scope: going back right away doesn't cancel the save. */
+    fun save(split: MacroSplit, onDone: () -> Unit) = viewModelScope.launch { c.settings.setMacroSplit(split); onDone() }
+}
 
 @Composable
 fun MacrosScreen(onBack: () -> Unit) {
-    val c = appContainer()
-    val scope = rememberCoroutineScope()
-    val target by c.body.calorieTarget.collectAsStateWithLifecycle(initialValue = null)
-    val weights by c.body.weightHistory.collectAsStateWithLifecycle(initialValue = emptyList())
+    val vm = appViewModel { c, _ -> MacrosViewModel(c) }
+    val target by vm.target.collectAsStateWithLifecycle()
+    val latestKg by vm.latestKg.collectAsStateWithLifecycle()
     var split by remember { mutableStateOf(MacroSplit.BALANCED) }
-    LaunchedEffect(Unit) { split = c.settings.current().macroSplit }
+    LaunchedEffect(Unit) { split = vm.saved() }
     ScreenScaffold("Objectifs de macros", onBack = onBack) { padding ->
         ScrollColumn(padding) {
             IntroText("Part de vos calories pour chaque macronutriment.")
@@ -47,13 +60,13 @@ fun MacrosScreen(onBack: () -> Unit) {
             target?.let { t ->
                 val g = split.grams(t.target)
                 SectionCard("Pour ${fmt(t.target, 0)} kcal / jour") {
-                    StatRow("Protéines", "${fmt(g.protein, 0)} g" + (weights.lastOrNull()?.let { " (${fmt(g.protein / it.kg, 1)} g/kg)" } ?: ""))
+                    StatRow("Protéines", "${fmt(g.protein, 0)} g" + (latestKg?.let { " (${fmt(g.protein / it, 1)} g/kg)" } ?: ""))
                     StatRow("Glucides", "${fmt(g.carbs, 0)} g")
                     StatRow("Lipides", "${fmt(g.fat, 0)} g")
                 }
             }
             Button(
-                onClick = { scope.launch { c.settings.setMacroSplit(split); onBack() } },
+                onClick = { vm.save(split, onBack) },
                 enabled = split.isValid,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text("Enregistrer") }

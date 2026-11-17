@@ -28,10 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.clement.nutrimo.data.db.MeasurementEntity
 import com.clement.nutrimo.ui.common.NumberField
 import com.clement.nutrimo.ui.common.ScrollColumn
-import com.clement.nutrimo.ui.common.appContainer
 import com.clement.nutrimo.ui.weight.MeasurementDialog
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @Composable
 fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
@@ -47,7 +45,7 @@ fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
         Text("Pose : ${state.pose.label}", style = MaterialTheme.typography.titleSmall)
         OutlinedTextField(state.note, vm::setNote, Modifier.fillMaxWidth(), label = { Text("Note (facultatif)") })
         NumberField(state.weight, vm::setWeight, "Poids du jour (facultatif)", Modifier.fillMaxWidth(), "kg")
-        MeasurementsButton()
+        MeasurementsButton(vm)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = vm::retake, Modifier.weight(1f), enabled = !state.saving) { Text("Reprendre") }
             Button(onClick = vm::save, Modifier.weight(1f), enabled = !state.saving) { Text("Enregistrer") }
@@ -57,14 +55,9 @@ fun PhotoReview(vm: PhotoCameraViewModel, state: PhotoCameraState) {
 
 /** Opens the usual measurement dialog for today, pre-filled with today's entry when there is one. */
 @Composable
-private fun MeasurementsButton() {
-    val c = appContainer()
+private fun MeasurementsButton(vm: PhotoCameraViewModel) {
     val scope = rememberCoroutineScope()
     var editing by remember { mutableStateOf<MeasurementEntity?>(null) }
-    TextButton(onClick = {
-        scope.launch { editing = c.body.measurementOn(LocalDate.now()) ?: MeasurementEntity(date = LocalDate.now()) }
-    }) { Text("Ajouter des mensurations pour aujourd'hui") }
-    editing?.let { m ->
-        MeasurementDialog(m, { scope.launch { c.body.saveMeasurement(it) } }) { editing = null }
-    }
+    TextButton(onClick = { scope.launch { editing = vm.todayMeasurement() } }) { Text("Ajouter des mensurations pour aujourd'hui") }
+    editing?.let { m -> MeasurementDialog(m, vm::saveMeasurement) { editing = null } }
 }

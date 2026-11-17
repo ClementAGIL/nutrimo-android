@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModel
 import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.data.demo.DemoData
 import com.clement.nutrimo.ui.common.ConfirmDialog
@@ -17,12 +18,12 @@ import com.clement.nutrimo.ui.common.IntroText
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
+import com.clement.nutrimo.ui.common.StatusRunner
 import com.clement.nutrimo.ui.common.WideButton
-import com.clement.nutrimo.ui.common.appContainer
-import com.clement.nutrimo.ui.common.rememberStatusRunner
+import com.clement.nutrimo.ui.common.appViewModel
 
 /** Each action with its button, confirmation texts and the work it does (returns the success message). */
-private enum class DevAction(val button: String, val confirmTitle: String, val confirmLabel: String, val run: suspend (AppContainer) -> String) {
+enum class DevAction(val button: String, val confirmTitle: String, val confirmLabel: String, val run: suspend (AppContainer) -> String) {
     DEMO("Charger les données de démo", "Charger la démo ?", "Charger", { c -> DemoData(c).load(); "Données de démo chargées." }),
     CLEAR("Tout effacer", "Tout effacer ?", "Effacer", { c ->
         DemoData(c).clear()
@@ -31,12 +32,18 @@ private enum class DevAction(val button: String, val confirmTitle: String, val c
     }),
 }
 
+class DevViewModel(private val c: AppContainer) : ViewModel() {
+    /** App scope: leaving the screen (or the ViewModel being cleared) must not stop the wipe or the load half-way. */
+    val runner = StatusRunner(c.appScope)
+
+    fun run(action: DevAction) = runner.run { action.run(c) }
+}
+
 @Composable
 fun DevScreen(onBack: () -> Unit, onShowIntro: () -> Unit) {
-    val c = appContainer()
+    val vm = appViewModel { c, _ -> DevViewModel(c) }
     var confirm by remember { mutableStateOf<DevAction?>(null) }
-    // App scope: leaving the screen must not stop the wipe or the load half-way.
-    val runner = rememberStatusRunner(c.appScope)
+    val runner = vm.runner
     ScreenScaffold("Développeur", onBack = onBack) { padding ->
         ScrollColumn(padding) {
             SectionCard("Présentation") {
@@ -61,7 +68,7 @@ fun DevScreen(onBack: () -> Unit, onShowIntro: () -> Unit) {
             title = action.confirmTitle,
             text = "Toutes vos données actuelles seront supprimées. Exportez-les avant si besoin.",
             confirmLabel = action.confirmLabel,
-            onConfirm = { runner.run { action.run(c) } },
+            onConfirm = { vm.run(action) },
             onDismiss = { confirm = null },
         )
     }

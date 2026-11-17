@@ -25,16 +25,16 @@ import com.clement.nutrimo.ui.journal.JournalScreen
 import com.clement.nutrimo.ui.more.AboutScreen
 import com.clement.nutrimo.ui.more.BackupScreen
 import com.clement.nutrimo.ui.more.DevScreen
-import com.clement.nutrimo.ui.onboarding.IntroScreen
-import com.clement.nutrimo.ui.photo.PhotoCameraScreen
-import com.clement.nutrimo.ui.photo.PhotoLock
-import com.clement.nutrimo.ui.photo.PhotoCompareScreen
-import com.clement.nutrimo.ui.photo.PhotosScreen
 import com.clement.nutrimo.ui.more.MacrosScreen
 import com.clement.nutrimo.ui.more.MoreScreen
 import com.clement.nutrimo.ui.more.RemindersScreen
 import com.clement.nutrimo.ui.more.ServerScreen
 import com.clement.nutrimo.ui.more.StepsScreen
+import com.clement.nutrimo.ui.onboarding.IntroScreen
+import com.clement.nutrimo.ui.photo.PhotoCameraScreen
+import com.clement.nutrimo.ui.photo.PhotoCompareScreen
+import com.clement.nutrimo.ui.photo.PhotoLock
+import com.clement.nutrimo.ui.photo.PhotosScreen
 import com.clement.nutrimo.ui.profile.ProfileScreen
 import com.clement.nutrimo.ui.recipe.RecipeEditScreen
 import com.clement.nutrimo.ui.recipe.RecipeViewScreen
@@ -65,7 +65,7 @@ fun NavGraphBuilder.nutrimoGraph(nav: NavHostController) {
     composable<MoreRoute> { MoreScreen(onOpen = { nav.navigate(it) }) }
     foodDestinations(nav, back)
     composable<HistoryRoute> { HistoryScreen(onBack = back) }
-    composable<DayNutrientsRoute> { DayNutrientsScreen(it.toRoute<DayNutrientsRoute>().epochDay, back) }
+    composable<DayNutrientsRoute> { DayNutrientsScreen(back) }
     composable<ProfileRoute> { ProfileScreen(onBack = back) }
     composable<GoalEditRoute> { GoalEditScreen(onBack = back) }
     composable<GoalsRoute> { GoalsScreen(onBack = back) }

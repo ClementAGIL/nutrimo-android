@@ -4,8 +4,12 @@ package com.clement.nutrimo.ui.journal
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.clement.nutrimo.data.AppContainer
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.domain.model.Nutrients
 import com.clement.nutrimo.ui.common.NutrientTable
@@ -13,16 +17,23 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.ScrollColumn
 import com.clement.nutrimo.ui.common.SectionCard
 import com.clement.nutrimo.ui.common.StatRow
-import com.clement.nutrimo.ui.common.appContainer
+import com.clement.nutrimo.ui.common.appViewModel
+import com.clement.nutrimo.ui.common.stateWhileSubscribed
+import com.clement.nutrimo.ui.navigation.DayNutrientsRoute
 import com.clement.nutrimo.util.day
 import com.clement.nutrimo.util.kcal
 import java.time.LocalDate
 
+class DayNutrientsViewModel(c: AppContainer, handle: SavedStateHandle) : ViewModel() {
+    val date: LocalDate = LocalDate.ofEpochDay(handle.toRoute<DayNutrientsRoute>().epochDay)
+    val entries = c.diary.day(date).stateWhileSubscribed(viewModelScope, emptyList())
+}
+
 @Composable
-fun DayNutrientsScreen(epochDay: Long, onBack: () -> Unit) {
-    val date = remember(epochDay) { LocalDate.ofEpochDay(epochDay) }
-    val diary = appContainer().diary
-    val entries by remember(date) { diary.day(date) }.collectAsStateWithLifecycle(initialValue = emptyList())
+fun DayNutrientsScreen(onBack: () -> Unit) {
+    val vm = appViewModel { c, handle -> DayNutrientsViewModel(c, handle) }
+    val date = vm.date
+    val entries by vm.entries.collectAsStateWithLifecycle()
     ScreenScaffold(date.day(), onBack = onBack) { padding ->
         ScrollColumn(padding) {
             SectionCard("Par repas") {
