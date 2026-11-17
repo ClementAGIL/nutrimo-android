@@ -54,7 +54,7 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   optional cooked weight; nutrition per part and per 100 g; log "1,5 part" or grams in the journal. The list shows
   how many times each recipe was logged: favorites first, then the most used.
 - Body measurements (waist, hips, chest, arm, thigh), from the Poids hub: history and one evolution chart per
-  measurement (1 / 3 / 6 months or everything).
+  measurement (3 months, 6 months, 1 year or everything).
   More than 6 months without measurements shrink to a short "…" break on the charts.
 - Progress photos (Poids -> Photos), only taken in the app and stored privately on the phone (never in the gallery or
   Google backups), unlocked with fingerprint / face / PIN each time, no screenshots:
