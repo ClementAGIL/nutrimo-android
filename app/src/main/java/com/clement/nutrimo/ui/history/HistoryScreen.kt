@@ -16,7 +16,7 @@ import com.clement.nutrimo.ui.common.AppTabs
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 
-private val TABS = listOf("Calendrier", "Graphiques")
+private val TABS = listOf(R.string.history_tab_calendar, R.string.history_tab_charts)
 
 @Composable
 fun HistoryScreen(onBack: () -> Unit) {
@@ -25,7 +25,7 @@ fun HistoryScreen(onBack: () -> Unit) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
     ScreenScaffold(stringResource(R.string.common_historique), onBack = onBack) { padding ->
         Column(Modifier.padding(padding)) {
-            AppTabs(TABS, tab) { tab = it }
+            AppTabs(TABS.map { stringResource(it) }, tab) { tab = it }
             if (tab == 0) CalendarTab(state, vm::showMonth, vm::select) else ChartsTab(state, vm::setChartDays)
         }
     }

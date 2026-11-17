@@ -45,11 +45,13 @@ import com.clement.nutrimo.util.full
 import com.clement.nutrimo.util.kg
 import java.time.LocalDate
 
-private val LEGEND = listOf(NutrimoColors.weight to "Poids", NutrimoColors.objective to "Objectif", NutrimoColors.trend to "Tendance")
+private val LEGEND = listOf(
+    NutrimoColors.weight to R.string.weight_legend_weight,
+    NutrimoColors.objective to R.string.weight_legend_goal,
+    NutrimoColors.trend to R.string.weight_legend_trend,
+)
 private val MEASUREMENT_COLOR = NutrimoColors.carbs
 private val PHOTO_COLOR = NutrimoColors.water
-private const val MEASUREMENT_LABEL = "Mensurations"
-private const val PHOTO_LABEL = "Photos"
 /** One per [Bmi.ZONES] entry: blue (underweight), green (normal), then yellow → dark red. */
 private val BMI_COLORS = listOf(
     NutrimoColors.protein, NutrimoColors.weight, NutrimoColors.caution, NutrimoColors.warning, NutrimoColors.fat, Color(0xFFA0283C),
@@ -97,19 +99,26 @@ fun WeightHubChart(state: WeightUiState, measurements: List<MeasurementEntity>, 
             )
             bubble?.let { (day, x) -> DayBubble(day, x, actions) { bubble = null } }
         }
-        ChartLegend(LEGEND, listOf(ChartMarker(LocalDate.MIN, MEASUREMENT_COLOR, false, MEASUREMENT_LABEL), ChartMarker(LocalDate.MIN, PHOTO_COLOR, true, PHOTO_LABEL)))
+        ChartLegend(
+            LEGEND.map { (color, label) -> color to stringResource(label) },
+            listOf(
+                ChartMarker(LocalDate.MIN, MEASUREMENT_COLOR, false, stringResource(R.string.common_mensurations)),
+                ChartMarker(LocalDate.MIN, PHOTO_COLOR, true, stringResource(R.string.common_photos)),
+            ),
+        )
         TrendText(state)
     }
 }
 
 /** Content of the ⓘ dialog of the chart. */
-private fun helpText(bmiZones: Boolean) = buildString {
-    append("• Touchez un jour pour voir sa pesée, ses mensurations et ses photos.\n")
-    append("• Pincez pour zoomer, glissez sur le côté pour vous déplacer dans le temps ; les boutons de période reviennent à une vue prédéfinie, la dernière pesée aux 3/4 de la largeur.\n")
-    append("• La tendance suit vos pesées des $TREND_WINDOW_DAYS derniers jours.\n")
-    append("• Sous la courbe : un losange les jours de mensurations, un cercle les jours de photos.")
-    if (bmiZones) append("\n• Les zones colorées sont les catégories d'IMC pour votre taille.")
-}
+@Composable
+private fun helpText(bmiZones: Boolean): String = listOfNotNull(
+    stringResource(R.string.weight_help_tap),
+    stringResource(R.string.weight_help_zoom),
+    stringResource(R.string.weight_help_trend, TREND_WINDOW_DAYS),
+    stringResource(R.string.weight_help_markers),
+    if (bmiZones) stringResource(R.string.weight_help_bmi) else null,
+).joinToString("\n")
 
 /** "D'après la tendance, vous atteindrez votre objectif (82 kg) le 12 mars 2027." */
 @Composable

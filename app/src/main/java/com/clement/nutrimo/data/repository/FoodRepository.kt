@@ -118,7 +118,7 @@ class FoodRepository(
         return Loggable(
             foodId = food.id,
             name = food.name,
-            subtitle = listOfNotNull(food.brand, food.source.label).joinToString(" · "),
+            subtitle = food.brand?.let { uiText(R.string.loggable_brand_source, it, uiText(food.source.label)) } ?: uiText(food.source.label),
             per100 = food.per100,
             portions = dao.portions(food.id).map { Portion(it.label, it.grams) },
         )

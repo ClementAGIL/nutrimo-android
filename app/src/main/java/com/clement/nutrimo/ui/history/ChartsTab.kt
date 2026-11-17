@@ -1,6 +1,7 @@
 // Charts tab: daily bars against the goal line for calories, sport, steps and water over 7 or 30 days, plus averages.
 package com.clement.nutrimo.ui.history
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,13 +32,13 @@ import com.clement.nutrimo.util.kcal
 import kotlin.math.ceil
 
 /** One bar chart per goal: what to plot, the goal line and the Y axis rounding step. */
-private class Metric(val title: String, val goal: DailyGoal, val yStep: Double, val value: (DayRecord) -> Double?)
+private class Metric(@StringRes val title: Int, val goal: DailyGoal, val yStep: Double, val value: (DayRecord) -> Double?)
 
 private val METRICS = listOf(
-    Metric("Calories mangées", DailyGoal.CALORIES, 250.0) { it.eatenKcal },
-    Metric("Sport (kcal)", DailyGoal.SPORT, 100.0) { it.sportKcal.takeIf { k -> k > 0 } },
-    Metric("Pas", DailyGoal.STEPS, 1000.0) { it.steps?.toDouble()?.takeIf { s -> s > 0 } },
-    Metric("Eau (ml)", DailyGoal.WATER, 250.0) { it.waterMl?.toDouble()?.takeIf { w -> w > 0 } },
+    Metric(R.string.charts_metric_calories, DailyGoal.CALORIES, 250.0) { it.eatenKcal },
+    Metric(R.string.charts_metric_sport, DailyGoal.SPORT, 100.0) { it.sportKcal.takeIf { k -> k > 0 } },
+    Metric(R.string.charts_metric_steps, DailyGoal.STEPS, 1000.0) { it.steps?.toDouble()?.takeIf { s -> s > 0 } },
+    Metric(R.string.charts_metric_water, DailyGoal.WATER, 250.0) { it.waterMl?.toDouble()?.takeIf { w -> w > 0 } },
 )
 
 @Composable
@@ -62,7 +63,7 @@ private fun HistoryState.goalValue(goal: DailyGoal): Double? = when (goal) {
 @Composable
 private fun MetricChart(metric: Metric, state: HistoryState) {
     val bars = state.chartRecords.mapNotNull { r -> metric.value(r)?.let { ChartPoint(r.date, it) } }
-    SectionCard(metric.title) {
+    SectionCard(stringResource(metric.title)) {
         if (bars.isEmpty()) return@SectionCard HintText(stringResource(R.string.charts_aucune_donnee))
         val end = state.today.plusDays(1)
         val goal = state.goalValue(metric.goal)

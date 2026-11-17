@@ -1,6 +1,7 @@
 // Something that can be logged in the diary or used as an ingredient: a food or a recipe.
 package com.clement.nutrimo.domain.model
 
+import com.clement.nutrimo.util.UiText
 import com.clement.nutrimo.util.fmt
 import java.text.Normalizer
 
@@ -13,7 +14,8 @@ data class Loggable(
     val foodId: String? = null,
     val recipeId: String? = null,
     val name: String,
-    val subtitle: String? = null,
+    /** E.g. "Marque · CIQUAL" or "Recette · 4 parts". */
+    val subtitle: UiText? = null,
     /** Per 100 g; null for a recipe whose weight is unknown. */
     val per100: Nutrients?,
     /** Per part; only for recipes. */

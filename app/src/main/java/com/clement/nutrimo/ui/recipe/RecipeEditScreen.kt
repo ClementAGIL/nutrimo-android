@@ -76,7 +76,7 @@ private fun IngredientsCard(lines: List<IngredientLine>, onEdit: (Int) -> Unit, 
         lines.forEachIndexed { i, line ->
             Row(Modifier.fillMaxWidth().clickable { onEdit(i) }, verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(line.name, maxLines = 2)
+                    Text(line.name.asString(), maxLines = 2)
                     Text(
                         "${ingredientQuantity(line)} · ${line.contribution?.let { kcal(it.nutrients.kcal) } ?: "–"}",
                         style = MaterialTheme.typography.bodySmall,
@@ -105,7 +105,7 @@ private fun QuantityDialog(line: IngredientLine, onSave: (Double) -> Unit, onDis
     var text by remember { mutableStateOf(line.ingredient.quantity.toInput()) }
     val isPart = line.ingredient.subRecipeId != null
     val quantity = text.toDecimal()?.takeIf { it > 0 }
-    FormDialog(line.name, onDismiss, { quantity?.let(onSave) }, canConfirm = quantity != null) {
+    FormDialog(line.name.asString(), onDismiss, { quantity?.let(onSave) }, canConfirm = quantity != null) {
         NumberField(text, { text = it }, stringResource(R.string.common_quantite), suffix = if (isPart) stringResource(R.string.common_parts_unit) else "g")
     }
 }

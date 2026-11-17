@@ -46,7 +46,7 @@ fun CustomFoodScreen(onBack: () -> Unit) {
             NutrientsCard(draft, vm)
             MicrosCard(draft, vm)
             PortionsCard(draft, vm)
-            if (draft.missing.isNotEmpty()) WarningText("Obligatoire : ${draft.missing.joinToString(", ")}")
+            if (draft.missing.isNotEmpty()) WarningText(stringResource(R.string.custom_food_required, draft.missing.map { stringResource(it) }.joinToString(", ")))
             WideButton(stringResource(R.string.common_enregistrer), { vm.save(onBack) }, enabled = draft.missing.isEmpty())
         }
     }
@@ -71,7 +71,7 @@ private fun NutrientsCard(d: CustomFoodDraft, vm: CustomFoodViewModel) {
             NumberField(
                 value = d.macros[f.key].orEmpty(),
                 onValueChange = { v -> vm.update { it.copy(macros = it.macros + (f.key to v)) } },
-                label = if (f.required) "${f.label} *" else f.label,
+                label = if (f.required) stringResource(R.string.custom_food_required_label, stringResource(f.label)) else stringResource(f.label),
                 suffix = f.unit,
                 modifier = Modifier.fillMaxWidth(),
             )

@@ -63,5 +63,6 @@ fun DayBubble(day: HubDay, x: Float, actions: WeightHubActions, onClose: () -> U
 }
 
 /** "Taille 98 cm · Hanches 104 cm" (the first two measured fields). */
+@Composable
 private fun measurementSummary(m: com.clement.nutrimo.data.db.MeasurementEntity): String =
-    MEASUREMENT_FIELDS.mapNotNull { f -> f.get(m)?.let { "${f.label} ${fmt(it)} cm" } }.take(2).joinToString(" · ")
+    MEASUREMENT_FIELDS.mapNotNull { f -> f.get(m)?.let { stringResource(R.string.measure_value, stringResource(f.label), fmt(it)) } }.take(2).joinToString(" · ")

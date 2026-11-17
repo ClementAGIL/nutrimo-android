@@ -50,7 +50,7 @@ fun FormDialog(
 fun ConfirmDialog(
     title: String,
     text: String,
-    confirmLabel: String = "Confirmer",
+    confirmLabel: String = stringResource(R.string.common_confirm),
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {

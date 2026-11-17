@@ -1,6 +1,7 @@
 // Recipe detail: per part and per 100 g nutrition, ingredients; edit, delete, add to the journal.
 package com.clement.nutrimo.ui.recipe
 
+import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -67,7 +68,7 @@ fun RecipeViewScreen(onBack: () -> Unit, onEdit: (String) -> Unit, onLog: (Strin
         ScrollColumn(padding) {
             WideButton(stringResource(R.string.common_ajouter_au_journal), { onLog(vm.id) })
             SectionCard(stringResource(R.string.recipe_view_1_parts_2_g_par, fmt(d.recipe.parts), fmt(d.totals.weightPerPart, 0))) {
-                d.lines.forEach { StatRow(it.name, ingredientQuantity(it)) }
+                d.lines.forEach { StatRow(it.name.asString(), ingredientQuantity(it)) }
             }
             NutrientTable(d.totals.perPart, stringResource(R.string.common_par_part))
             d.totals.per100?.let { SectionCard { StatRow(stringResource(R.string.common_pour_100_g), kcal(it.kcal)) } }

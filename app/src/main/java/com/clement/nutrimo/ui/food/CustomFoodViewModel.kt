@@ -1,6 +1,8 @@
 // Create / edit a custom food: label nutrients mandatory, fiber and micros optional, own portions.
 package com.clement.nutrimo.ui.food
 
+import com.clement.nutrimo.R
+import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,17 +22,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /** One nutrient input; [required] ones are those of the French nutrition label. */
-data class NutrientField(val key: String, val label: String, val unit: String, val required: Boolean)
+data class NutrientField(val key: String, @StringRes val label: Int, val unit: String, val required: Boolean)
 
 val MACRO_FIELDS = listOf(
-    NutrientField("kcal", "Énergie", "kcal", true),
-    NutrientField("fat", "Matières grasses", "g", true),
-    NutrientField("satFat", "dont acides gras saturés", "g", true),
-    NutrientField("carbs", "Glucides", "g", true),
-    NutrientField("sugars", "dont sucres", "g", true),
-    NutrientField("fiber", "Fibres", "g", false),
-    NutrientField("protein", "Protéines", "g", true),
-    NutrientField("salt", "Sel", "g", true),
+    NutrientField("kcal", R.string.custom_food_energy, "kcal", true),
+    NutrientField("fat", R.string.custom_food_fat, "g", true),
+    NutrientField("satFat", R.string.custom_food_sat_fat, "g", true),
+    NutrientField("carbs", R.string.custom_food_carbs, "g", true),
+    NutrientField("sugars", R.string.custom_food_sugars, "g", true),
+    NutrientField("fiber", R.string.custom_food_fiber, "g", false),
+    NutrientField("protein", R.string.custom_food_protein, "g", true),
+    NutrientField("salt", R.string.custom_food_salt, "g", true),
 )
 
 data class PortionDraft(val label: String = "", val grams: String = "")
@@ -46,9 +48,10 @@ data class CustomFoodDraft(
 ) {
     fun macro(key: String): Double? = macros[key]?.toDecimal()
 
-    val missing: List<String>
+    /** Labels (string resources) of the required fields still empty. */
+    val missing: List<Int>
         get() = buildList {
-            if (name.isBlank()) add("Nom")
+            if (name.isBlank()) add(R.string.custom_food_name)
             MACRO_FIELDS.filter { it.required && macro(it.key) == null }.forEach { add(it.label) }
         }
 

@@ -42,12 +42,10 @@ import java.util.Locale
 
 /** Title and explanation of each reminder, in screen order. */
 private val CARDS = listOf(
-    ReminderKind.WEIGH to ("Pesée hebdomadaire" to "Seulement si aucune pesée ce jour-là."),
-    ReminderKind.MEAL to ("Saisie des repas" to "Chaque jour, si le journal est vide."),
-    ReminderKind.ENCOURAGEMENT to (
-        "Encouragement du jour" to "Un message bienveillant chaque jour : vos victoires, la série à ne pas perdre, du réconfort les jours difficiles."
-        ),
-    ReminderKind.PHOTO to ("Photos de progression" to "Le 1er de chaque mois, si aucune photo ce mois-ci."),
+    ReminderKind.WEIGH to (R.string.reminder_weigh to R.string.reminder_weigh_hint),
+    ReminderKind.MEAL to (R.string.reminder_meal to R.string.reminder_meal_hint),
+    ReminderKind.ENCOURAGEMENT to (R.string.reminder_encouragement to R.string.reminder_encouragement_hint),
+    ReminderKind.PHOTO to (R.string.reminder_photo to R.string.reminder_photo_hint),
 )
 
 class RemindersViewModel(private val c: AppContainer) : ViewModel() {
@@ -79,7 +77,7 @@ fun RemindersScreen(onBack: () -> Unit) {
                 }
             }
             CARDS.forEach { (kind, text) ->
-                ReminderCard(text.first, text.second, s.reminder(kind), withDay = kind.weekly) { r ->
+                ReminderCard(stringResource(text.first), stringResource(text.second), s.reminder(kind), withDay = kind.weekly) { r ->
                     if (r.enabled) askPermission()
                     vm.update(kind, r)
                 }

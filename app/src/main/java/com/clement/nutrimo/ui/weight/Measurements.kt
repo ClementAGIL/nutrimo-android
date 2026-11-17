@@ -1,6 +1,7 @@
 // Body measurements (waist, hips, chest, arm, thigh in cm), one entry per day: list (newest first) and edit dialog.
 package com.clement.nutrimo.ui.weight
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,18 +41,18 @@ import java.time.LocalDate
 
 /** Label, chart color and accessors of each measurement, so the list, the charts and the dialog share one definition. */
 class MeasurementField(
-    val label: String,
+    @StringRes val label: Int,
     val color: Color,
     val get: (MeasurementEntity) -> Double?,
     val set: (MeasurementEntity, Double?) -> MeasurementEntity,
 )
 
 val MEASUREMENT_FIELDS = listOf(
-    MeasurementField("Tour de taille", NutrimoColors.carbs, { it.waist }, { m, v -> m.copy(waist = v) }),
-    MeasurementField("Hanches", NutrimoColors.fat, { it.hips }, { m, v -> m.copy(hips = v) }),
-    MeasurementField("Poitrine", NutrimoColors.protein, { it.chest }, { m, v -> m.copy(chest = v) }),
-    MeasurementField("Bras", NutrimoColors.trend, { it.arm }, { m, v -> m.copy(arm = v) }),
-    MeasurementField("Cuisse", NutrimoColors.weight, { it.thigh }, { m, v -> m.copy(thigh = v) }),
+    MeasurementField(R.string.measure_waist, NutrimoColors.carbs, { it.waist }, { m, v -> m.copy(waist = v) }),
+    MeasurementField(R.string.measure_hips, NutrimoColors.fat, { it.hips }, { m, v -> m.copy(hips = v) }),
+    MeasurementField(R.string.measure_chest, NutrimoColors.protein, { it.chest }, { m, v -> m.copy(chest = v) }),
+    MeasurementField(R.string.measure_arm, NutrimoColors.trend, { it.arm }, { m, v -> m.copy(arm = v) }),
+    MeasurementField(R.string.measure_thigh, NutrimoColors.weight, { it.thigh }, { m, v -> m.copy(thigh = v) }),
 )
 
 @Composable
@@ -61,7 +62,7 @@ fun MeasurementList(list: List<MeasurementEntity>, onEdit: (MeasurementEntity) -
         items(list, key = { it.id }) { m ->
             ListItem(
                 headlineContent = { Text(m.date.day()) },
-                supportingContent = { Text(MEASUREMENT_FIELDS.mapNotNull { f -> f.get(m)?.let { "${f.label} ${fmt(it)} cm" } }.joinToString(" · ")) },
+                supportingContent = { Text(MEASUREMENT_FIELDS.mapNotNull { f -> f.get(m)?.let { stringResource(R.string.measure_value, stringResource(f.label), fmt(it)) } }.joinToString(" · ")) },
                 trailingContent = { IconButton(onClick = { onDelete(m) }) { Icon(Icons.Default.Delete, stringResource(R.string.common_supprimer)) } },
                 modifier = Modifier.clickable { onEdit(m) },
             )
@@ -79,7 +80,7 @@ fun MeasurementDialog(initial: MeasurementEntity, onSave: (MeasurementEntity) ->
     }, confirmLabel = stringResource(R.string.common_enregistrer)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             DateField(stringResource(R.string.common_date), date, { date = it }, Modifier.fillMaxWidth(), max = LocalDate.now())
-            MEASUREMENT_FIELDS.forEachIndexed { i, f -> NumberField(texts[i].value, { texts[i].value = it }, f.label, Modifier.fillMaxWidth(), "cm") }
+            MEASUREMENT_FIELDS.forEachIndexed { i, f -> NumberField(texts[i].value, { texts[i].value = it }, stringResource(f.label), Modifier.fillMaxWidth(), "cm") }
         }
     }
 }

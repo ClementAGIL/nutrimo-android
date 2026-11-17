@@ -108,8 +108,9 @@ private fun NextBmiZone(p: GoalProgress, heightCm: Double) {
     StatRow(stringResource(R.string.weight_dashboard_atteinte_estimee_tendance), estimate(p, p.trend?.dateReaching(threshold)))
 }
 
+@Composable
 private fun estimate(p: GoalProgress, date: LocalDate? = p.estimatedEnd): String = when {
-    p.trend == null -> "$MIN_TREND_POINTS pesées minimum"
-    date == null -> "pas de tendance à la baisse"
+    p.trend == null -> stringResource(R.string.weight_estimate_min_points, MIN_TREND_POINTS)
+    date == null -> stringResource(R.string.weight_estimate_no_downtrend)
     else -> date.full()
 }

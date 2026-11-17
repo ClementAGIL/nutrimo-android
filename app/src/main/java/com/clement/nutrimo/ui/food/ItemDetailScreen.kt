@@ -1,6 +1,7 @@
 // Quantity screen for a food or recipe: amount + unit, meal, live nutrients, favorite; add / save / delete.
 package com.clement.nutrimo.ui.food
 
+import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -56,7 +57,7 @@ fun ItemDetailScreen(actions: ItemDetailActions) {
         }
     }) { padding ->
         ScrollColumn(padding) {
-            item.subtitle?.let { IntroText(it) }
+            item.subtitle?.let { IntroText(it.asString()) }
             item.per100?.let { HintText(stringResource(R.string.item_detail_1_kcal_pour_100_g, fmt(it.kcal, 0))) }
             QuantityRow(state, vm)
             if (!vm.route.forRecipe) Dropdown(stringResource(R.string.item_detail_repas), state.meal, Meal.entries, { stringResource(it.label) }, vm::setMeal, Modifier.fillMaxWidth())

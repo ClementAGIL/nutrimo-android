@@ -54,14 +54,15 @@ fun PhotoDayCard(day: PhotoDay, state: PhotosUiState, vm: PhotosViewModel) {
         }
     }
     deleting?.let {
-        ConfirmDialog(stringResource(R.string.photo_day_supprimer_photo_2), stringResource(R.string.photo_day_photo_1_2, it.pose.label, it.date.day()), stringResource(R.string.common_supprimer), { vm.delete(it) }, { deleting = null })
+        ConfirmDialog(stringResource(R.string.photo_day_supprimer_photo_2), stringResource(R.string.photo_day_photo_1_2, stringResource(it.pose.label), it.date.day()), stringResource(R.string.common_supprimer), { vm.delete(it) }, { deleting = null })
     }
 }
 
+@Composable
 private fun weightText(day: PhotoDay): String = when {
-    day.kg == null -> "Aucune pesée"
-    day.weighedThatDay -> "Pesée du jour : ${kg(day.kg)}"
-    else -> "≈ ${kg(day.kg)} (pas de pesée ce jour-là, lu sur la courbe)"
+    day.kg == null -> stringResource(R.string.photo_day_no_weight)
+    day.weighedThatDay -> stringResource(R.string.photo_day_weighed, kg(day.kg))
+    else -> stringResource(R.string.photo_day_curve, kg(day.kg))
 }
 
 private fun chosenLetter(photo: PhotoEntity, state: PhotosUiState): String? =

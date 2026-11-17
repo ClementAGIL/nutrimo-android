@@ -55,13 +55,15 @@ import com.clement.nutrimo.ui.common.SectionCard
 import java.time.LocalDate
 
 /** From hard day to great day; index + 1 = mood stored. */
-private val MOODS = listOf("😣" to "Difficile", "😕" to "Bof", "😐" to "Moyenne", "🙂" to "Bonne", "😄" to "Excellente")
+private val MOODS = listOf(
+    "😣" to R.string.mood_hard, "😕" to R.string.mood_meh, "😐" to R.string.mood_average,
+    "🙂" to R.string.mood_good, "😄" to R.string.mood_great,
+)
 
 /** "🙂 Bonne", for the calendar. */
-fun moodText(mood: Int): String = MOODS.getOrNull(mood - 1)?.let { (face, label) -> "$face $label" } ?: ""
-
-private const val PLACEHOLDER =
-    "Pour quoi êtes-vous reconnaissant·e aujourd'hui ?\nUne victoire du jour, même petite ?\nQuelques mots sur votre journée…"
+@Composable
+fun moodText(mood: Int): String =
+    MOODS.getOrNull(mood - 1)?.let { (face, label) -> stringResource(R.string.mood_text, face, stringResource(label)) } ?: ""
 
 /** The text of the day; notes written before the single field had three parts, joined here. */
 private val DayNoteEntity.text: String get() = listOf(gratitude, win, note).filter { it.isNotBlank() }.joinToString("\n\n")
@@ -76,10 +78,10 @@ fun DayNoteCard(date: LocalDate, note: DayNoteEntity?, onSave: (DayNoteEntity) -
             MOODS.forEachIndexed { i, (emoji, label) ->
                 val mood = i + 1
                 // A second tap on the chosen face clears it.
-                MoodFace(emoji, label, current.mood == mood) { onSave(current.copy(mood = if (current.mood == mood) null else mood)) }
+                MoodFace(emoji, stringResource(label), current.mood == mood) { onSave(current.copy(mood = if (current.mood == mood) null else mood)) }
             }
         }
-        current.mood?.let { HintText(stringResource(R.string.day_note_journee_1, MOODS[it - 1].second.lowercase())) }
+        current.mood?.let { HintText(stringResource(R.string.day_note_journee_1, stringResource(MOODS[it - 1].second).lowercase())) }
         val text = current.text
         if (text.isEmpty()) {
             HintText(stringResource(R.string.day_note_gratitude_victoire_quelques_mots_ecrire))
@@ -140,7 +142,7 @@ private fun DayNoteEditor(text: String, onSave: (String) -> Unit, onClose: () ->
             Column(Modifier.fillMaxSize().padding(padding).imePadding().padding(16.dp)) {
                 OutlinedTextField(
                     draft, { draft = it }, Modifier.fillMaxWidth().weight(1f).focusRequester(focus),
-                    placeholder = { Text(PLACEHOLDER) },
+                    placeholder = { Text(stringResource(R.string.day_note_placeholder)) },
                 )
             }
         }

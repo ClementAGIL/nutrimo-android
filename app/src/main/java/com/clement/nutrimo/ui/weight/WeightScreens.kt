@@ -29,7 +29,7 @@ import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 import java.time.LocalDate
 
-private val MEASUREMENT_TABS = listOf("Historique", "Graphiques")
+private val MEASUREMENT_TABS = listOf(R.string.measurements_tab_history, R.string.measurements_tab_charts)
 
 /** Weigh-ins (newest first) and the goal actions: a new goal, or the past ones. */
 @Composable
@@ -68,7 +68,7 @@ fun MeasurementsScreen(onBack: () -> Unit) {
         },
     ) { padding ->
         Column(Modifier.padding(padding)) {
-            AppTabs(MEASUREMENT_TABS, tab) { tab = it }
+            AppTabs(MEASUREMENT_TABS.map { stringResource(it) }, tab) { tab = it }
             if (tab == 0) MeasurementList(list, { editing = it }) { vm.deleteMeasurement(it.id) } else MeasurementCharts(list)
         }
     }

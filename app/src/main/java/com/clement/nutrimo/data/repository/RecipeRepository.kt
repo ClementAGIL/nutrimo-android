@@ -1,6 +1,9 @@
 // Recipes: storage, nutrition (recursive through sub-recipes) and cycle protection.
 package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import androidx.room.withTransaction
 import com.clement.nutrimo.data.db.IngredientEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
@@ -18,7 +21,8 @@ import kotlinx.coroutines.flow.map
 
 data class IngredientLine(
     val ingredient: IngredientEntity,
-    val name: String,
+    /** The food or sub-recipe's name, or "deleted" when it no longer exists. */
+    val name: UiText,
     /** Null when the food or sub-recipe was deleted. */
     val contribution: IngredientContribution?,
 )
@@ -43,13 +47,13 @@ class RecipeRepository(private val db: NutrimoDatabase) {
     /** Name and contribution of one ingredient; [visiting] guards against cycles. */
     suspend fun line(ingredient: IngredientEntity, visiting: Set<String> = emptySet()): IngredientLine {
         ingredient.foodId?.let { foodId ->
-            val food = foods.byId(foodId) ?: return IngredientLine(ingredient, "Aliment supprimé", null)
-            return IngredientLine(ingredient, food.name, RecipeMath.ofFood(food.per100, ingredient.quantity))
+            val food = foods.byId(foodId) ?: return IngredientLine(ingredient, uiText(R.string.recipe_deleted_food), null)
+            return IngredientLine(ingredient, UiText.Raw(food.name), RecipeMath.ofFood(food.per100, ingredient.quantity))
         }
-        val subId = ingredient.subRecipeId ?: return IngredientLine(ingredient, "?", null)
-        val sub = dao.byId(subId) ?: return IngredientLine(ingredient, "Recette supprimée", null)
+        val subId = ingredient.subRecipeId ?: return IngredientLine(ingredient, UiText.Raw("?"), null)
+        val sub = dao.byId(subId) ?: return IngredientLine(ingredient, uiText(R.string.recipe_deleted_recipe), null)
         val totals = totals(subId, visiting)
-        return IngredientLine(ingredient, sub.name, totals?.let { RecipeMath.ofSubRecipe(it, ingredient.quantity) })
+        return IngredientLine(ingredient, UiText.Raw(sub.name), totals?.let { RecipeMath.ofSubRecipe(it, ingredient.quantity) })
     }
 
     suspend fun totals(id: String, visiting: Set<String> = emptySet()): RecipeTotals? {
@@ -65,7 +69,7 @@ class RecipeRepository(private val db: NutrimoDatabase) {
         return Loggable(
             recipeId = id,
             name = recipe.name,
-            subtitle = "Recette · ${fmt(recipe.parts)} parts",
+            subtitle = uiText(R.string.loggable_recipe_parts, fmt(recipe.parts)),
             per100 = totals.per100,
             perPart = totals.perPart,
         )
