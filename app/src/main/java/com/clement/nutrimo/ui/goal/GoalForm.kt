@@ -1,6 +1,7 @@
 // Goal form (weights, pace preset or end date) with a live calorie preview; used by onboarding and GoalEdit.
 package com.clement.nutrimo.ui.goal
 
+import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,7 +48,7 @@ fun GoalForm(draft: GoalDraft, onChange: (GoalDraft) -> Unit, profile: ProfileEn
         }
         if (draft.mode == GoalMode.PACE) PaceChooser(draft, onChange)
         else DateField(stringResource(R.string.goal_form_date_objectif), draft.endDate, { onChange(draft.copy(endDate = it)) }, Modifier.fillMaxWidth(), min = LocalDate.now().plusDays(7))
-        draft.error?.let { if (draft.startKg.isNotEmpty() && draft.targetKg.isNotEmpty()) WarningText(it) }
+        draft.error?.let { if (draft.startKg.isNotEmpty() && draft.targetKg.isNotEmpty()) WarningText(it.asString()) }
         GoalPreview(draft, profile)
     }
 }

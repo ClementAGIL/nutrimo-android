@@ -1,6 +1,7 @@
 // Journal tab: day switcher, daily summary, the 4 meals and water.
 package com.clement.nutrimo.ui.journal
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,7 +55,8 @@ fun JournalScreen(actions: JournalActions) {
     val vm = appViewModel { c, _ -> JournalViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
-    LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
+    val resources = LocalContext.current.resources
+    LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it.resolve(resources)) } }
     LifecycleResumeEffect(Unit) {
         vm.refreshHealth()
         onPauseOrDispose {}

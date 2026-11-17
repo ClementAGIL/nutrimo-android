@@ -19,3 +19,9 @@ sealed interface UiText {
 }
 
 fun uiText(@StringRes id: Int, vararg args: Any): UiText = UiText.Res(id, args.toList())
+
+/** An error meant for the user (shown as is by StatusRunner), unlike technical failures shown as "Erreur : …". */
+class UserFacingException(val text: UiText) : Exception(text.toString())
+
+/** Stops with a message for the user. */
+fun fail(@StringRes id: Int, vararg args: Any): Nothing = throw UserFacingException(UiText.Res(id, args.toList()))

@@ -1,6 +1,9 @@
 // State of the journal: entries of the selected day grouped by meal, totals, target, water and "Ma journée".
 package com.clement.nutrimo.ui.journal
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DEFAULT_WEIGHT_KG
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -72,7 +75,7 @@ private data class DayData(
 @OptIn(ExperimentalCoroutinesApi::class)
 class JournalViewModel(private val c: AppContainer) : ViewModel() {
     private val date = MutableStateFlow(LocalDate.now())
-    val messages = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val messages = MutableSharedFlow<UiText>(extraBufferCapacity = 1)
 
     private val day = date.flatMapLatest { d ->
         combine(c.diary.day(d), c.diary.water(d), c.activities.day(d), c.dayNotes.day(d)) { entries, water, activities, note ->
@@ -115,12 +118,12 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
     fun copyFromPreviousDay(meal: Meal) = viewModelScope.launch {
         val day = date.value
         val count = c.diary.copyMeal(day.minusDays(1), day, meal)
-        messages.tryEmit(if (count == 0) "Rien à copier pour ce repas la veille" else "$count aliment(s) copié(s)")
+        messages.tryEmit(if (count == 0) uiText(R.string.journal_copy_none) else uiText(R.string.journal_copied, count))
     }
 
     fun saveMeal(name: String, entries: List<DiaryEntity>) = viewModelScope.launch {
         c.savedMeals.saveFrom(name, entries)
-        messages.tryEmit("Repas « $name » enregistré : retrouvez-le dans l'onglet Repas de la recherche")
+        messages.tryEmit(uiText(R.string.journal_meal_saved, name))
     }
 
     fun addActivity(type: String, minutes: Int?, kcal: Double?) = viewModelScope.launch {

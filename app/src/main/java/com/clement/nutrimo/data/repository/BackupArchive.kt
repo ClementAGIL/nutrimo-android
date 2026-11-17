@@ -2,6 +2,8 @@
 // Import reads the JSON from such a ZIP or from a plain .json file; photos are not re-imported (yet).
 package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.util.fail
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.PhotoEntity
 import com.clement.nutrimo.data.db.points
 import com.clement.nutrimo.domain.calc.kgAt
@@ -53,7 +55,7 @@ class BackupArchive(private val backup: BackupRepository, private val photos: Ph
     suspend fun backupText(bytes: ByteArray): String = withContext(Dispatchers.IO) {
         if (bytes.size < 2 || bytes[0] != ZIP_MAGIC[0] || bytes[1] != ZIP_MAGIC[1]) return@withContext bytes.decodeToString()
         ZipInputStream(ByteArrayInputStream(bytes)).use { zip ->
-            generateSequence { zip.nextEntry }.firstOrNull { it.name == BACKUP_ENTRY } ?: error("Fichier ZIP sans $BACKUP_ENTRY")
+            generateSequence { zip.nextEntry }.firstOrNull { it.name == BACKUP_ENTRY } ?: fail(R.string.error_zip_without_backup, BACKUP_ENTRY)
             zip.readBytes().decodeToString()
         }
     }

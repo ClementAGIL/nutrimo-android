@@ -1,6 +1,8 @@
 // JSON export / import of all personal data (the bundled CIQUAL foods are not exported).
 package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.util.fail
+import com.clement.nutrimo.R
 import androidx.room.withTransaction
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DayNoteEntity
@@ -74,7 +76,7 @@ class BackupRepository(private val db: NutrimoDatabase, json: Json) {
     /** Merges the backup into the database (rows with the same id are replaced). */
     suspend fun import(text: String): BackupSummary {
         val b = json.decodeFromString<Backup>(text)
-        require(b.version <= BACKUP_VERSION) { "Sauvegarde créée par une version plus récente de Nutrimo" }
+        if (b.version > BACKUP_VERSION) fail(R.string.error_backup_newer)
         db.withTransaction {
             b.profile?.let { db.profileDao().upsert(it) }
             db.weightDao().upsertAll(b.weights)

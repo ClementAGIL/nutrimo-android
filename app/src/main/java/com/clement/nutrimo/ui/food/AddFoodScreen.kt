@@ -1,6 +1,7 @@
 // Food search screen: search field with barcode button, quick tabs when empty, merged results otherwise.
 package com.clement.nutrimo.ui.food
 
+import com.clement.nutrimo.ui.common.asString
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -67,7 +68,7 @@ fun AddFoodScreen(actions: AddFoodActions, scannedBarcode: String?, onBarcodeCon
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
             )
             if (state.loading) LinearProgressIndicator(Modifier.fillMaxWidth())
-            state.message?.let { Text(it, Modifier.padding(horizontal = 16.dp)) }
+            state.message?.let { Text(it.asString(), Modifier.padding(horizontal = 16.dp)) }
             if (state.query.isBlank()) QuickTabs(vm, actions) else SearchResults(state, vm, actions)
         }
     }
@@ -89,7 +90,7 @@ private fun SearchResults(state: SearchUiState, vm: AddFoodViewModel, actions: A
 }
 
 private fun LazyListScope.remoteSection(state: SearchUiState, vm: AddFoodViewModel, actions: AddFoodActions) {
-    state.remoteSource?.let { item { SectionHeader(it.label) } }
+    state.remoteSource?.let { item { SectionHeader(stringResource(it.label)) } }
     items(state.remote, key = { "remote" + it.id }) { dto -> RemoteFoodRow(dto) { vm.pickRemote(dto, actions.onFood) } }
-    state.remoteError?.let { item { Column(Modifier.padding(16.dp)) { WarningText(it) } } }
+    state.remoteError?.let { item { Column(Modifier.padding(16.dp)) { WarningText(it.asString()) } } }
 }

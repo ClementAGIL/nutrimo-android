@@ -1,6 +1,9 @@
 // Recipe editor state: name, parts, optional cooked weight, ingredients (foods in g, sub-recipes in parts).
 package com.clement.nutrimo.ui.recipe
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,11 +36,11 @@ data class RecipeDraft(
     val cookedValue: Double? get() = cookedWeight.toDecimal()?.takeIf { it > 0 }
     val totals: RecipeTotals? get() = partsValue?.let { RecipeMath.totals(lines.mapNotNull { l -> l.contribution }, it, cookedValue) }
 
-    val error: String?
+    val error: UiText?
         get() = when {
-            name.isBlank() -> "Donnez un nom à la recette"
-            partsValue == null -> "Nombre de parts invalide"
-            lines.isEmpty() -> "Ajoutez au moins un ingrédient"
+            name.isBlank() -> uiText(R.string.recipe_error_name)
+            partsValue == null -> uiText(R.string.recipe_error_parts)
+            lines.isEmpty() -> uiText(R.string.recipe_error_ingredients)
             else -> null
         }
 }
@@ -45,7 +48,7 @@ data class RecipeDraft(
 class RecipeEditViewModel(private val c: AppContainer, handle: SavedStateHandle) : ViewModel() {
     private val route = handle.toRoute<RecipeEditRoute>()
     val draft = MutableStateFlow(RecipeDraft())
-    val messages = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val messages = MutableSharedFlow<UiText>(extraBufferCapacity = 1)
     val isEdit = route.recipeId != null
 
     init {
@@ -69,7 +72,7 @@ class RecipeEditViewModel(private val c: AppContainer, handle: SavedStateHandle)
         val quantity = qty.toDoubleOrNull() ?: return@launch
         val recipeId = draft.value.id
         if (kind == "recipe" && !c.recipes.canUseAsSub(recipeId, id)) {
-            messages.tryEmit("Impossible : cette recette contient déjà la recette en cours")
+            messages.tryEmit(uiText(R.string.recipe_error_cycle))
             return@launch
         }
         val ingredient = IngredientEntity(

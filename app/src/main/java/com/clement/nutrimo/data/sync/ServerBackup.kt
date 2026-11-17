@@ -1,6 +1,8 @@
 // Backups on the user's PC (nutrimo-api /backups): manual push/restore and a daily automatic push.
 package com.clement.nutrimo.data.sync
 
+import com.clement.nutrimo.util.fail
+import com.clement.nutrimo.R
 import android.content.Context
 import android.os.Build
 import androidx.work.Constraints
@@ -27,7 +29,7 @@ class ServerBackup(
     /** Sends the full export to the server; throws when no server is set or it cannot be reached. */
     suspend fun push() {
         val s = settings.current()
-        check(s.serverUrl.isNotBlank()) { "Aucun serveur configuré (Plus → Serveur)" }
+        if (s.serverUrl.isBlank()) fail(R.string.error_no_server)
         api.uploadBackup(s.serverUrl, s.apiKey, Build.MODEL, backup.export())
         settings.setLastServerBackup(System.currentTimeMillis())
     }
@@ -35,8 +37,8 @@ class ServerBackup(
     /** Imports the server's latest backup (merged into the current data). */
     suspend fun restoreLatest(): BackupSummary {
         val s = settings.current()
-        check(s.serverUrl.isNotBlank()) { "Aucun serveur configuré (Plus → Serveur)" }
-        val json = api.latestBackup(s.serverUrl, s.apiKey) ?: error("Aucune sauvegarde sur le serveur")
+        if (s.serverUrl.isBlank()) fail(R.string.error_no_server)
+        val json = api.latestBackup(s.serverUrl, s.apiKey) ?: fail(R.string.error_no_server_backup)
         return backup.import(json)
     }
 

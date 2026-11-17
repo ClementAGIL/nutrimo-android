@@ -1,6 +1,10 @@
 // Foods: bundled CIQUAL seed, local search, remote search (PC backend, then Open Food Facts), barcode, custom foods.
 package com.clement.nutrimo.data.repository
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
+import androidx.annotation.StringRes
 import android.content.Context
 import com.clement.nutrimo.data.db.FoodEntity
 import com.clement.nutrimo.data.db.NutrimoDatabase
@@ -26,9 +30,9 @@ private const val LOCAL_CANDIDATES = 400
 private const val LOCAL_RESULTS = 50
 private const val RECENT_COUNT = 30
 
-enum class RemoteSource(val label: String) { BACKEND("Serveur Nutrimo"), OFF("Open Food Facts") }
+enum class RemoteSource(@StringRes val label: Int) { BACKEND(R.string.remote_source_backend), OFF(R.string.remote_source_off) }
 
-data class RemoteResult(val items: List<FoodDto>, val source: RemoteSource?, val error: String? = null)
+data class RemoteResult(val items: List<FoodDto>, val source: RemoteSource?, val error: UiText? = null)
 
 class FoodRepository(
     private val context: Context,
@@ -74,11 +78,10 @@ class FoodRepository(
             nullOnError { api.search(s.serverUrl, s.apiKey, query) }?.let { return RemoteResult(it, RemoteSource.BACKEND) }
         }
         if (!allowOff) {
-            val hint = if (s.serverUrl.isBlank()) "Validez" else "Serveur injoignable : validez"
-            return RemoteResult(emptyList(), null, "$hint pour chercher sur Open Food Facts")
+            return RemoteResult(emptyList(), null, uiText(if (s.serverUrl.isBlank()) R.string.remote_hint_submit else R.string.remote_hint_unreachable))
         }
         return nullOnError { off.search(query) }?.let { RemoteResult(it, RemoteSource.OFF) }
-            ?: RemoteResult(emptyList(), null, "Pas de connexion internet")
+            ?: RemoteResult(emptyList(), null, uiText(R.string.remote_no_internet))
     }
 
     /** Local cache, then the backend, then Open Food Facts. The found product is cached. */

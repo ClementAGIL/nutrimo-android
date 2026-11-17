@@ -1,6 +1,8 @@
 // Recipe editor: name, parts, cooked weight, ingredient list (tap to change the quantity), live totals.
 package com.clement.nutrimo.ui.recipe
 
+import com.clement.nutrimo.ui.common.asString
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +51,8 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
     val snackbar = remember { SnackbarHostState() }
     var editing by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(picked) { picked?.let { onPickedConsumed(); vm.addIngredient(it) } }
-    LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it) } }
+    val resources = LocalContext.current.resources
+    LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it.resolve(resources)) } }
     ScreenScaffold(if (vm.isEdit) stringResource(R.string.recipe_edit_modifier_recette) else stringResource(R.string.common_nouvelle_recette), onBack = onBack, snackbar = snackbar) { padding ->
         ScrollColumn(padding) {
             OutlinedTextField(draft.name, { v -> vm.update { it.copy(name = v) } }, label = { Text(stringResource(R.string.recipe_edit_nom)) }, modifier = Modifier.fillMaxWidth())
@@ -60,7 +63,7 @@ fun RecipeEditScreen(onBack: () -> Unit, onAddIngredient: () -> Unit, picked: St
             }
             IngredientsCard(draft.lines, onEdit = { editing = it }, onRemove = vm::remove, onAdd = onAddIngredient)
             TotalsCard(draft)
-            draft.error?.let { WarningText(it) }
+            draft.error?.let { WarningText(it.asString()) }
             WideButton(stringResource(R.string.common_enregistrer), { vm.save(onBack) }, enabled = draft.error == null)
         }
     }

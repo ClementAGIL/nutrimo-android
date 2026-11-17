@@ -1,6 +1,8 @@
 // Backups: on the PC server (data only), or a ZIP file with the data and the progress photos; import reads ZIP or JSON.
 package com.clement.nutrimo.ui.more
 
+import com.clement.nutrimo.ui.common.asString
+import com.clement.nutrimo.util.uiText
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
@@ -52,26 +54,26 @@ class BackupViewModel(private val c: AppContainer) : ViewModel() {
 
     fun export(resolver: ContentResolver, uri: Uri) = runner.run {
         withContext(Dispatchers.IO) { resolver.openOutputStream(uri) }?.use { c.archive.write(it) }
-        "Sauvegarde exportée (données et photos)."
+        uiText(R.string.backup_exported)
     }
 
     fun import(resolver: ContentResolver, uri: Uri) = runner.run {
         val bytes = withContext(Dispatchers.IO) { resolver.openInputStream(uri)?.use { it.readBytes() } } ?: ByteArray(0)
         val s = c.backup.import(c.archive.backupText(bytes))
-        "Importé : ${s.weights} pesées, ${s.diary} entrées du journal, ${s.recipes} recettes, ${s.foods} aliments."
+        uiText(R.string.backup_imported, s.weights, s.diary, s.recipes, s.foods)
     }
 
-    fun pushToServer() = runner.run { c.serverBackup.push(); "Sauvegarde envoyée au serveur." }
+    fun pushToServer() = runner.run { c.serverBackup.push(); uiText(R.string.backup_pushed) }
 
     fun restoreFromServer() = runner.run {
         val r = c.serverBackup.restoreLatest()
-        "Restauré : ${r.weights} pesées, ${r.diary} entrées, ${r.recipes} recettes."
+        uiText(R.string.backup_restored, r.weights, r.diary, r.recipes)
     }
 
     fun setAutoBackup(context: Context, on: Boolean) = runner.run {
         c.settings.setAutoBackup(on)
         ServerBackup.schedule(context, on)
-        if (on) "Sauvegarde automatique activée." else "Sauvegarde automatique désactivée."
+        uiText(if (on) R.string.backup_auto_on else R.string.backup_auto_off)
     }
 }
 
@@ -86,7 +88,7 @@ fun BackupScreen(onBack: () -> Unit) {
             )
             ServerCard(vm)
             FileCard(vm)
-            runner.status?.let { Text(it) }
+            runner.status?.let { Text(it.asString()) }
         }
     }
 }

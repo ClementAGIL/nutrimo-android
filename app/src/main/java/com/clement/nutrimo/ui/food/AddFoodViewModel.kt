@@ -1,6 +1,9 @@
 // Food search: instant local results, then the PC backend (or Open Food Facts on submit), plus barcode lookup.
 package com.clement.nutrimo.ui.food
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,9 +33,9 @@ data class SearchUiState(
     val recipes: List<RecipeEntity> = emptyList(),
     val remote: List<FoodDto> = emptyList(),
     val remoteSource: RemoteSource? = null,
-    val remoteError: String? = null,
+    val remoteError: UiText? = null,
     val loading: Boolean = false,
-    val message: String? = null,
+    val message: UiText? = null,
 )
 
 class AddFoodViewModel(private val c: AppContainer, handle: SavedStateHandle) : ViewModel() {
@@ -100,7 +103,7 @@ class AddFoodViewModel(private val c: AppContainer, handle: SavedStateHandle) : 
     fun pickRemote(dto: FoodDto, open: (String) -> Unit) = viewModelScope.launch { open(c.foods.cache(dto).id) }
 
     fun lookupBarcode(code: String, found: (String) -> Unit, notFound: (String) -> Unit) = viewModelScope.launch {
-        state.update { it.copy(loading = true, message = "Recherche du code $code…") }
+        state.update { it.copy(loading = true, message = uiText(R.string.add_food_barcode_lookup, code)) }
         val food = c.foods.findByBarcode(code)
         state.update { it.copy(loading = false, message = null) }
         if (food != null) found(food.id) else notFound(code)

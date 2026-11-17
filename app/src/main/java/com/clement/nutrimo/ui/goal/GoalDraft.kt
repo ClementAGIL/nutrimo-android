@@ -1,6 +1,9 @@
 // Editable goal state: pace preset or end date, resolved into a pace + end date and validated.
 package com.clement.nutrimo.ui.goal
 
+import com.clement.nutrimo.util.uiText
+import com.clement.nutrimo.util.UiText
+import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.GoalEntity
 import com.clement.nutrimo.domain.calc.GoalMath
 import com.clement.nutrimo.domain.model.GoalMode
@@ -44,13 +47,13 @@ data class GoalDraft(
             return if (mode == GoalMode.DATE) endDate else GoalMath.endDateForPace(startDate, s, t, p)
         }
 
-    val error: String?
+    val error: UiText?
         get() = when {
-            start == null -> "Poids de départ invalide"
-            target == null -> "Poids objectif invalide"
-            target!! >= start!! -> "L'objectif doit être inférieur au poids de départ"
-            pace == null || pace!! < MIN_PACE -> "Rythme invalide"
-            pace!! > MAX_PACE -> "Rythme trop élevé (max ${MAX_PACE.toInt()} kg/semaine)"
+            start == null -> uiText(R.string.goal_error_start)
+            target == null -> uiText(R.string.goal_error_target)
+            target!! >= start!! -> uiText(R.string.goal_error_target_above)
+            pace == null || pace!! < MIN_PACE -> uiText(R.string.goal_error_pace)
+            pace!! > MAX_PACE -> uiText(R.string.goal_error_pace_max, MAX_PACE.toInt())
             else -> null
         }
 

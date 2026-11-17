@@ -1,6 +1,8 @@
 // Nutrimo API settings: server URL on the home network, optional API key, connection test.
 package com.clement.nutrimo.ui.more
 
+import com.clement.nutrimo.ui.common.asString
+import com.clement.nutrimo.util.uiText
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -32,7 +34,7 @@ class ServerViewModel(private val c: AppContainer) : ViewModel() {
     suspend fun saved(): Pair<String, String> = c.settings.current().let { it.serverUrl to it.apiKey }
 
     fun test(url: String, key: String) = tester.run {
-        c.foods.testServer(url, key).fold({ "✅ Connecté : $it" }, { "❌ Injoignable (${it.message})" })
+        c.foods.testServer(url, key).fold({ uiText(R.string.server_connected, it) }, { uiText(R.string.server_unreachable, it.message.orEmpty()) })
     }
 
     fun save(url: String, key: String, onDone: () -> Unit) = viewModelScope.launch { c.settings.setServer(url, key); onDone() }
@@ -56,7 +58,7 @@ fun ServerScreen(onBack: () -> Unit) {
             WideButton(if (tester.busy) stringResource(R.string.server_test_en_cours) else stringResource(R.string.server_tester_connexion), { vm.test(url, key) },
                 enabled = url.isNotBlank() && !tester.busy, outlined = true)
             WideButton(stringResource(R.string.common_enregistrer), { vm.save(url, key, onBack) })
-            tester.status?.let { Text(it) }
+            tester.status?.let { Text(it.asString()) }
         }
     }
 }
