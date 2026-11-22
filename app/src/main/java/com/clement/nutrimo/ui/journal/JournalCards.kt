@@ -35,6 +35,7 @@ import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.CardHeader
+import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.MacroBars
@@ -112,14 +113,24 @@ class MealCardActions(
 @Composable
 fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
     var naming by remember { mutableStateOf(false) }
+    var confirmCopy by remember { mutableStateOf(false) }
     SectionCard {
         CardHeader(stringResource(meal.label), kcal(entries.sumOf { it.nutrients.kcal })) {
-            if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille)) }
-            else IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, stringResource(R.string.journal_enregistrer_ce_repas)) }
+            // Always offered: on a meal that already has foods, yesterday's are added after a confirmation.
+            IconButton(onClick = { if (entries.isEmpty()) actions.onCopy() else confirmCopy = true }) {
+                Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille))
+            }
+            if (entries.isNotEmpty()) IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, stringResource(R.string.journal_enregistrer_ce_repas)) }
             IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, stringResource(R.string.common_ajouter)) }
         }
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
         entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
+    }
+    if (confirmCopy) {
+        ConfirmDialog(
+            stringResource(R.string.journal_copier_depuis_veille), stringResource(R.string.journal_copy_add_confirm), stringResource(R.string.common_ajouter),
+            onConfirm = { confirmCopy = false; actions.onCopy() },
+        ) { confirmCopy = false }
     }
     if (naming) TextDialog(stringResource(R.string.journal_enregistrer_ce_repas), stringResource(R.string.journal_nom_ex_petit_dej_habituel), stringResource(meal.label), actions.onSave) { naming = false }
 }
