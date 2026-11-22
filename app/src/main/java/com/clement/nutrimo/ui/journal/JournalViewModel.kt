@@ -166,6 +166,17 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         messages.tryEmit(uiText(R.string.journal_copied_to, count, to.full()))
     }
 
+    /** Moves the whole shown day to [to] (DiaryRepository.moveDay), and the journal follows it there. */
+    fun moveDay(to: LocalDate) = viewModelScope.launch {
+        val from = date.value
+        if (!c.diary.moveDay(from, to)) {
+            messages.tryEmit(uiText(R.string.journal_rien_a_deplacer))
+            return@launch
+        }
+        setDate(to)
+        messages.tryEmit(uiText(R.string.journal_journee_deplacee, from.full(), to.full()))
+    }
+
     fun saveMeal(name: String, entries: List<DiaryEntity>) = viewModelScope.launch {
         c.savedMeals.saveFrom(name, entries)
         messages.tryEmit(uiText(R.string.journal_meal_saved, name))

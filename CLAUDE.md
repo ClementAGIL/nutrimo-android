@@ -63,7 +63,7 @@ data/
   repository/                     DayRecords (LocalHistory + HealthHistory -> buildRecords; HealthRepository.history,
                                   AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (net (MET − 1) × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
-                                  nutrition, cycle check), Diary (entries + water), Backup (JSON export/import),
+                                  nutrition, cycle check), Diary (entries + water; copyMeal / moveMeal to a day and meal, moveDay = whole day incl. activities and note), Backup (JSON export/import),
                                   Photo (files/photos/<id>.jpg at 2,500 px + thumbs/, upright and never mirrored; storage),
                                   BackupArchive (ZIP export = backup.json + photos/<date>_<pose>_<kg>_<id>.jpg + photos.json;
                                   import reads ZIP or JSON, photos not re-imported). The server backup never carries photos

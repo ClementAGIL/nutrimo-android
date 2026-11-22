@@ -2,6 +2,8 @@
 package com.clement.nutrimo.ui.journal
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +27,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,12 +40,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
+import com.clement.nutrimo.ui.common.DateField
+import com.clement.nutrimo.ui.common.FormDialog
 import com.clement.nutrimo.ui.common.ScreenScaffold
 import com.clement.nutrimo.ui.common.appViewModel
 import com.clement.nutrimo.ui.navigation.GoalEditRoute
 import com.clement.nutrimo.ui.navigation.ProfileRoute
 import com.clement.nutrimo.ui.navigation.StepsRoute
 import com.clement.nutrimo.util.day
+import com.clement.nutrimo.util.full
 import java.time.LocalDate
 
 /** Navigation callbacks of the journal. */
@@ -56,6 +67,8 @@ fun JournalScreen(actions: JournalActions) {
     val state by vm.state.collectAsStateWithLifecycle()
     val today by vm.today.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
+    var menu by remember { mutableStateOf(false) }
+    var movingDay by remember { mutableStateOf(false) }
     val resources = LocalContext.current.resources
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it.resolve(resources)) } }
     LifecycleResumeEffect(Unit) {
@@ -65,7 +78,29 @@ fun JournalScreen(actions: JournalActions) {
     }
     ScreenScaffold(stringResource(R.string.journal_journal), snackbar = snackbar, actions = {
         IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, stringResource(R.string.common_historique)) }
+        Box {
+            IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, stringResource(R.string.journal_plus_options)) }
+            DropdownMenu(menu, { menu = false }) {
+                DropdownMenuItem(
+                    { Text(stringResource(R.string.journal_deplacer_journee)) }, { menu = false; movingDay = true },
+                    leadingIcon = { Icon(Icons.Default.EditCalendar, null) },
+                )
+            }
+        }
     }) { padding -> JournalList(state, today, vm, actions, padding) }
+    if (movingDay) MoveDayDialog(state.date, today, vm::moveDay) { movingDay = false }
+}
+
+/** Picks the day to move the whole shown [date] to (up to [today]). */
+@Composable
+private fun MoveDayDialog(date: LocalDate, today: LocalDate, onConfirm: (LocalDate) -> Unit, onDismiss: () -> Unit) {
+    var to by remember { mutableStateOf(date) }
+    FormDialog(stringResource(R.string.journal_deplacer_journee), onDismiss, { onConfirm(to) }, stringResource(R.string.journal_deplacer), canConfirm = to != date) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(stringResource(R.string.journal_deplacer_journee_aide, date.full()))
+            DateField(stringResource(R.string.reminders_jour), to, { to = it }, Modifier.fillMaxWidth(), max = today)
+        }
+    }
 }
 
 /** The day: date bar, summary, the four meals, then steps, activities and water. */

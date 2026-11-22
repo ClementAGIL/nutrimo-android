@@ -160,6 +160,9 @@ interface DiaryDao {
     )
     fun observeDailyTotals(from: LocalDate, to: LocalDate): Flow<List<DayTotal>>
 
+    @Query("SELECT * FROM diary WHERE date = :date")
+    suspend fun onDate(date: LocalDate): List<DiaryEntity>
+
     @Query("SELECT COUNT(*) FROM diary WHERE date = :date")
     suspend fun countOn(date: LocalDate): Int
 

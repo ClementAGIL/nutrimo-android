@@ -78,6 +78,46 @@ class DiaryRepository(
         return source.size
     }
 
+    /**
+     * Moves everything logged on [from] to [to], for a day logged on the wrong date: foods (each in its meal), water
+     * (added to the target's), manual activities and the "Ma journée" note (merged into the target's, its mood kept
+     * first). What [to] already has is kept. Health Connect data is not ours and stays where it is. Returns whether
+     * anything moved.
+     */
+    suspend fun moveDay(from: LocalDate, to: LocalDate): Boolean {
+        if (from == to) return false
+        val at = now()
+        return db.withTransaction {
+            val foods = dao.onDate(from)
+            dao.upsertAll(foods.map { it.copy(date = to, updatedAt = at) })
+            val activityDao = db.activityDao()
+            val activities = activityDao.onDate(from)
+            activityDao.upsertAll(activities.map { it.copy(date = to, updatedAt = at) })
+            val water = waterDao.get(from)?.ml ?: 0
+            if (water > 0) {
+                waterDao.upsert(WaterEntity(to, (waterDao.get(to)?.ml ?: 0) + water, at))
+                waterDao.upsert(WaterEntity(from, 0, at))
+            }
+            val noteDao = db.dayNoteDao()
+            val note = noteDao.get(from)?.takeIf { !it.isEmpty }
+            if (note != null) {
+                val target = noteDao.get(to)
+                noteDao.upsert(
+                    if (target == null) note.copy(date = to, updatedAt = at)
+                    else target.copy(
+                        mood = target.mood ?: note.mood,
+                        gratitude = listOf(target.gratitude, note.gratitude).filter { it.isNotBlank() }.joinToString("\n\n"),
+                        win = listOf(target.win, note.win).filter { it.isNotBlank() }.joinToString("\n\n"),
+                        note = listOf(target.note, note.note).filter { it.isNotBlank() }.joinToString("\n\n"),
+                        updatedAt = at,
+                    ),
+                )
+                noteDao.delete(from)
+            }
+            foods.isNotEmpty() || activities.isNotEmpty() || water > 0 || note != null
+        }
+    }
+
     suspend fun hasEntries(date: LocalDate): Boolean = dao.countOn(date) > 0
 
     /** Adds [deltaMl] (negative to remove) to the stored amount, never below 0. */
