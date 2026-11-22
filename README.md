@@ -20,7 +20,7 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   (one per day, edit / delete, change since the previous one). Goal history in "Mes objectifs".
 - Journal: day by day, calories eaten / target / maintenance / remaining, protein-carbs-fat bars. The calorie ring
   is green under the target, yellow above it but still under maintenance (still losing, just slower), red above
-  maintenance. 4 meals (breakfast, lunch, dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before (added to what is already there, after a confirmation), move a meal to another day (⋮ menu, e.g. logged on the wrong date), water glasses.
+  maintenance. 4 meals (breakfast, lunch, dinner, snacks) with subtotals, swipe to delete, tap to edit, copy the day before's meal into an empty one, copy or move a meal to another day (⋮ menu, e.g. logged on the wrong date), water glasses.
   Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals), each with its % of the
   daily reference for the profile's sex and age (ANSES needs; salt, sodium, sugars and saturated fat as WHO / EU limits).
 - "Ma journée" (bottom of the journal): the mood of the day in one tap (5 faces) and a short journal (one text,

@@ -39,7 +39,6 @@ import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.CardHeader
-import com.clement.nutrimo.ui.common.ConfirmDialog
 import com.clement.nutrimo.ui.common.DatePickDialog
 import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.HintText
@@ -114,6 +113,8 @@ class MealCardActions(
     val onCopy: () -> Unit,
     /** Moves the whole meal to another day (entries logged on the wrong date). */
     val onMove: (LocalDate) -> Unit,
+    /** Copies the whole meal to another day, where it is added to what is there. */
+    val onCopyTo: (LocalDate) -> Unit,
     /** Saves the meal's entries as a reusable meal named by the user. */
     val onSave: (String) -> Unit,
 )
@@ -123,13 +124,11 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, date: LocalDate, today: Loc
     var naming by remember { mutableStateOf(false) }
     var menu by remember { mutableStateOf(false) }
     var moving by remember { mutableStateOf(false) }
-    var confirmCopy by remember { mutableStateOf(false) }
+    var copying by remember { mutableStateOf(false) }
     SectionCard {
         CardHeader(stringResource(meal.label), kcal(entries.sumOf { it.nutrients.kcal })) {
-            // Always offered: on a meal that already has foods, yesterday's are added after a confirmation.
-            IconButton(onClick = { if (entries.isEmpty()) actions.onCopy() else confirmCopy = true }) {
-                Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille))
-            }
+            // Empty meal: fill it from the day before. A meal with foods is copied elsewhere from the ⋮ menu instead.
+            if (entries.isEmpty()) IconButton(onClick = actions.onCopy) { Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille)) }
             IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, stringResource(R.string.common_ajouter)) }
             if (entries.isNotEmpty()) {
                 Box {
@@ -138,6 +137,10 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, date: LocalDate, today: Loc
                         DropdownMenuItem(
                             { Text(stringResource(R.string.journal_enregistrer_ce_repas)) }, { menu = false; naming = true },
                             leadingIcon = { Icon(Icons.Default.BookmarkAdd, null) },
+                        )
+                        DropdownMenuItem(
+                            { Text(stringResource(R.string.journal_copier_autre_jour)) }, { menu = false; copying = true },
+                            leadingIcon = { Icon(Icons.Default.ContentCopy, null) },
                         )
                         DropdownMenuItem(
                             { Text(stringResource(R.string.journal_deplacer_autre_jour)) }, { menu = false; moving = true },
@@ -150,12 +153,7 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, date: LocalDate, today: Loc
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
         entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
     }
-    if (confirmCopy) {
-        ConfirmDialog(
-            stringResource(R.string.journal_copier_depuis_veille), stringResource(R.string.journal_copy_add_confirm), stringResource(R.string.common_ajouter),
-            onConfirm = { confirmCopy = false; actions.onCopy() },
-        ) { confirmCopy = false }
-    }
+    if (copying) DatePickDialog(date, { to -> copying = false; actions.onCopyTo(to) }, { copying = false }, max = today)
     if (moving) DatePickDialog(date, { to -> moving = false; actions.onMove(to) }, { moving = false }, max = today)
     if (naming) TextDialog(stringResource(R.string.journal_enregistrer_ce_repas), stringResource(R.string.journal_nom_ex_petit_dej_habituel), stringResource(meal.label), actions.onSave) { naming = false }
 }

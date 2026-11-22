@@ -164,6 +164,14 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         messages.tryEmit(uiText(R.string.journal_moved, count, to.full()))
     }
 
+    /** Copies the shown day's [meal] to [to] (added to what is there), and the journal follows it there. */
+    fun copyMealTo(meal: Meal, to: LocalDate) = viewModelScope.launch {
+        val count = c.diary.copyMeal(date.value, to, meal)
+        if (count == 0) return@launch
+        setDate(to)
+        messages.tryEmit(uiText(R.string.journal_copied_to, count, to.full()))
+    }
+
     fun saveMeal(name: String, entries: List<DiaryEntity>) = viewModelScope.launch {
         c.savedMeals.saveFrom(name, entries)
         messages.tryEmit(uiText(R.string.journal_meal_saved, name))
