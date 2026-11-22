@@ -71,7 +71,7 @@ domain/
   model/                          Nutrients (scale/plus), enums with French labels, NutrientCatalog (micros),
                                   Loggable (food or recipe + unit choices → nutrients), String.normalized()
   calc/                           Energy (Mifflin-St Jeor, deficit, floor), GoalMath (pace <-> date, progress),
-                                  Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day; VALID_WEIGHT_KG = range of every weigh-in / goal input), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table; burned = net (MET − 1) kcal: the resting part is in the TDEE), Macros (MacroSplit % → grams, presets),
+                                  Trend (linear regression on Trend.recent = last 30 days of weigh-ins, even before the goal start; estimated end), WeightCurve (kgAt: weight on any day; VALID_WEIGHT_KG = range of every weigh-in / goal input), Bmi (ZONES, zoneOf, weightAt, nextLower), RecipeMath, Activities (MET table; burned = net (MET − 1) kcal: the resting part is in the TDEE), DailyNeeds (adult daily references by sex / age: ANSES needs, WHO / EU limits; tested), Macros (MacroSplit % → grams, presets),
                                   Encouragement (pick: weight news > open streak > proud today > proud yesterday > hard moment >
                                   gentle; gender-neutral wording, tested in app/src/test), DayGoals (DailyGoal incl. JOURNAL = mood or text in "Ma journée", GoalTargets + DEFAULT_* goals, DayRecord.achieved = null without data,
                                   streaks; AppSettings.goalTargets(profile) builds the targets)
@@ -94,7 +94,7 @@ ui/
                                   no dismiss on outside tap, confirm before losing changes; older gratitude/win fields are
                                   merged into the note on save; moodText for the calendar), JournalCards (summary ring + macro bars, MealCard, WaterCard; ring/text color by KcalZone:
                                   green ≤ budget, yellow ≤ maintenance = TDEE + burned, red above), EntryUi
-                                  (quantityText, SwipeToDelete), DayNutrientsScreen. Every card with a goal has a
+                                  (quantityText, SwipeToDelete), DayNutrientsScreen (NutrientTable with needs = % of DailyNeeds). Every card with a goal has a
                                   GoalSettingsButton → JournalActions.onGoalSettings(route): calories → GoalEdit,
                                   steps and sport → Steps ("Pas et sport"), water → Profile
   history/                        HistoryScreen (journal chart icon): CalendarTab (month grid, one dot per goal: filled =

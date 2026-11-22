@@ -21,7 +21,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
 - Journal: day by day, calories eaten / target / maintenance / remaining, protein-carbs-fat bars. The calorie ring
   is green under the target, yellow above it but still under maintenance (still losing, just slower), red above
   maintenance. 4 meals (breakfast, lunch, dinner, snacks) with subtotals, swipe to delete, tap to edit, copy a meal from the day before, water glasses.
-  Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals).
+  Tap the summary for every nutrient of the day (sugars, fiber, salt, vitamins, minerals), each with its % of the
+  daily reference for the profile's sex and age (ANSES needs; salt, sodium, sugars and saturated fat as WHO / EU limits).
 - "Ma journée" (bottom of the journal): the mood of the day in one tap (5 faces) and a short journal (one text,
   prompts as placeholder: gratitude, victory of the day, a few words). Written full screen, save icon at the top;
   a tap outside never closes it, and leaving with unsaved text asks first. Included in the backups.

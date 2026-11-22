@@ -4,6 +4,7 @@ package com.clement.nutrimo.ui.common
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.clement.nutrimo.ui.theme.NutrimoColors
@@ -17,8 +18,8 @@ fun IntroText(text: String) {
 
 /** Secondary explanation under a value or a control. */
 @Composable
-fun HintText(text: String) {
-    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+fun HintText(text: String, modifier: Modifier = Modifier) {
+    Text(text, modifier, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable

@@ -155,6 +155,9 @@
     <string name="measurements_aucune_mensuration_ajoutez_en_avec">Aucune mensuration. Ajoutez-en avec le bouton +.</string>
     <string name="nutrient_dont_acides_gras_satures">dont acides gras saturés</string>
     <string name="nutrient_dont_sucres">dont sucres</string>
+    <string name="nutrient_pourcentages_reperes">En % des repères journaliers d’un adulte</string>
+    <string name="nutrient_reperes_journaliers">Repères journaliers</string>
+    <string name="nutrient_reperes_aide">Les pourcentages comparent la journée aux références nutritionnelles de l’ANSES pour un adulte, selon le sexe et l’âge de votre profil (fibres, vitamines, minéraux) : la barre devient verte quand le repère est atteint.\n\nPour le sel, le sodium, les sucres et les acides gras saturés, le repère est une limite à ne pas dépasser (OMS, Union européenne) : la barre devient orange au-delà.\n\nCe sont des moyennes pour la population, pas un diagnostic, et un jour seul compte peu : c’est la régularité sur plusieurs jours qui importe. Les aliments sans vitamines ni minéraux renseignés font baisser les totaux.</string>
     <string name="nutrient_energie">Énergie</string>
     <string name="nutrient_matieres_grasses">Matières grasses</string>
     <string name="nutrient_vitamines_mineraux">Vitamines et minéraux</string>
