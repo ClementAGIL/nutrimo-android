@@ -83,11 +83,14 @@ private fun JournalList(state: JournalUiState, today: LocalDate, vm: JournalView
             MealCard(
                 meal,
                 entries,
+                state.date,
+                today,
                 MealCardActions(
                     onAdd = { actions.onAdd(state.date, meal) },
                     onEdit = actions.onEdit,
                     onDelete = vm::delete,
                     onCopy = { vm.copyFromPreviousDay(meal) },
+                    onMove = { to -> vm.moveMeal(meal, to) },
                     onSave = { name -> vm.saveMeal(name, entries) },
                 ),
             )

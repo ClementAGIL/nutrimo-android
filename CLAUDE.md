@@ -134,7 +134,7 @@ ui/
                                   AppTabs, EmptyState), Rows (StatRow, ProgressRow, ProgressBar, SwitchRow, GoalSettingsButton),
                                   Inputs (NumberField, ChoiceChips, WideButton), Texts (IntroText, HintText, WarningText),
                                   Dialogs (FormDialog = confirm + Annuler, ConfirmDialog, TextDialog, InfoButton = ⓘ opening a help dialog: use it instead of long HintText in crowded cards), StatusRunner (owned by a VM: action →
-                                  status message / busy), Pickers (DateField, Dropdown), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
+                                  status message / busy), Pickers (DateField, DatePickDialog, Dropdown), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
   common/chart/                   LineChart (public types + composable of the generic Canvas date/value chart; drawing in
                                   ChartDrawing (PlotArea, bands, grid, bars, lines, drawMarkerShape shared with the legend),
                                   GapAxis (dates with > 183 days without data collapsed into "…" breaks, dateAt = reverse for taps;

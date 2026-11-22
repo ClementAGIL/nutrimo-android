@@ -12,6 +12,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -36,6 +40,7 @@ import com.clement.nutrimo.data.db.DiaryEntity
 import com.clement.nutrimo.domain.model.Meal
 import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.ConfirmDialog
+import com.clement.nutrimo.ui.common.DatePickDialog
 import com.clement.nutrimo.ui.common.GoalSettingsButton
 import com.clement.nutrimo.ui.common.HintText
 import com.clement.nutrimo.ui.common.MacroBars
@@ -45,6 +50,7 @@ import com.clement.nutrimo.ui.common.TextDialog
 import com.clement.nutrimo.ui.theme.NutrimoColors
 import com.clement.nutrimo.util.fmt
 import com.clement.nutrimo.util.kcal
+import java.time.LocalDate
 
 private const val WATER_STEP_ML = 250
 
@@ -106,13 +112,17 @@ class MealCardActions(
     val onEdit: (DiaryEntity) -> Unit,
     val onDelete: (DiaryEntity) -> Unit,
     val onCopy: () -> Unit,
+    /** Moves the whole meal to another day (entries logged on the wrong date). */
+    val onMove: (LocalDate) -> Unit,
     /** Saves the meal's entries as a reusable meal named by the user. */
     val onSave: (String) -> Unit,
 )
 
 @Composable
-fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
+fun MealCard(meal: Meal, entries: List<DiaryEntity>, date: LocalDate, today: LocalDate, actions: MealCardActions) {
     var naming by remember { mutableStateOf(false) }
+    var menu by remember { mutableStateOf(false) }
+    var moving by remember { mutableStateOf(false) }
     var confirmCopy by remember { mutableStateOf(false) }
     SectionCard {
         CardHeader(stringResource(meal.label), kcal(entries.sumOf { it.nutrients.kcal })) {
@@ -120,8 +130,22 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
             IconButton(onClick = { if (entries.isEmpty()) actions.onCopy() else confirmCopy = true }) {
                 Icon(Icons.Default.ContentCopy, stringResource(R.string.journal_copier_depuis_veille))
             }
-            if (entries.isNotEmpty()) IconButton(onClick = { naming = true }) { Icon(Icons.Default.BookmarkAdd, stringResource(R.string.journal_enregistrer_ce_repas)) }
             IconButton(onClick = actions.onAdd) { Icon(Icons.Default.Add, stringResource(R.string.common_ajouter)) }
+            if (entries.isNotEmpty()) {
+                Box {
+                    IconButton(onClick = { menu = true }) { Icon(Icons.Default.MoreVert, stringResource(R.string.journal_plus_options)) }
+                    DropdownMenu(menu, { menu = false }) {
+                        DropdownMenuItem(
+                            { Text(stringResource(R.string.journal_enregistrer_ce_repas)) }, { menu = false; naming = true },
+                            leadingIcon = { Icon(Icons.Default.BookmarkAdd, null) },
+                        )
+                        DropdownMenuItem(
+                            { Text(stringResource(R.string.journal_deplacer_autre_jour)) }, { menu = false; moving = true },
+                            leadingIcon = { Icon(Icons.Default.EditCalendar, null) },
+                        )
+                    }
+                }
+            }
         }
         // key(): the swipe state must follow its entry, not its position, once a row is deleted.
         entries.forEach { entry -> key(entry.id) { EntryRow(entry, actions.onEdit, actions.onDelete) } }
@@ -132,6 +156,7 @@ fun MealCard(meal: Meal, entries: List<DiaryEntity>, actions: MealCardActions) {
             onConfirm = { confirmCopy = false; actions.onCopy() },
         ) { confirmCopy = false }
     }
+    if (moving) DatePickDialog(date, { to -> moving = false; actions.onMove(to) }, { moving = false }, max = today)
     if (naming) TextDialog(stringResource(R.string.journal_enregistrer_ce_repas), stringResource(R.string.journal_nom_ex_petit_dej_habituel), stringResource(meal.label), actions.onSave) { naming = false }
 }
 

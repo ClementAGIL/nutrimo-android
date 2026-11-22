@@ -133,6 +133,9 @@
     <string name="journal_ajouter_verre">Ajouter un verre</string>
     <string name="journal_au_dessus_objectif_1">Au-dessus de l\'objectif : %1$s</string>
     <string name="journal_copier_depuis_veille">Copier depuis la veille</string>
+    <string name="journal_plus_options">Plus d’options</string>
+    <string name="journal_deplacer_autre_jour">Déplacer vers un autre jour</string>
+    <string name="journal_moved">%1$d aliment(s) déplacé(s) au %2$s</string>
     <string name="journal_copy_add_confirm">Ce repas contient déjà des aliments. Ajouter en plus ceux de la veille ?</string>
     <string name="journal_depassement_1">Dépassement : %1$s</string>
     <string name="journal_dont_1_activite_pas">dont %1$s d\'activité et de pas</string>

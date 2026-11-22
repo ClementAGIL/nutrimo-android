@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.time.Duration
+import com.clement.nutrimo.util.full
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlinx.coroutines.delay
@@ -153,6 +154,14 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
         val day = date.value
         val count = c.diary.copyMeal(day.minusDays(1), day, meal)
         messages.tryEmit(if (count == 0) uiText(R.string.journal_copy_none) else uiText(R.string.journal_copied, count))
+    }
+
+    /** For entries logged on the wrong day: the whole meal goes to [to], and the journal follows it there. */
+    fun moveMeal(meal: Meal, to: LocalDate) = viewModelScope.launch {
+        val count = c.diary.moveMeal(date.value, to, meal)
+        if (count == 0) return@launch
+        setDate(to)
+        messages.tryEmit(uiText(R.string.journal_moved, count, to.full()))
     }
 
     fun saveMeal(name: String, entries: List<DiaryEntity>) = viewModelScope.launch {

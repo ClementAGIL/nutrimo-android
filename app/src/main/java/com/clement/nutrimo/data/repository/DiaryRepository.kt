@@ -68,6 +68,15 @@ class DiaryRepository(
         return source.size
     }
 
+    /** Moves the [meal] of [from] to [to] (same meal, order kept); returns how many entries moved. */
+    suspend fun moveMeal(from: LocalDate, to: LocalDate, meal: Meal): Int {
+        if (from == to) return 0
+        val source = dao.meal(from, meal)
+        val at = now()
+        dao.upsertAll(source.map { it.copy(date = to, updatedAt = at) })
+        return source.size
+    }
+
     suspend fun hasEntries(date: LocalDate): Boolean = dao.countOn(date) > 0
 
     /** Adds [deltaMl] (negative to remove) to the stored amount, never below 0. */

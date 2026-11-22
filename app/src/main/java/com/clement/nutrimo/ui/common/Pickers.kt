@@ -49,7 +49,12 @@ fun DateField(
         trailingIcon = { IconButton(onClick = { open = true }) { Icon(Icons.Default.CalendarMonth, stringResource(R.string.pickers_choisir)) } },
         modifier = modifier,
     )
-    if (!open) return
+    if (open) DatePickDialog(date, { onDateChange(it); open = false }, { open = false }, min, max)
+}
+
+/** Calendar dialog starting on [date], limited by [min] / [max]; [onPick] gets the chosen day. */
+@Composable
+fun DatePickDialog(date: LocalDate, onPick: (LocalDate) -> Unit, onDismiss: () -> Unit, min: LocalDate? = null, max: LocalDate? = null) {
     val state = rememberDatePickerState(
         initialSelectedDateMillis = date.toMillis(),
         selectableDates = object : SelectableDates {
@@ -60,14 +65,13 @@ fun DateField(
         },
     )
     DatePickerDialog(
-        onDismissRequest = { open = false },
+        onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                state.selectedDateMillis?.let { onDateChange(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate()) }
-                open = false
+                state.selectedDateMillis?.let { onPick(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate()) } ?: onDismiss()
             }) { Text(stringResource(R.string.common_ok)) }
         },
-        dismissButton = { TextButton(onClick = { open = false }) { Text(stringResource(R.string.common_annuler)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_annuler)) } },
     ) { DatePicker(state) }
 }
 
