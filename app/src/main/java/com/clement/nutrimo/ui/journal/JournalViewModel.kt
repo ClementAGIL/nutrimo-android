@@ -28,7 +28,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlinx.coroutines.delay
 
 data class JournalUiState(
     val date: LocalDate = LocalDate.now(),
@@ -72,9 +75,18 @@ private data class DayData(
     val date: LocalDate, val entries: List<DiaryEntity>, val water: WaterEntity?, val activities: List<ActivityEntity>, val note: DayNoteEntity?,
 )
 
+/** The midnight check waits this long past 00:00, so LocalDate.now() is surely the new day. */
+private const val MIDNIGHT_MARGIN_MS = 1_000L
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class JournalViewModel(private val c: AppContainer) : ViewModel() {
     private val date = MutableStateFlow(LocalDate.now())
+
+    /**
+     * The current day, kept up to date while the app lives across midnight (the ViewModel can survive for days in
+     * the background): checked on resume and at each midnight. A journal showing "today" follows it to the new day.
+     */
+    val today = MutableStateFlow(LocalDate.now())
     val messages = MutableSharedFlow<UiText>(extraBufferCapacity = 1)
 
     private val day = date.flatMapLatest { d ->
@@ -100,6 +112,25 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
             dayNote = d.note,
         )
     }.stateWhileSubscribed(viewModelScope, JournalUiState())
+
+    init {
+        viewModelScope.launch {
+            while (true) {
+                val untilMidnight = Duration.between(LocalDateTime.now(), LocalDate.now().plusDays(1).atStartOfDay())
+                delay(untilMidnight.toMillis() + MIDNIGHT_MARGIN_MS)
+                checkToday()
+            }
+        }
+    }
+
+    /** Called on resume and at midnight: moves "today" (and the shown day, if it was today) to the real date. */
+    fun checkToday() {
+        val now = LocalDate.now()
+        val previous = today.value
+        if (now == previous) return
+        today.value = now
+        if (date.value == previous) setDate(now)
+    }
 
     fun shiftDay(days: Long) = setDate(date.value.plusDays(days))
 

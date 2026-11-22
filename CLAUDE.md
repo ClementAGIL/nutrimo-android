@@ -88,7 +88,8 @@ ui/
                                   preview and safety warnings, shared), GoalEditScreen
   more/                           "Plus" tab menu (MORE_ENTRIES), ServerScreen (URL + key + test), BackupScreen
                                   (server backup/restore + auto toggle, SAF file export/import), RemindersScreen, AboutScreen, DevScreen (load demo / erase all), MacrosScreen, StepsScreen
-  journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (day → meals, totals, water,
+  journal/                        JournalScreen (day bar, LazyColumn), JournalViewModel (today = StateFlow kept current on resume and at
+                                  midnight, the shown day follows it if it was today; day → meals, totals, water,
                                   activities; budget = target + burned), ActivityCard (manual + imported sessions), StepsCard (install / connect / progress),
                                   DayNoteCard ("Ma journée": mood faces; one text in a full-screen editor, save icon on top,
                                   no dismiss on outside tap, confirm before losing changes; older gratitude/win fields are

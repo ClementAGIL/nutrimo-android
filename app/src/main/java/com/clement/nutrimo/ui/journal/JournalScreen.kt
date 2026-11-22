@@ -54,27 +54,29 @@ data class JournalActions(
 fun JournalScreen(actions: JournalActions) {
     val vm = appViewModel { c, _ -> JournalViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
+    val today by vm.today.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val resources = LocalContext.current.resources
     LaunchedEffect(Unit) { vm.messages.collect { snackbar.showSnackbar(it.resolve(resources)) } }
     LifecycleResumeEffect(Unit) {
+        vm.checkToday()
         vm.refreshHealth()
         onPauseOrDispose {}
     }
     ScreenScaffold(stringResource(R.string.journal_journal), snackbar = snackbar, actions = {
         IconButton(onClick = actions.onHistory) { Icon(Icons.Default.BarChart, stringResource(R.string.common_historique)) }
-    }) { padding -> JournalList(state, vm, actions, padding) }
+    }) { padding -> JournalList(state, today, vm, actions, padding) }
 }
 
 /** The day: date bar, summary, the four meals, then steps, activities and water. */
 @Composable
-private fun JournalList(state: JournalUiState, vm: JournalViewModel, actions: JournalActions, padding: PaddingValues) {
+private fun JournalList(state: JournalUiState, today: LocalDate, vm: JournalViewModel, actions: JournalActions, padding: PaddingValues) {
     LazyColumn(
         Modifier.padding(padding),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        item { DayBar(state.date, vm::shiftDay) { vm.setDate(LocalDate.now()) } }
+        item { DayBar(state.date, today, vm::shiftDay) { vm.setDate(today) } }
         item { SummaryCard(state, { actions.onDetails(state.date) }) { actions.onGoalSettings(GoalEditRoute) } }
         items(Meal.entries) { meal ->
             val entries = state.meals[meal].orEmpty()
@@ -102,10 +104,10 @@ private fun JournalList(state: JournalUiState, vm: JournalViewModel, actions: Jo
 }
 
 @Composable
-private fun DayBar(date: LocalDate, onShift: (Long) -> Unit, onToday: () -> Unit) {
+/** [today] comes from the ViewModel (kept current), not LocalDate.now(): a skipped recomposition would keep a stale day. */
+private fun DayBar(date: LocalDate, today: LocalDate, onShift: (Long) -> Unit, onToday: () -> Unit) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
         IconButton(onClick = { onShift(-1) }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, stringResource(R.string.journal_jour_precedent)) }
-        val today = LocalDate.now()
         Text(
             when (date) {
                 today -> stringResource(R.string.common_aujourd_hui)
