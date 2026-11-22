@@ -106,6 +106,7 @@ private fun MoveDayDialog(date: LocalDate, today: LocalDate, onConfirm: (LocalDa
 /** The day: date bar, summary, the four meals, then steps, activities and water. */
 @Composable
 private fun JournalList(state: JournalUiState, today: LocalDate, vm: JournalViewModel, actions: JournalActions, padding: PaddingValues) {
+    val activityTypes by vm.activityTypes.collectAsStateWithLifecycle()
     LazyColumn(
         Modifier.padding(padding),
         contentPadding = PaddingValues(16.dp),
@@ -132,7 +133,7 @@ private fun JournalList(state: JournalUiState, today: LocalDate, vm: JournalView
         }
         item { StepsCard(state.health, state.targets.steps, state.healthInBudget, vm::refreshHealth) { actions.onGoalSettings(StepsRoute) } }
         item {
-            ActivityCard(state.activities, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.targets.sportKcal) {
+            ActivityCard(state.activities, activityTypes, state.health?.sessions.orEmpty(), vm::addActivity, vm::deleteActivity, state.targets.sportKcal) {
                 actions.onGoalSettings(StepsRoute)
             }
         }

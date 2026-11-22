@@ -25,6 +25,7 @@ import com.clement.nutrimo.R
 import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.health.ImportedActivity
 import com.clement.nutrimo.domain.calc.Activities
+import com.clement.nutrimo.domain.calc.ActivityType
 import com.clement.nutrimo.ui.common.CardHeader
 import com.clement.nutrimo.ui.common.Dropdown
 import com.clement.nutrimo.ui.common.FormDialog
@@ -41,6 +42,8 @@ import com.clement.nutrimo.util.toDecimal
 @Composable
 fun ActivityCard(
     activities: List<ActivityEntity>,
+    /** Choices of the add dialog, most logged first (the first is preselected). */
+    types: List<ActivityType>,
     imported: List<ImportedActivity>,
     onAdd: (type: String, minutes: Int?, kcal: Double?) -> Unit,
     onDelete: (ActivityEntity) -> Unit,
@@ -65,7 +68,7 @@ fun ActivityCard(
         }
         if (imported.isNotEmpty()) ImportedSessions(imported)
     }
-    if (adding) ActivityDialog(onAdd) { adding = false }
+    if (adding) ActivityDialog(types, onAdd) { adding = false }
 }
 
 /** Read-only workouts from Health Connect (they count in the budget only if enabled in Plus → Pas). */
@@ -81,8 +84,8 @@ private fun ImportedSessions(sessions: List<ImportedActivity>) {
 }
 
 @Composable
-private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: () -> Unit) {
-    var type by remember { mutableStateOf(Activities.TYPES.first()) }
+private fun ActivityDialog(types: List<ActivityType>, onAdd: (String, Int?, Double?) -> Unit, onDismiss: () -> Unit) {
+    var type by remember { mutableStateOf(types.first()) }
     var minutes by remember { mutableStateOf("30") }
     var manual by remember { mutableStateOf("") }
     // Minutes are whole ("0,5" would round to 0 and log nothing).
@@ -93,7 +96,7 @@ private fun ActivityDialog(onAdd: (String, Int?, Double?) -> Unit, onDismiss: ()
         confirmLabel = stringResource(R.string.common_ajouter), canConfirm = valid,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Dropdown(stringResource(R.string.activity_type), type, Activities.TYPES, { stringResource(it.label) }, { type = it }, Modifier.fillMaxWidth())
+            Dropdown(stringResource(R.string.activity_type), type, types, { stringResource(it.label) }, { type = it }, Modifier.fillMaxWidth())
             if (type.met != null) NumberField(minutes, { minutes = it }, stringResource(R.string.activity_duree), Modifier.fillMaxWidth(), "min")
             else NumberField(manual, { manual = it }, stringResource(R.string.activity_calories_depensees), Modifier.fillMaxWidth(), "kcal")
         }

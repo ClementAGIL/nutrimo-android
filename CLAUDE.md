@@ -61,7 +61,7 @@ data/
                                   photos on the 1st, EncouragementWorker = loadDayRecords + Encouragement.pick). Adding a
                                   reminder = one ReminderKind entry + one worker + one card title in RemindersScreen
   repository/                     DayRecords (LocalHistory + HealthHistory -> buildRecords; HealthRepository.history,
-                                  AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (net (MET − 1) × weight × time, or manual kcal), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
+                                  AppContainer.loadDayRecords one-shot for workers), DayNote (empty note = deleted), Settings (DataStore), Activity (net (MET − 1) × weight × time, or manual kcal; typesByUse = most logged first), SavedMeal (save a meal / log it in one tap), Body (profile/weights/goals/calorie target), Food
                                   (seed, local+remote search, barcode, cache, custom), Recipe (recursive
                                   nutrition, cycle check), Diary (entries + water; copyMeal / moveMeal to a day and meal, moveDay = whole day incl. activities and note), Backup (JSON export/import),
                                   Photo (files/photos/<id>.jpg at 2,500 px + thumbs/, upright and never mirrored; storage),

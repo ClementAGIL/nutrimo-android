@@ -13,6 +13,7 @@ import com.clement.nutrimo.data.db.WaterEntity
 import com.clement.nutrimo.data.health.HealthInfo
 import com.clement.nutrimo.data.health.day
 import com.clement.nutrimo.data.repository.goalTargets
+import com.clement.nutrimo.domain.calc.Activities
 import com.clement.nutrimo.domain.calc.CalorieTarget
 import com.clement.nutrimo.domain.calc.GoalTargets
 import com.clement.nutrimo.domain.calc.MacroSplit
@@ -97,6 +98,9 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
     }
 
     private val health = MutableStateFlow<HealthInfo?>(null)
+
+    /** For the add-activity dialog: most logged types first. */
+    val activityTypes = c.activities.typesByUse.stateWhileSubscribed(viewModelScope, Activities.TYPES)
 
     val state: StateFlow<JournalUiState> = combine(day, c.body.calorieTarget, c.body.profile, c.settings.settings, health) { d, target, profile, settings, healthInfo ->
         JournalUiState(

@@ -6,6 +6,8 @@ import com.clement.nutrimo.data.db.ActivityEntity
 import com.clement.nutrimo.data.db.DayBurn
 import com.clement.nutrimo.data.db.NutrimoDatabase
 import com.clement.nutrimo.domain.calc.Activities
+import com.clement.nutrimo.domain.calc.ActivityType
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
@@ -14,6 +16,11 @@ class ActivityRepository(db: NutrimoDatabase) {
     private val weights = db.weightDao()
 
     fun day(date: LocalDate): Flow<List<ActivityEntity>> = dao.observeDay(date)
+
+    /** Every activity type, most logged first; never logged ones keep the Activities.TYPES order, after them. */
+    val typesByUse: Flow<List<ActivityType>> = dao.observeTypesByUse().map { keys ->
+        Activities.TYPES.sortedBy { type -> keys.indexOf(type.key).takeIf { it >= 0 } ?: Int.MAX_VALUE }
+    }
 
     fun burned(from: LocalDate, to: LocalDate): Flow<List<DayBurn>> = dao.observeBurned(from, to)
 

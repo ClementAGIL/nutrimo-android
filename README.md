@@ -34,7 +34,7 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   estimate = steps beyond 5,000 + workouts other than walking/running (their steps already count).
   The Pas card has a refresh button; it also refreshes each time you come back to the app.
 - Physical activity: walking, running, cycling, swimming, strength training… with the duration (calories estimated
-  from MET values and your weight, net of the resting energy already in your maintenance) or any activity with its kcal; burned calories are added to the day's budget.
+  from MET values and your weight, net of the resting energy already in your maintenance) or any activity with its kcal; burned calories are added to the day's budget. The list starts with your most logged activities.
 - History (chart icon in the journal):
   - Calendar (default): one month at a time, a colored dot per daily goal (calories under the budget, weight stable
     or down, sport calories, steps, water, day rated in "Ma journée" in sunny yellow). Filled = achieved, ring = missed, nothing = no data that day (an unlogged

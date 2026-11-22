@@ -122,6 +122,10 @@ interface ActivityDao {
     @Query("SELECT date, SUM(kcal) AS kcal FROM activities WHERE date BETWEEN :from AND :to GROUP BY date")
     fun observeBurned(from: LocalDate, to: LocalDate): Flow<List<DayBurn>>
 
+    /** Activity type keys that were ever logged, most logged first. */
+    @Query("SELECT type FROM activities GROUP BY type ORDER BY COUNT(*) DESC")
+    fun observeTypesByUse(): Flow<List<String>>
+
     @Query("SELECT * FROM activities WHERE date = :date")
     suspend fun onDate(date: LocalDate): List<ActivityEntity>
 
