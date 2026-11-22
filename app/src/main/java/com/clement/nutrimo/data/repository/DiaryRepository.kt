@@ -60,20 +60,21 @@ class DiaryRepository(
     suspend fun delete(id: String) = dao.delete(id)
 
     /** Copies the entries of [meal] from [from] to [to]; returns how many were copied. */
-    suspend fun copyMeal(from: LocalDate, to: LocalDate, meal: Meal): Int {
+    /** Copies the [meal] of [from] into [toMeal] of [to] (added to what is there); returns how many entries were copied. */
+    suspend fun copyMeal(from: LocalDate, meal: Meal, to: LocalDate, toMeal: Meal): Int {
         val source = dao.meal(from, meal)
         val at = now()
         // One millisecond apart: the journal sorts by createdAt, so the copies keep the original order.
-        dao.upsertAll(source.mapIndexed { i, e -> e.copy(id = newId(), date = to, createdAt = at + i, updatedAt = at) })
+        dao.upsertAll(source.mapIndexed { i, e -> e.copy(id = newId(), date = to, meal = toMeal, createdAt = at + i, updatedAt = at) })
         return source.size
     }
 
-    /** Moves the [meal] of [from] to [to] (same meal, order kept); returns how many entries moved. */
-    suspend fun moveMeal(from: LocalDate, to: LocalDate, meal: Meal): Int {
-        if (from == to) return 0
+    /** Moves the [meal] of [from] into [toMeal] of [to] (order kept); returns how many entries moved. */
+    suspend fun moveMeal(from: LocalDate, meal: Meal, to: LocalDate, toMeal: Meal): Int {
+        if (from == to && meal == toMeal) return 0
         val source = dao.meal(from, meal)
         val at = now()
-        dao.upsertAll(source.map { it.copy(date = to, updatedAt = at) })
+        dao.upsertAll(source.map { it.copy(date = to, meal = toMeal, updatedAt = at) })
         return source.size
     }
 

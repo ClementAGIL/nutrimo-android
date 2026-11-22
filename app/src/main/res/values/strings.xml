@@ -132,9 +132,10 @@
     <string name="journal_1_verre">%1$s verre(s)</string>
     <string name="journal_ajouter_verre">Ajouter un verre</string>
     <string name="journal_au_dessus_objectif_1">Au-dessus de l\'objectif : %1$s</string>
-    <string name="journal_copier_depuis_veille">Copier depuis la veille</string>
+    <string name="journal_copier_ce_repas">Copier ce repas</string>
+    <string name="journal_copier">Copier</string>
+    <string name="journal_deplacer">Déplacer</string>
     <string name="journal_plus_options">Plus d’options</string>
-    <string name="journal_copier_autre_jour">Copier vers un autre jour</string>
     <string name="journal_copied_to">%1$d aliment(s) copié(s) au %2$s</string>
     <string name="journal_deplacer_autre_jour">Déplacer vers un autre jour</string>
     <string name="journal_moved">%1$d aliment(s) déplacé(s) au %2$s</string>
@@ -447,8 +448,6 @@
     <string name="dev_clear_done">Données effacées.</string>
     <string name="server_connected">✅ Connecté : %1$s</string>
     <string name="server_unreachable">❌ Injoignable (%1$s)</string>
-    <string name="journal_copy_none">Rien à copier pour ce repas la veille</string>
-    <string name="journal_copied">%1$s aliment(s) copié(s)</string>
     <string name="journal_meal_saved">Repas « %1$s » enregistré : retrouvez-le dans l\'onglet Repas de la recherche</string>
     <string name="add_food_barcode_lookup">Recherche du code %1$s…</string>
     <string name="remote_source_backend">Serveur Nutrimo</string>

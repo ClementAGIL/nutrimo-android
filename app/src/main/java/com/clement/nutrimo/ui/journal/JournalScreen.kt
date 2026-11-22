@@ -89,9 +89,8 @@ private fun JournalList(state: JournalUiState, today: LocalDate, vm: JournalView
                     onAdd = { actions.onAdd(state.date, meal) },
                     onEdit = actions.onEdit,
                     onDelete = vm::delete,
-                    onCopy = { vm.copyFromPreviousDay(meal) },
-                    onMove = { to -> vm.moveMeal(meal, to) },
-                    onCopyTo = { to -> vm.copyMealTo(meal, to) },
+                    onCopy = { to, toMeal -> vm.copyMeal(meal, to, toMeal) },
+                    onMove = { to, toMeal -> vm.moveMeal(meal, to, toMeal) },
                     onSave = { name -> vm.saveMeal(name, entries) },
                 ),
             )

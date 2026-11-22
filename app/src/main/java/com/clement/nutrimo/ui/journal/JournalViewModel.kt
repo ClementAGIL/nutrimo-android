@@ -150,23 +150,17 @@ class JournalViewModel(private val c: AppContainer) : ViewModel() {
 
     fun delete(entry: DiaryEntity) = viewModelScope.launch { c.diary.delete(entry.id) }
 
-    fun copyFromPreviousDay(meal: Meal) = viewModelScope.launch {
-        val day = date.value
-        val count = c.diary.copyMeal(day.minusDays(1), day, meal)
-        messages.tryEmit(if (count == 0) uiText(R.string.journal_copy_none) else uiText(R.string.journal_copied, count))
-    }
-
-    /** For entries logged on the wrong day: the whole meal goes to [to], and the journal follows it there. */
-    fun moveMeal(meal: Meal, to: LocalDate) = viewModelScope.launch {
-        val count = c.diary.moveMeal(date.value, to, meal)
+    /** For entries logged on the wrong day or meal: the whole meal goes to [toMeal] of [to], and the journal follows it. */
+    fun moveMeal(meal: Meal, to: LocalDate, toMeal: Meal) = viewModelScope.launch {
+        val count = c.diary.moveMeal(date.value, meal, to, toMeal)
         if (count == 0) return@launch
         setDate(to)
         messages.tryEmit(uiText(R.string.journal_moved, count, to.full()))
     }
 
-    /** Copies the shown day's [meal] to [to] (added to what is there), and the journal follows it there. */
-    fun copyMealTo(meal: Meal, to: LocalDate) = viewModelScope.launch {
-        val count = c.diary.copyMeal(date.value, to, meal)
+    /** Copies the shown day's [meal] into [toMeal] of [to] (added to what is there), and the journal follows it there. */
+    fun copyMeal(meal: Meal, to: LocalDate, toMeal: Meal) = viewModelScope.launch {
+        val count = c.diary.copyMeal(date.value, meal, to, toMeal)
         if (count == 0) return@launch
         setDate(to)
         messages.tryEmit(uiText(R.string.journal_copied_to, count, to.full()))
