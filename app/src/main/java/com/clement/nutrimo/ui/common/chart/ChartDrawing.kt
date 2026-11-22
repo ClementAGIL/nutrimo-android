@@ -47,7 +47,11 @@ internal class PlotArea(val left: Float, val top: Float, val right: Float, val b
     /** x of a position on [axis], in days from its left edge. */
     fun at(position: Long): Float = left + (right - left) * position / (axis?.totalDays ?: 1L)
     fun y(value: Double) = bottom - (bottom - top) * ((value - w.min) / (w.max - w.min)).toFloat()
-    fun dateAt(x: Float): LocalDate = w.start.plusDays(((x - left) / (right - left) * w.days).roundToLong().coerceIn(0, w.days.toLong()))
+    fun dateAt(x: Float): LocalDate {
+        val share = (x - left) / (right - left)
+        if (axis != null) return axis.dateAt((share * axis.totalDays).roundToLong())
+        return w.start.plusDays((share * w.days).roundToLong().coerceIn(0, w.days.toLong()))
+    }
 }
 
 internal fun DrawScope.drawBand(area: PlotArea, b: ChartBand, measurer: TextMeasurer, style: TextStyle) {

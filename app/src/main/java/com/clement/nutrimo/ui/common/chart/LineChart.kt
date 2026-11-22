@@ -63,7 +63,7 @@ fun LineChart(
     /** Enables pinch to zoom and horizontal drag to pan, within these dates; [onZoom] gets the new visible dates. */
     zoomBounds: ClosedRange<LocalDate>? = null,
     onZoom: ((LocalDate, LocalDate) -> Unit)? = null,
-    /** Collapses long stretches without data into short breaks (not combined with [onTap] / zoom). */
+    /** Collapses long stretches without data into short breaks (not combined with zoom). */
     axis: GapAxis? = null,
 ) {
     val measurer = rememberTextMeasurer()
@@ -72,9 +72,9 @@ fun LineChart(
     val halo = MaterialTheme.colorScheme.surface
     // Diamonds row first, then rings.
     val rows = markers.map { it.ring }.distinct().sorted()
-    val tap = if (onTap == null) Modifier else Modifier.pointerInput(window, rows.size) {
+    val tap = if (onTap == null) Modifier else Modifier.pointerInput(window, rows.size, axis) {
         detectTapGestures { offset ->
-            val area = plotArea(size.width.toFloat(), size.height.toFloat(), rows.size, window)
+            val area = plotArea(size.width.toFloat(), size.height.toFloat(), rows.size, window, axis)
             onTap(area.dateAt(offset.x), area::x)
         }
     }

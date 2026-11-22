@@ -37,12 +37,7 @@ private val BUBBLE_MAX_WIDTH = 240.dp
 @Composable
 fun DayBubble(day: HubDay, x: Float, actions: WeightHubActions, onClose: () -> Unit) {
     Card(
-        // Measured against the whole chart width, then narrowed: the clamp keeps the bubble inside the chart.
-        Modifier.layout { measurable, constraints ->
-            val p = measurable.measure(constraints.copy(minWidth = 0))
-            val left = (x - p.width / 2f).roundToInt().coerceIn(0, (constraints.maxWidth - p.width).coerceAtLeast(0))
-            layout(constraints.maxWidth, p.height) { p.place(left, 0) }
-        }.widthIn(max = BUBBLE_MAX_WIDTH),
+        Modifier.centeredOver(x).widthIn(max = BUBBLE_MAX_WIDTH),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
     ) {
         Column(Modifier.padding(start = 12.dp, bottom = 4.dp)) {
@@ -60,6 +55,13 @@ fun DayBubble(day: HubDay, x: Float, actions: WeightHubActions, onClose: () -> U
             }
         }
     }
+}
+
+/** Centers the element over [x] (px), measured against the whole parent width then clamped to stay inside it. */
+internal fun Modifier.centeredOver(x: Float) = layout { measurable, constraints ->
+    val p = measurable.measure(constraints.copy(minWidth = 0))
+    val left = (x - p.width / 2f).roundToInt().coerceIn(0, (constraints.maxWidth - p.width).coerceAtLeast(0))
+    layout(constraints.maxWidth, p.height) { p.place(left, 0) }
 }
 
 /** "Taille 98 cm · Hanches 104 cm" (the first two measured fields). */

@@ -55,7 +55,8 @@ on the phone. Food data comes from CIQUAL (bundled, works offline), the user's o
   how many times each recipe was logged: favorites first, then the most used.
 - Body measurements (waist, hips, chest, arm, thigh), from the Poids hub: history and one evolution chart per
   measurement (3 months, 6 months, 1 year or everything).
-  More than 6 months without measurements shrink to a short "…" break on the charts.
+  More than 6 months without measurements shrink to a short "…" break on the charts. Tap a point to see its date,
+  value and change since the previous measurement.
 - Progress photos (Poids -> Photos), only taken in the app and stored privately on the phone (never in the gallery or
   Google backups), unlocked with fingerprint / face / PIN each time, no screenshots:
   - Camera: Face / Profil / Dos, front or back camera, the last photo of the pose shown at 30 % to line up, timer

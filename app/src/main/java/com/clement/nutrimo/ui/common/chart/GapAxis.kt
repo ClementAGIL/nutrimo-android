@@ -68,6 +68,17 @@ class GapAxis(dates: List<LocalDate>) {
         }
     }
 
+    /** Date at [position] (days from the left edge); a position inside a break gives the closer edge of the break. */
+    fun dateAt(position: Long): LocalDate {
+        val p = position.coerceIn(0, totalDays)
+        val i = offsets.indexOfLast { it <= p }.coerceAtLeast(0)
+        val length = ChronoUnit.DAYS.between(segments[i].start, segments[i].endInclusive)
+        val inside = p - offsets[i]
+        if (inside <= length || i == segments.lastIndex) return segments[i].start.plusDays(inside.coerceAtMost(length))
+        // In the break after segment i: snap to its end or to the next segment's start.
+        return if (inside - length <= BREAK_DAYS / 2) segments[i].endInclusive else segments[i + 1].start
+    }
+
     /** Position of [date] in days from the left edge, or null when it falls in a collapsed stretch. */
     fun position(date: LocalDate): Long? {
         val i = segments.indexOfFirst { date in it }

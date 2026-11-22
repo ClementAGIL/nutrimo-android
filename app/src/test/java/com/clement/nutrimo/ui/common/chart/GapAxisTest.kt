@@ -54,4 +54,17 @@ class GapAxisTest {
         assertEquals(positions.sorted(), positions)
         assertTrue(positions.last() <= axis.totalDays)
     }
+
+    @Test
+    fun `dateAt reverses position and snaps a break to its closer edge`() {
+        val old = LocalDate.of(2022, 5, 4)
+        val axis = GapAxis(listOf(old, today))
+        assertEquals(old, axis.dateAt(axis.position(old)!!))
+        assertEquals(today, axis.dateAt(axis.position(today)!!))
+        val breakMiddle = axis.breaks.single()
+        assertEquals(axis.segments[0].endInclusive, axis.dateAt(breakMiddle - 1))
+        assertEquals(axis.segments[1].start, axis.dateAt(breakMiddle + 1))
+        assertEquals(axis.segments.last().endInclusive, axis.dateAt(axis.totalDays + 50))
+        assertEquals(axis.segments.first().start, axis.dateAt(-5))
+    }
 }

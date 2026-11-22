@@ -116,7 +116,8 @@ ui/
                                   under the plot: diamond = measurement day, ring = photo day; tap -> DayBubble with links), Bilan / Mensurations / Photos buttons, "+" menu
                                   (weigh-in, measurements, photo). WeightScreens: WeighBilanScreen (WeightDashboard + history
                                   link), WeighHistoryScreen, MeasurementsScreen (list / charts tabs). Measurements
-                                  (MEASUREMENT_FIELDS shared by list, dialog and charts), MeasurementCharts, WeightViewModel
+                                  (MEASUREMENT_FIELDS shared by list, dialog and charts), MeasurementCharts (tap a point = bubble:
+                                  date, value, change since the previous one; centeredOver shared with DayBubble), WeightViewModel
                                   (progressOf), WeightHistory, WeightDialog (one per day, confirm replace)
   photo/                          PhotoLock (PhotoLockGate: device unlock via the platform BiometricPrompt, weak biometrics or
                                   PIN; PhotoLock.lock() when entering from the hub and in MainActivity.onStop; SecureWindow =
@@ -135,8 +136,8 @@ ui/
                                   status message / busy), Pickers (DateField, Dropdown), Splash (SplashState.gone / splashGone(): screens wait for the splash fade), ViewModels (appViewModel, Flow.stateWhileSubscribed), NutrientViews (MacroBars, NutrientTable)
   common/chart/                   LineChart (public types + composable of the generic Canvas date/value chart; drawing in
                                   ChartDrawing (PlotArea, bands, grid, bars, lines, drawMarkerShape shared with the legend),
-                                  GapAxis (dates with > 183 days without data collapsed into "…" breaks; LineChart(axis =)
-                                  for the measurement charts, also the photo timeline; tested),
+                                  GapAxis (dates with > 183 days without data collapsed into "…" breaks, dateAt = reverse for taps;
+                                  LineChart(axis =) for the measurement charts, also the photo timeline; tested),
                                   zoomPan in ChartGestures): lines, dots, daily bars, ChartBand value zones,
                                   ChartMarker in a lane under the plot (one row per kind),
                                   zoomBounds + onZoom = pinch-zoom / sideways drag-pan, selected

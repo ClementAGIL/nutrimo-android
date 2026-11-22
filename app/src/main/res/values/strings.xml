@@ -150,6 +150,7 @@
     <string name="macros_total_1_doit_faire_100">Total : %1$s %% (doit faire 100 %%)</string>
     <string name="measurement_charts_ajoutez_mensurations_pour_voir_leur">Ajoutez des mensurations pour voir leur évolution.</string>
     <string name="measurement_charts_aucune_mensuration_sur_cette_periode">Aucune mensuration sur cette période.</string>
+    <string name="measurement_charts_depuis">%1$s depuis le %2$s</string>
     <string name="measurement_charts_evolution_sur_periode">Évolution sur la période</string>
     <string name="measurements_aucune_mensuration_ajoutez_en_avec">Aucune mensuration. Ajoutez-en avec le bouton +.</string>
     <string name="nutrient_dont_acides_gras_satures">dont acides gras saturés</string>
